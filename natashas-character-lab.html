@@ -351,15 +351,43 @@ body{overflow-x:hidden;}
 .dna-table td:last-child{color:var(--t1);font-weight:600;}
 .dna-table tr:last-child td{border-bottom:none;}
 
-/* ── CONSISTENCY LAB ── */
-.consist-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
-.consist-item{
-  background:var(--sf);border:1px solid var(--bd);
-  border-radius:var(--r2);padding:10px;text-align:center;
-}
-.consist-ico{font-size:22px;margin-bottom:6px;}
-.consist-lbl{font-size:10px;font-weight:700;color:var(--t2);}
-.consist-status{font-size:9px;color:var(--t3);margin-top:3px;}
+/* ── CONSISTENCY LAB v2 ── */
+.cl-toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:6px;}
+.cl-mode-btns{display:flex;gap:4px;}
+.cl-mode{padding:4px 12px;border-radius:var(--pill);font-size:9px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;border:1px solid var(--bd);background:transparent;color:var(--t3);font-family:var(--f);cursor:pointer;transition:all 0.18s;}
+.cl-mode.on{background:var(--sf2);border-color:var(--bd2);color:var(--t1);}
+.cl-char-ctx{display:flex;align-items:center;gap:8px;margin-bottom:12px;padding:8px 10px;background:var(--sf);border:1px solid var(--bd);border-radius:var(--r2);}
+.cl-char-name{font-size:11px;font-weight:700;color:var(--t1);}
+.cl-compare-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px;}
+@media(max-width:1099px){.cl-compare-grid{grid-template-columns:repeat(2,1fr);}}
+.cl-panel{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r2);overflow:hidden;display:flex;flex-direction:column;transition:border-color 0.18s var(--ease);min-width:0;}
+.cl-panel:hover{border-color:var(--bd2);}
+.cl-panel.cl-anchor{border-color:var(--gold-bd);background:var(--gold-bg);}
+.cl-panel-header{padding:5px 8px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bd);gap:4px;}
+.cl-panel-label{font-size:9px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:0.07em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.cl-preview{flex:1;min-height:108px;max-height:160px;display:flex;align-items:center;justify-content:center;overflow:hidden;background:var(--bg2);position:relative;}
+.cl-preview svg{width:100%;height:100%;}
+.cl-ph{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;width:100%;height:100%;min-height:108px;padding:8px;}
+.cl-ph-ico{font-size:22px;opacity:0.28;}
+.cl-ph-lbl{font-size:8.5px;font-weight:700;color:var(--t4);text-transform:uppercase;letter-spacing:0.07em;text-align:center;line-height:1.4;}
+.cl-checks{padding:5px 8px;border-top:1px solid var(--bd);display:flex;flex-wrap:wrap;gap:2px 8px;}
+.cl-check{font-size:8.5px;font-weight:600;display:flex;align-items:center;gap:3px;white-space:nowrap;}
+.cl-check.pass{color:var(--pos);}
+.cl-check.warn{color:var(--warn);}
+.cl-check.fail{color:var(--danger);}
+.cl-check.na{color:var(--t4);}
+.cl-dna-swatch{height:26px;border-radius:var(--r3);margin:10px 10px 0;border:1px solid rgba(255,255,255,0.10);}
+.cl-dna-items{padding:6px 10px;display:flex;flex-direction:column;gap:3px;}
+.cl-dna-item{font-size:9px;color:var(--t2);display:flex;align-items:center;gap:5px;}
+.cl-drift-wrap{overflow-x:auto;margin-bottom:12px;}
+.cl-drift-tbl{width:100%;border-collapse:collapse;font-size:9.5px;}
+.cl-drift-tbl th{text-align:left;font-size:8.5px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--t3);padding:5px 8px;border-bottom:1px solid var(--bd);white-space:nowrap;}
+.cl-drift-tbl td{padding:5px 8px;border-bottom:1px solid var(--bd);vertical-align:middle;color:var(--t2);}
+.cl-drift-tbl tr:last-child td{border-bottom:none;}
+.cl-drift-tbl .mk{font-weight:700;color:var(--t1);}
+.cl-drift-tbl .pass{color:var(--pos);}
+.cl-drift-tbl .warn{color:var(--warn);}
+.cl-drift-tbl .na{color:var(--t4);}
 
 /* ── MOBILE TAB SCROLL ── */
 @media(max-width:899px){
@@ -2119,57 +2147,194 @@ body{overflow-x:hidden;}
       </div>
     </div>
 
-    <!-- CONSISTENCY LAB TAB -->
+    <!-- CONSISTENCY LAB TAB v2 -->
     <div class="info-pane" id="pane-consistency">
-      <div class="sec">Character Consistency Lab</div>
-      <div class="gc">
-        <div style="font-size:12px;color:var(--t2);line-height:1.70;margin-bottom:14px;">Identity must remain consistent across all representation types. The same canonical identity drives 2D portrait, 3D model, social avatar, campaign image and gameplay sprite.</div>
-        <div class="consist-grid">
-          <div class="consist-item">
-            <div class="consist-ico">🎨</div>
-            <div class="consist-lbl">2D Portrait</div>
-            <div class="consist-status"><span class="chip cw">Prototype</span></div>
-          </div>
-          <div class="consist-item">
-            <div class="consist-ico">🧊</div>
-            <div class="consist-lbl">3D Model</div>
-            <div class="consist-status"><span class="chip" style="background:var(--lat-bg);color:var(--laterite);border:1px solid var(--lat-bd)">Concept</span></div>
-          </div>
-          <div class="consist-item">
-            <div class="consist-ico">👤</div>
-            <div class="consist-lbl">Social Avatar</div>
-            <div class="consist-status"><span class="chip cw">Prototype</span></div>
-          </div>
-          <div class="consist-item">
-            <div class="consist-ico">📸</div>
-            <div class="consist-lbl">Campaign Image</div>
-            <div class="consist-status"><span class="chip" style="background:var(--lat-bg);color:var(--laterite);border:1px solid var(--lat-bd)">Concept</span></div>
-          </div>
-          <div class="consist-item">
-            <div class="consist-ico">🎮</div>
-            <div class="consist-lbl">Gameplay Sprite</div>
-            <div class="consist-status"><span class="chip" style="background:var(--lat-bg);color:var(--laterite);border:1px solid var(--lat-bd)">Concept</span></div>
-          </div>
-          <div class="consist-item">
-            <div class="consist-ico">🗺️</div>
-            <div class="consist-lbl">Map Token</div>
-            <div class="consist-status"><span class="chip" style="background:var(--lat-bg);color:var(--laterite);border:1px solid var(--lat-bd)">Concept</span></div>
-          </div>
+
+      <!-- Toolbar -->
+      <div class="cl-toolbar">
+        <div class="sec" style="margin-bottom:0">Visual Consistency Lab</div>
+        <div class="cl-mode-btns">
+          <button class="cl-mode on" id="cl-btn-compare" onclick="setClMode('compare',this)">Compare</button>
+          <button class="cl-mode" id="cl-btn-drift" onclick="setClMode('drift',this)">Drift Check</button>
         </div>
       </div>
-      <div class="sec">Identity Drift Check</div>
-      <div class="gc">
-        <div class="dr"><span class="dr-k">Face Structure</span><span class="dr-v"><span class="chip cp">✓ Consistent</span></span></div>
-        <div class="dr"><span class="dr-k">Skin Tone</span><span class="dr-v"><span class="chip cp">✓ Consistent</span></span></div>
-        <div class="dr"><span class="dr-k">Signature Item</span><span class="dr-v"><span class="chip cp">✓ Fila cap locked</span></span></div>
-        <div class="dr"><span class="dr-k">3D ↔ 2D Match</span><span class="dr-v"><span class="chip cw">⚠ Pending 3D</span></span></div>
-        <div class="dr"><span class="dr-k">Cultural Accuracy</span><span class="dr-v"><span class="chip ca">✦ Under review</span></span></div>
+
+      <!-- Active character context strip -->
+      <div class="cl-char-ctx">
+        <span class="cl-char-name" id="cl-char-name">Alhaji Tunde Adeyemi</span>
+        <span class="chip" id="cl-char-chip" style="background:var(--kwara-bg);color:var(--kwara2);border:1px solid var(--kwara-bd)">Gov · Kwara · Hero</span>
       </div>
+
+      <!-- ── COMPARE MODE ── -->
+      <div id="cl-compare-mode">
+        <div class="cl-compare-grid">
+
+          <!-- 1 · Canonical DNA anchor -->
+          <div class="cl-panel cl-anchor">
+            <div class="cl-panel-header">
+              <span class="cl-panel-label">Canonical DNA</span>
+              <span class="chip ca" style="font-size:7px;padding:2px 6px">Locked</span>
+            </div>
+            <div style="flex:1">
+              <div class="cl-dna-swatch" id="cl-skin-swatch" style="background:#8a5a28"></div>
+              <div class="cl-dna-items" id="cl-dna-items">
+                <span class="cl-dna-item">🟤 Skin: Laterite Brown</span>
+                <span class="cl-dna-item">🟢 State: Kwara</span>
+                <span class="cl-dna-item">🎩 Fila cap (Yoruba)</span>
+                <span class="cl-dna-item">👘 Agbada / Babariga</span>
+              </div>
+            </div>
+            <div class="cl-checks">
+              <span class="cl-check pass">✓ Identity source</span>
+              <span class="cl-check pass">✓ Canonical ref</span>
+            </div>
+          </div>
+
+          <!-- 2 · 2D Portrait -->
+          <div class="cl-panel">
+            <div class="cl-panel-header">
+              <span class="cl-panel-label">2D Portrait</span>
+              <span class="chip cw" style="font-size:7px;padding:2px 6px">Prototype</span>
+            </div>
+            <div class="cl-preview" id="cl-prev-portrait"></div>
+            <div class="cl-checks" id="cl-chk-portrait">
+              <span class="cl-check pass">✓ Skin tone</span>
+              <span class="cl-check pass">✓ Face structure</span>
+              <span class="cl-check pass">✓ Sig. item</span>
+              <span class="cl-check pass">✓ Cultural DNA</span>
+            </div>
+          </div>
+
+          <!-- 3 · Full Body -->
+          <div class="cl-panel">
+            <div class="cl-panel-header">
+              <span class="cl-panel-label">Full Body</span>
+              <span class="chip cw" style="font-size:7px;padding:2px 6px">Prototype</span>
+            </div>
+            <div class="cl-preview" id="cl-prev-fullbody"></div>
+            <div class="cl-checks" id="cl-chk-fullbody">
+              <span class="cl-check pass">✓ Skin tone</span>
+              <span class="cl-check pass">✓ Proportions</span>
+              <span class="cl-check pass">✓ Costume DNA</span>
+              <span class="cl-check pass">✓ Sig. item</span>
+            </div>
+          </div>
+
+          <!-- 4 · Social Avatar -->
+          <div class="cl-panel">
+            <div class="cl-panel-header">
+              <span class="cl-panel-label">Social Avatar</span>
+              <span class="chip cw" style="font-size:7px;padding:2px 6px">Prototype</span>
+            </div>
+            <div class="cl-preview" id="cl-prev-avatar"></div>
+            <div class="cl-checks" id="cl-chk-avatar">
+              <span class="cl-check pass">✓ Skin tone</span>
+              <span class="cl-check pass">✓ Recognisable</span>
+              <span class="cl-check warn">⚠ Compressed</span>
+              <span class="cl-check pass">✓ State colour</span>
+            </div>
+          </div>
+
+          <!-- 5 · Wardrobe Variant -->
+          <div class="cl-panel">
+            <div class="cl-panel-header">
+              <span class="cl-panel-label">Wardrobe Variant</span>
+              <span class="chip cw" style="font-size:7px;padding:2px 6px">Prototype</span>
+            </div>
+            <div class="cl-preview" id="cl-prev-wardrobe"></div>
+            <div class="cl-checks" id="cl-chk-wardrobe">
+              <span class="cl-check pass">✓ Skin tone</span>
+              <span class="cl-check pass">✓ Face consistent</span>
+              <span class="cl-check warn">⚠ Alt costume</span>
+              <span class="cl-check pass">✓ Cultural respect</span>
+            </div>
+          </div>
+
+          <!-- 6 · Environment Placement -->
+          <div class="cl-panel">
+            <div class="cl-panel-header">
+              <span class="cl-panel-label">Environment</span>
+              <span class="chip" style="font-size:7px;padding:2px 6px;background:var(--lat-bg);color:var(--laterite);border:1px solid var(--lat-bd)">Concept</span>
+            </div>
+            <div class="cl-preview">
+              <div class="cl-ph">
+                <div class="cl-ph-ico" id="cl-env-ico">🏛️</div>
+                <div class="cl-ph-lbl" id="cl-env-lbl">Government House<br>Ilorin, Kwara</div>
+              </div>
+            </div>
+            <div class="cl-checks">
+              <span class="cl-check na">— Pending asset</span>
+              <span class="cl-check na" id="cl-env-region">— Region: Kwara</span>
+            </div>
+          </div>
+
+          <!-- 7 · Social Profile -->
+          <div class="cl-panel">
+            <div class="cl-panel-header">
+              <span class="cl-panel-label">Social Profile</span>
+              <span class="chip" style="font-size:7px;padding:2px 6px;background:var(--lat-bg);color:var(--laterite);border:1px solid var(--lat-bd)">Concept</span>
+            </div>
+            <div class="cl-preview">
+              <div class="cl-ph">
+                <div class="cl-ph-ico">📱</div>
+                <div class="cl-ph-lbl" id="cl-social-lbl">@GovAdeyemi<br>NATASHAS Feed</div>
+              </div>
+            </div>
+            <div class="cl-checks">
+              <span class="cl-check na">— Pending asset</span>
+              <span class="cl-check na">— Feed integration</span>
+            </div>
+          </div>
+
+          <!-- 8 · Gameplay Sprite -->
+          <div class="cl-panel">
+            <div class="cl-panel-header">
+              <span class="cl-panel-label">Gameplay</span>
+              <span class="chip" style="font-size:7px;padding:2px 6px;background:var(--lat-bg);color:var(--laterite);border:1px solid var(--lat-bd)">Concept</span>
+            </div>
+            <div class="cl-preview">
+              <div class="cl-ph">
+                <div class="cl-ph-ico">🎮</div>
+                <div class="cl-ph-lbl">Isometric sprite<br>Phase 3 asset</div>
+              </div>
+            </div>
+            <div class="cl-checks">
+              <span class="cl-check na">— Phase 3</span>
+              <span class="cl-check na">— Election Engine</span>
+            </div>
+          </div>
+
+        </div><!-- /cl-compare-grid -->
+      </div><!-- /cl-compare-mode -->
+
+      <!-- ── DRIFT CHECK MODE ── -->
+      <div id="cl-drift-mode" style="display:none">
+        <div class="cl-drift-wrap">
+          <table class="cl-drift-tbl">
+            <thead>
+              <tr>
+                <th>Identity Marker</th>
+                <th>2D Portrait</th>
+                <th>Full Body</th>
+                <th>Avatar</th>
+                <th>Wardrobe Alt</th>
+                <th>Environment</th>
+                <th>Social Profile</th>
+                <th>Gameplay</th>
+              </tr>
+            </thead>
+            <tbody id="cl-drift-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Production Rule -->
       <div class="sec">Production Rule</div>
       <div class="gc">
         <div style="font-size:13px;color:var(--t2);line-height:1.72;">Asset priority: <strong style="color:var(--t1)">REUSE → VARIANT → DERIVATIVE → NEW</strong>. No developer or agent may invent a new version of an existing canonical identity without consulting this record first.</div>
       </div>
-    </div>
+
+    </div><!-- /pane-consistency -->
 
   </div><!-- end info-panel -->
 
@@ -2356,6 +2521,7 @@ function selectChar(id){
   updateDNA(id);
   updateCtx(id);
   updateAudioPanel(id);
+  updateConsistencyLab(id);
   const d=DATA[id];
   document.getElementById('footer-id').textContent=`${d.id} · ${d.slug} · ${d.state} · Phase 2`;
 }
@@ -2380,6 +2546,7 @@ function setInfoTab(tab, btn){
   btn.classList.add('on');
   document.querySelectorAll('.info-pane').forEach(p=>p.classList.remove('on'));
   document.getElementById('pane-'+tab).classList.add('on');
+  if(tab==='consistency') updateConsistencyLab(cur);
 }
 
 function updateDNA(id){
@@ -2455,6 +2622,209 @@ function updateAudioPanel(id){
     <div class="dr"><span class="dr-k">Language</span><span class="dr-v dim">${id==='gov'?'Deep baritone · Yoruba-inflected English · Strategic Pidgin':id==='cos'?'Precise Igbo-English · Strategic understatement · Pidgin when building rapport':'Hausa-Yoruba mix · Market Pidgin · Arabic (prayer context)'}</span></div>
     <div class="dr"><span class="dr-k">Tone range</span><span class="dr-v dim">${id==='gov'?'Authoritative → warm → commanding':id==='cos'?'Measured → analytical → occasional dry wit':'Candid → energetic → warm → alarmed'}</span></div>
     <div class="dr"><span class="dr-k">Ambient region</span><span class="dr-v"><span class="chip ${id==='cos'?'ce':'ck'}">${id==='cos'?'Enugu':'Kwara'} DNA</span></span></div>`;
+}
+
+// ── CONSISTENCY LAB v2 ──
+const CL_DATA = {
+  gov:{
+    name:'Alhaji Tunde Adeyemi', chip:'Gov · Kwara · Hero',
+    chipBg:'var(--kwara-bg)',chipColor:'var(--kwara2)',chipBd:'var(--kwara-bd)',
+    skinHex:'#8a5a28', skinLabel:'Laterite Brown',
+    dna:['🟤 Skin: Laterite Brown','🟢 State: Kwara','🎩 Fila cap (Yoruba)','👘 Agbada / Babariga'],
+    envIco:'🏛️', envLbl:'Government House<br>Ilorin, Kwara', envRegion:'Region: Kwara',
+    socialLbl:'@GovAdeyemi<br>NATASHAS Feed',
+    portraitSrc:'svg-gov', fbSrc:'fb-gov', avSrc:'av-gov',
+    fbViewBox:'0 0 160 400', avViewBox:'0 0 80 80',
+    portraitViewBox:'40 58 180 180',
+    wardrobeSrc:'svg-gov', wardrobeNote:'Western Suit variant',
+    drift:[
+      ['Skin Tone','pass','pass','pass','pass','na','na','na'],
+      ['Eye Colour','pass','pass','warn','pass','na','na','na'],
+      ['Face Structure','pass','pass','warn','pass','na','na','na'],
+      ['Fila Cap','pass','pass','pass','fail','na','na','na'],
+      ['Outfit Colour','pass','pass','pass','warn','na','na','na'],
+      ['Cultural Auth.','pass','pass','pass','pass','na','na','na'],
+      ['Regional Signal','pass','pass','pass','pass','na','na','na'],
+    ]
+  },
+  cos:{
+    name:'Barr. Chidi Okafor', chip:'CoS · Enugu · Support',
+    chipBg:'var(--enugu-bg)',chipColor:'var(--enugu2)',chipBd:'var(--enugu-bd)',
+    skinHex:'#6a4018', skinLabel:'Deep Brown',
+    dna:['🟤 Skin: Deep Brown','🔵 State: Enugu','👓 Gold spectacles','👔 Agbada / Suit'],
+    envIco:'🏢', envLbl:'Government Secretariat<br>Enugu, Enugu State', envRegion:'Region: Enugu',
+    socialLbl:'@CoSOkafor<br>NATASHAS Feed',
+    portraitSrc:'svg-cos', fbSrc:'fb-cos', avSrc:'av-cos',
+    fbViewBox:'0 0 160 400', avViewBox:'0 0 80 80',
+    portraitViewBox:'40 58 180 180',
+    wardrobeSrc:'svg-cos', wardrobeNote:'Agbada formal variant',
+    drift:[
+      ['Skin Tone','pass','pass','pass','pass','na','na','na'],
+      ['Eye Colour','pass','pass','warn','pass','na','na','na'],
+      ['Face Structure','pass','pass','warn','pass','na','na','na'],
+      ['Gold Spectacles','pass','pass','warn','pass','na','na','na'],
+      ['Outfit Colour','pass','pass','pass','warn','na','na','na'],
+      ['Cultural Auth.','pass','pass','pass','pass','na','na','na'],
+      ['Regional Signal','pass','pass','pass','pass','na','na','na'],
+    ]
+  },
+  npc:{
+    name:'Mama Fatima', chip:'NPC · Kwara · Supporting',
+    chipBg:'var(--teal-bg)',chipColor:'var(--teal)',chipBd:'var(--teal-bd)',
+    skinHex:'#7a4820', skinLabel:'Warm Brown',
+    dna:['🟤 Skin: Warm Brown','🟢 State: Kwara','🧕 Teal hijab (Kwara Islamic)','✨ Gold border pattern'],
+    envIco:'🛒', envLbl:'Central Market<br>Ilorin, Kwara', envRegion:'Region: Kwara',
+    socialLbl:'@MamaFatima<br>NATASHAS Feed',
+    portraitSrc:'svg-npc', fbSrc:'fb-npc', avSrc:'av-npc',
+    fbViewBox:'0 0 160 400', avViewBox:'0 0 80 80',
+    portraitViewBox:'40 58 180 180',
+    wardrobeSrc:'svg-npc', wardrobeNote:'Market attire variant',
+    drift:[
+      ['Skin Tone','pass','pass','pass','pass','na','na','na'],
+      ['Eye Colour','pass','pass','warn','pass','na','na','na'],
+      ['Face Structure','pass','pass','warn','pass','na','na','na'],
+      ['Teal Hijab','pass','pass','pass','pass','na','na','na'],
+      ['Gold Border','pass','pass','warn','pass','na','na','na'],
+      ['Cultural Auth.','pass','pass','pass','pass','na','na','na'],
+      ['Regional Signal','pass','pass','pass','pass','na','na','na'],
+    ]
+  }
+};
+
+function cloneSvgSafe(srcEl, idSuffix){
+  const clone = srcEl.cloneNode(true);
+  const idMap = {};
+  clone.querySelectorAll('[id]').forEach(el=>{
+    const oldId = el.getAttribute('id');
+    const newId = oldId + idSuffix;
+    idMap[oldId] = newId;
+    el.setAttribute('id', newId);
+  });
+  const fixRef = (val) => val ? val.replace(/url\(#([^)]+)\)/g,(_,id)=>`url(#${idMap[id]||id})`) : val;
+  clone.querySelectorAll('*').forEach(el=>{
+    ['fill','stroke','filter','clip-path','mask'].forEach(attr=>{
+      const v = el.getAttribute(attr);
+      if(v && v.startsWith('url(')) el.setAttribute(attr, fixRef(v));
+    });
+    const style = el.getAttribute('style');
+    if(style) el.setAttribute('style', style.replace(/url\(#([^)]+)\)/g,(_,id)=>`url(#${idMap[id]||id})`));
+  });
+  return clone;
+}
+
+function fillClPanel(panelId, srcId, viewBoxOverride, idSuffix){
+  const panel = document.getElementById(panelId);
+  if(!panel) return;
+  panel.innerHTML = '';
+  const src = document.getElementById(srcId);
+  if(!src) return;
+  const targetSvg = src.tagName.toLowerCase()==='svg' ? src : src.querySelector('svg');
+  if(!targetSvg) return;
+  const clone = cloneSvgSafe(targetSvg, idSuffix);
+  clone.removeAttribute('style');
+  clone.style.cssText='width:100%;height:100%;display:block;';
+  if(viewBoxOverride) clone.setAttribute('viewBox', viewBoxOverride);
+  panel.appendChild(clone);
+}
+
+function updateConsistencyLab(id){
+  const c = CL_DATA[id];
+  if(!c) return;
+  // Context strip
+  const nameEl = document.getElementById('cl-char-name');
+  const chipEl = document.getElementById('cl-char-chip');
+  if(nameEl) nameEl.textContent = c.name;
+  if(chipEl){
+    chipEl.textContent = c.chip;
+    chipEl.style.cssText = `background:${c.chipBg};color:${c.chipColor};border:1px solid ${c.chipBd}`;
+  }
+  // DNA swatch + items
+  const swatch = document.getElementById('cl-skin-swatch');
+  if(swatch) swatch.style.background = c.skinHex;
+  const dnaEl = document.getElementById('cl-dna-items');
+  if(dnaEl) dnaEl.innerHTML = c.dna.map(d=>`<span class="cl-dna-item">${d}</span>`).join('');
+  // Environment + social labels
+  const envIco = document.getElementById('cl-env-ico');
+  const envLbl = document.getElementById('cl-env-lbl');
+  const envReg = document.getElementById('cl-env-region');
+  const socLbl = document.getElementById('cl-social-lbl');
+  if(envIco) envIco.textContent = c.envIco;
+  if(envLbl) envLbl.innerHTML = c.envLbl;
+  if(envReg) envReg.textContent = '— ' + c.envRegion;
+  if(socLbl) socLbl.innerHTML = c.socialLbl;
+  // Fill preview panels with cloned SVGs
+  fillClPanel('cl-prev-portrait', c.portraitSrc, c.portraitViewBox, '-clp-'+id);
+  // For full body, grab the SVG inside the fullbody-viewer (which may be display:none — that's ok for cloning)
+  const fbWrap = document.getElementById(c.fbSrc);
+  if(fbWrap){
+    const fbSvg = fbWrap.querySelector('svg');
+    if(fbSvg){
+      const panel = document.getElementById('cl-prev-fullbody');
+      if(panel){
+        panel.innerHTML='';
+        const clone = cloneSvgSafe(fbSvg, '-clf-'+id);
+        clone.removeAttribute('style');
+        clone.style.cssText='width:100%;height:100%;display:block;';
+        panel.appendChild(clone);
+      }
+    }
+  }
+  // Avatar: first avatar-circle svg
+  const avWrap = document.getElementById(c.avSrc);
+  if(avWrap){
+    const avSvg = avWrap.querySelector('.avatar-circle svg');
+    if(avSvg){
+      const panel = document.getElementById('cl-prev-avatar');
+      if(panel){
+        panel.innerHTML='';
+        const clone = cloneSvgSafe(avSvg, '-clav-'+id);
+        clone.removeAttribute('style');
+        clone.style.cssText='width:90%;height:90%;border-radius:50%;display:block;';
+        panel.appendChild(clone);
+      }
+    }
+  }
+  // Wardrobe variant: portrait again with a label overlay indicating alt wardrobe
+  const wdPanel = document.getElementById('cl-prev-wardrobe');
+  if(wdPanel){
+    wdPanel.innerHTML='';
+    const src = document.getElementById(c.wardrobeSrc);
+    if(src){
+      const targetSvg = src.tagName.toLowerCase()==='svg' ? src : src.querySelector('svg');
+      if(targetSvg){
+        const clone = cloneSvgSafe(targetSvg, '-clw-'+id);
+        clone.removeAttribute('style');
+        clone.style.cssText='width:100%;height:100%;display:block;opacity:0.80;';
+        if(c.portraitViewBox) clone.setAttribute('viewBox', c.portraitViewBox);
+        wdPanel.appendChild(clone);
+        const lbl = document.createElement('div');
+        lbl.style.cssText='position:absolute;bottom:4px;left:0;right:0;text-align:center;font-size:7.5px;font-weight:700;color:var(--warn);letter-spacing:0.08em;text-transform:uppercase;background:rgba(7,8,12,0.68);padding:2px 4px;';
+        lbl.textContent = c.wardrobeNote;
+        wdPanel.appendChild(lbl);
+      }
+    }
+  }
+  // Build drift check table
+  buildDriftTable(c);
+}
+
+function buildDriftTable(c){
+  const tbody = document.getElementById('cl-drift-tbody');
+  if(!tbody) return;
+  const LABELS = {pass:'✓ Pass', warn:'⚠ Warn', fail:'✗ Fail', na:'— N/A'};
+  tbody.innerHTML = c.drift.map(row=>{
+    const [marker, ...cells] = row;
+    return `<tr><td class="mk">${marker}</td>${cells.map(s=>`<td class="${s}">${LABELS[s]||s}</td>`).join('')}</tr>`;
+  }).join('');
+}
+
+function setClMode(mode, btn){
+  document.querySelectorAll('.cl-mode').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  const compare = document.getElementById('cl-compare-mode');
+  const drift = document.getElementById('cl-drift-mode');
+  if(compare) compare.style.display = mode==='compare' ? '' : 'none';
+  if(drift) drift.style.display = mode==='drift' ? '' : 'none';
 }
 
 // ── THREE.JS 3D LAB ──
