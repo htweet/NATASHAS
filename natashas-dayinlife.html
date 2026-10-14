@@ -1,0 +1,1797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#08090d">
+<title>NATASHAS — A Day in the Life of a Governor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════
+   DESIGN TOKENS
+═══════════════════════════════════════════ */
+:root {
+  /* Core */
+  --bg: #07080c;
+  --bg2: #0b0d15;
+  --bg3: #0f1118;
+  --sf: rgba(255,255,255,0.04);
+  --sf2: rgba(255,255,255,0.07);
+  --sf3: rgba(255,255,255,0.11);
+  --bd: rgba(255,255,255,0.08);
+  --bd2: rgba(255,255,255,0.15);
+  --bd3: rgba(255,255,255,0.22);
+  /* Text */
+  --t1: #f4f0ea;
+  --t2: rgba(244,240,234,0.62);
+  --t3: rgba(244,240,234,0.38);
+  --t4: rgba(244,240,234,0.22);
+  /* Gold */
+  --gold: #c9a84c;
+  --gold2: #e2c06a;
+  --gold3: #f0d080;
+  --gold-bg: rgba(201,168,76,0.10);
+  --gold-bd: rgba(201,168,76,0.26);
+  --gold-glow: 0 0 40px rgba(201,168,76,0.18), 0 0 80px rgba(201,168,76,0.08);
+  /* Regions — Nigerian Identity Palette */
+  --kwara: #2e6b3e;       /* Kwara savanna forest green */
+  --kwara2: #52a06c;      /* Kwara accent — mosque dome green */
+  --kwara3: rgba(46,107,62,0.16);
+  --kwara-bd: rgba(46,107,62,0.30);
+  --enugu: #1c4d96;       /* Enugu coal city blue */
+  --enugu2: #4a82d4;      /* Enugu sky — harmattan haze */
+  --enugu3: rgba(28,77,150,0.16);
+  --enugu-bd: rgba(28,77,150,0.30);
+  /* Nigerian Cultural Palette */
+  --ng-green: #008751;          /* Nigerian flag green */
+  --ng-green-bg: rgba(0,135,81,0.10);
+  --ng-green-bd: rgba(0,135,81,0.28);
+  --laterite: #b84520;          /* Nigerian laterite / red earth */
+  --laterite-bg: rgba(184,69,32,0.10);
+  --laterite-bd: rgba(184,69,32,0.28);
+  --adire: #1a3759;             /* Yoruba adire indigo */
+  --adire-bg: rgba(26,55,89,0.20);
+  --harmattan: #d4a85c;         /* Harmattan season — warm ochre gold */
+  /* Status */
+  --pos: #22c55e;   --pos-bg: rgba(34,197,94,0.10);   --pos-bd: rgba(34,197,94,0.24);
+  --warn: #f59e0b;  --warn-bg: rgba(245,158,11,0.10);  --warn-bd: rgba(245,158,11,0.24);
+  --danger: #ef4444; --danger-bg: rgba(239,68,68,0.10); --danger-bd: rgba(239,68,68,0.24);
+  --rumour: #a78bfa; --rumour-bg: rgba(167,139,250,0.10); --rumour-bd: rgba(167,139,250,0.24);
+  --ai: #38bdf8;    --ai-bg: rgba(56,189,248,0.10);    --ai-bd: rgba(56,189,248,0.24);
+  --teal: #2dd4bf;  --teal-bg: rgba(45,212,191,0.10);  --teal-bd: rgba(45,212,191,0.24);
+  --cf: rgba(200,200,222,0.72); --cf-bg: rgba(130,130,150,0.10); --cf-bd: rgba(200,200,222,0.22);
+  /* Radii */
+  --r: 14px; --r2: 10px; --r3: 6px; --pill: 100px;
+  /* Blur */
+  --blur: blur(28px); --blur2: blur(18px);
+  /* Typography — Inter throughout, weight-driven hierarchy */
+  --display: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  /* Layout */
+  --hud-h: 60px;
+  --cap-h: 54px;
+  --nav-h: 80px;
+  /* Transitions */
+  --ease: cubic-bezier(0.35, 0, 0.25, 1);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { height: 100%; overflow: hidden; -webkit-tap-highlight-color: transparent; }
+body {
+  height: 100%; overflow: hidden;
+  background: var(--bg); color: var(--t1);
+  font-family: var(--body); font-size: 15px; line-height: 1.6;
+  -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+}
+::-webkit-scrollbar { width: 0; height: 0; }
+* { scrollbar-width: none; }
+
+/* ═══════════════════════════════════════════
+   SPLASH — ARTICLE 5 DISCLAIMER
+═══════════════════════════════════════════ */
+#splash {
+  position: fixed; inset: 0; z-index: 1000;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: flex-start;
+  overflow-y: auto; padding: 0;
+  background:
+    radial-gradient(ellipse 100% 60% at 50% 0%, rgba(201,168,76,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 20% 80%, rgba(74,124,89,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 80% 90%, rgba(45,95,166,0.06) 0%, transparent 60%),
+    linear-gradient(180deg, #04050a 0%, #08090f 50%, #060810 100%);
+  transition: opacity 0.7s var(--ease), transform 0.7s var(--ease);
+}
+#splash.out { opacity: 0; pointer-events: none; transform: scale(1.03); }
+
+.splash-wrap {
+  width: 100%; max-width: 520px;
+  padding: 48px 28px 48px;
+  display: flex; flex-direction: column; align-items: center;
+  min-height: 100%;
+}
+
+/* GameForge badge */
+.gf-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 6px 18px; border-radius: var(--pill);
+  background: var(--gold-bg); border: 1px solid var(--gold-bd);
+  font-family: var(--body); font-size: 11px; font-weight: 700;
+  letter-spacing: 0.10em; text-transform: uppercase; color: var(--gold);
+  margin-bottom: 32px;
+}
+
+/* GIANT TITLE */
+.splash-title {
+  font-family: var(--display);
+  font-size: clamp(72px, 20vw, 120px);
+  font-weight: 900;
+  letter-spacing: -0.03em; line-height: 0.88;
+  color: var(--t1);
+  text-align: center;
+  text-shadow: var(--gold-glow);
+  margin-bottom: 0;
+  animation: title-in 1.2s var(--ease) both;
+}
+.splash-title .gold-letters { color: var(--gold2); }
+@keyframes title-in {
+  from { opacity: 0; transform: translateY(30px) scale(0.96); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.splash-tagline {
+  font-family: var(--display);
+  font-size: clamp(15px, 4vw, 22px);
+  font-weight: 800;
+  letter-spacing: 0.20em;
+  color: var(--t2); text-align: center;
+  margin-top: 16px; margin-bottom: 8px;
+  animation: title-in 1.2s 0.15s var(--ease) both;
+}
+
+.splash-naija {
+  font-family: var(--body);
+  font-size: 13px; font-style: italic; font-weight: 500;
+  color: var(--t3); text-align: center; letter-spacing: 0.03em;
+  margin-bottom: 40px;
+  animation: title-in 1.2s 0.25s var(--ease) both;
+}
+
+/* Gold divider line */
+.gold-line {
+  width: 80px; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  margin: 0 auto 40px; border-radius: 1px;
+  animation: fade-in 1.2s 0.4s var(--ease) both;
+}
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+
+/* Notice */
+.notice-box {
+  width: 100%;
+  background: rgba(239,68,68,0.055);
+  border: 1px solid rgba(239,68,68,0.22);
+  border-radius: var(--r);
+  padding: 22px 22px 20px;
+  margin-bottom: 24px;
+  animation: fade-in 1.0s 0.5s var(--ease) both;
+}
+.notice-head {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 11px; font-weight: 800;
+  text-transform: uppercase; letter-spacing: 0.12em;
+  color: var(--danger); margin-bottom: 14px;
+}
+.notice-body p {
+  font-size: 13px; color: var(--t2);
+  line-height: 1.75; margin-bottom: 10px;
+}
+.notice-body p:last-child { margin-bottom: 0; }
+.notice-body strong { color: var(--t1); font-weight: 700; }
+
+.notice-stamp {
+  font-family: var(--display);
+  font-size: 18px; letter-spacing: 0.08em;
+  color: rgba(239,68,68,0.55); text-align: center;
+  margin: 18px 0 0; text-transform: uppercase;
+}
+
+/* Enter CTA */
+.enter-btn {
+  width: 100%; padding: 18px 24px; margin-top: 4px;
+  border: none; border-radius: var(--r2);
+  background: linear-gradient(135deg, #8a6820 0%, #c9a84c 45%, #d9bc6a 100%);
+  color: #140e00; font-family: var(--display);
+  font-size: 18px; font-weight: 900; letter-spacing: 0.16em;
+  cursor: pointer; transition: all 0.25s var(--ease);
+  box-shadow: 0 6px 32px rgba(201,168,76,0.32), 0 2px 8px rgba(0,0,0,0.4);
+  animation: fade-in 1.0s 0.7s var(--ease) both;
+}
+.enter-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 40px rgba(201,168,76,0.45), 0 4px 12px rgba(0,0,0,0.4);
+}
+.enter-btn:active { transform: translateY(-1px); }
+
+.splash-foot {
+  margin-top: 28px; text-align: center;
+  font-size: 11px; color: var(--t4); line-height: 1.8;
+  animation: fade-in 1.0s 0.9s var(--ease) both;
+}
+.splash-foot span { color: var(--t3); font-weight: 600; }
+
+/* ═══════════════════════════════════════════
+   WORLD STAGE
+═══════════════════════════════════════════ */
+#world {
+  position: fixed; inset: 0; z-index: 0;
+  overflow: hidden;
+  transition: background 1.2s ease;
+}
+.wk {
+  /* Kwara — savanna green, emirate gold, warm dark earth */
+  background:
+    radial-gradient(ellipse 110% 55% at 50% 105%, rgba(46,107,62,0.34) 0%, transparent 65%),
+    radial-gradient(ellipse 55% 30% at 10% 90%, rgba(46,107,62,0.18) 0%, transparent 55%),
+    radial-gradient(ellipse 40% 25% at 90% 85%, rgba(201,168,76,0.09) 0%, transparent 55%),
+    radial-gradient(ellipse 30% 20% at 50% 40%, rgba(184,69,32,0.04) 0%, transparent 60%),
+    linear-gradient(185deg, #050406 0%, #060e08 55%, #0b1410 100%);
+}
+.we {
+  /* Enugu — coal blue, highland cool, adire indigo undertone */
+  background:
+    radial-gradient(ellipse 110% 55% at 50% 105%, rgba(28,77,150,0.32) 0%, transparent 65%),
+    radial-gradient(ellipse 55% 30% at 88% 90%, rgba(28,77,150,0.18) 0%, transparent 55%),
+    radial-gradient(ellipse 40% 25% at 10% 85%, rgba(26,55,89,0.14) 0%, transparent 55%),
+    radial-gradient(ellipse 30% 20% at 50% 40%, rgba(0,135,81,0.03) 0%, transparent 60%),
+    linear-gradient(185deg, #030408 0%, #060a14 55%, #080e1e 100%);
+}
+
+/* Stars */
+.star {
+  position: absolute; border-radius: 50%; background: #fff;
+  animation: tw var(--d,5s) var(--dl,0s) infinite ease-in-out;
+}
+@keyframes tw { 0%,100%{opacity:var(--lo,.08)}50%{opacity:var(--hi,.55)} }
+
+/* Glow orb */
+#glow-orb {
+  position: absolute;
+  width: 700px; height: 500px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--gc, rgba(74,124,89,0.09)) 0%, transparent 68%);
+  bottom: -150px; left: -100px;
+  animation: orb-breathe 10s infinite ease-in-out;
+  pointer-events: none;
+}
+@keyframes orb-breathe {
+  0%,100%{opacity:.7;transform:scale(1) rotate(0deg)}
+  50%{opacity:1;transform:scale(1.15) rotate(5deg)}
+}
+
+/* Landscape */
+#ls {
+  position: absolute; bottom: 0; left: 0; width: 100%;
+  pointer-events: none;
+}
+
+/* ═══════════════════════════════════════════
+   HUD — TOP BAR
+═══════════════════════════════════════════ */
+#hud {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  height: var(--hud-h);
+  display: flex; align-items: center;
+  padding: 0 20px; gap: 12px;
+  background: rgba(5,6,10,0.80);
+  -webkit-backdrop-filter: var(--blur); backdrop-filter: var(--blur);
+  border-bottom: 1px solid var(--bd);
+}
+
+.hud-region {
+  display: flex; align-items: center; gap: 8px;
+  flex: 1; min-width: 0;
+}
+.rpip {
+  width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0;
+  transition: background 1s ease, box-shadow 1s ease;
+}
+.rpip.k { background: var(--kwara2); box-shadow: 0 0 10px var(--kwara); }
+.rpip.e { background: var(--enugu2); box-shadow: 0 0 10px var(--enugu); }
+.rtxt {
+  font-size: 12px; font-weight: 700; color: var(--t2);
+  letter-spacing: 0.05em; overflow: hidden;
+  text-overflow: ellipsis; white-space: nowrap;
+  transition: color 1s ease;
+}
+
+.hud-mid {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 1px; flex-shrink: 0;
+}
+.hud-time {
+  font-family: var(--display);
+  font-size: 20px; font-weight: 900; letter-spacing: 0.02em;
+  color: var(--gold); line-height: 1;
+  text-shadow: 0 0 20px rgba(201,168,76,0.4);
+}
+.hud-day { font-size: 10px; color: var(--t4); letter-spacing: 0.10em; text-transform: uppercase; }
+
+.hud-right {
+  display: flex; align-items: center; gap: 8px;
+  justify-content: flex-end; flex: 1;
+}
+.e-pill {
+  display: flex; align-items: center; gap: 5px;
+  padding: 4px 10px; border-radius: var(--pill);
+  background: var(--sf); border: 1px solid var(--bd);
+  font-size: 11px; font-weight: 700; color: var(--t2);
+}
+.fic-pill {
+  display: flex; align-items: center; gap: 5px;
+  padding: 4px 10px; border-radius: var(--pill);
+  background: var(--danger-bg); border: 1px solid var(--danger-bd);
+  font-size: 9px; font-weight: 900; color: var(--danger);
+  letter-spacing: 0.10em; text-transform: uppercase; white-space: nowrap;
+}
+
+/* ═══════════════════════════════════════════
+   CAPITAL BAR — All 8
+═══════════════════════════════════════════ */
+#caps {
+  position: fixed; top: var(--hud-h); left: 0; right: 0; z-index: 199;
+  height: var(--cap-h);
+  display: flex; align-items: stretch;
+  background: rgba(5,6,10,0.68);
+  -webkit-backdrop-filter: var(--blur2); backdrop-filter: var(--blur2);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  overflow-x: auto;
+}
+.cap {
+  flex: 1; min-width: 66px;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 6px 4px; gap: 1px;
+  border-right: 1px solid rgba(255,255,255,0.04);
+  cursor: default; position: relative;
+}
+.cap:last-child { border-right: none; }
+.cap-ic { font-size: 13px; line-height: 1; }
+.cap-v {
+  font-family: var(--display);
+  font-size: 17px; font-weight: 900; letter-spacing: -0.01em; line-height: 1;
+}
+.cap-l { font-size: 8px; color: var(--t4); letter-spacing: 0.08em; text-transform: uppercase; }
+.cap-d { font-size: 9px; font-weight: 800; line-height: 1; }
+.up { color: var(--pos); }
+.dn { color: var(--danger); }
+.nt { color: var(--t4); }
+
+/* ═══════════════════════════════════════════
+   SCENE CONTAINER
+═══════════════════════════════════════════ */
+#sc {
+  position: fixed;
+  top: calc(var(--hud-h) + var(--cap-h));
+  bottom: var(--nav-h);
+  left: 0; right: 0; z-index: 100;
+  overflow-y: auto;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 16px 16px 24px;
+  -webkit-overflow-scrolling: touch;
+}
+.scene {
+  display: none; width: 100%; max-width: 560px;
+  flex-direction: column; gap: 14px;
+  pointer-events: auto;
+  animation: scene-in 0.38s var(--ease) both;
+}
+.scene.on { display: flex; }
+@keyframes scene-in {
+  from { opacity: 0; transform: translateY(22px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ═══════════════════════════════════════════
+   GLASS CARD
+═══════════════════════════════════════════ */
+.gc {
+  background: rgba(11,13,22,0.80);
+  -webkit-backdrop-filter: var(--blur); backdrop-filter: var(--blur);
+  border: 1px solid var(--bd);
+  border-radius: var(--r);
+  padding: 22px;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+.gc:hover { border-color: var(--bd2); }
+.gc.gold-card { border-color: var(--gold-bd); background: rgba(14,12,6,0.82); }
+.gc.kw { border-color: var(--kwara-bd); background: rgba(6,14,8,0.82); }
+.gc.en { border-color: var(--enugu-bd); background: rgba(5,9,20,0.82); }
+.gc.dg { border-color: var(--danger-bd); background: rgba(20,7,7,0.82); }
+.gc.pg { border-color: var(--pos-bd); background: rgba(5,18,9,0.82); }
+
+/* ═══════════════════════════════════════════
+   CHIPS
+═══════════════════════════════════════════ */
+.chip {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 3px 9px; border-radius: var(--r3);
+  font-size: 9px; font-weight: 900;
+  letter-spacing: 0.10em; text-transform: uppercase;
+  white-space: nowrap; flex-shrink: 0;
+  border: 1px solid transparent;
+}
+.cg  { background: var(--gold-bg);   color: var(--gold);   border-color: var(--gold-bd); }
+.cp  { background: var(--pos-bg);    color: var(--pos);    border-color: var(--pos-bd); }
+.cw  { background: var(--warn-bg);   color: var(--warn);   border-color: var(--warn-bd); animation: chip-pulse 2.2s infinite; }
+.cd  { background: var(--danger-bg); color: var(--danger); border-color: var(--danger-bd); animation: chip-pulse 1.4s infinite; }
+.cr  { background: var(--rumour-bg); color: var(--rumour); border-color: var(--rumour-bd); }
+.ca  { background: var(--ai-bg);     color: var(--ai);     border-color: var(--ai-bd); }
+.ct  { background: var(--teal-bg);   color: var(--teal);   border-color: var(--teal-bd); }
+.ccf { background: var(--cf-bg);     color: var(--cf);     border-color: var(--cf-bd); }
+.ck  { background: rgba(34,197,94,0.08);  color: var(--pos);    border-color: rgba(34,197,94,0.20); }
+.cl  { background: rgba(245,158,11,0.08); color: var(--warn);   border-color: rgba(245,158,11,0.20); }
+.cu  { background: rgba(167,139,250,0.08);color: var(--rumour); border-color: rgba(167,139,250,0.20); }
+@keyframes chip-pulse { 0%,100%{box-shadow:none}50%{box-shadow:0 0 12px currentColor} }
+
+/* ═══════════════════════════════════════════
+   TYPOGRAPHY COMPONENTS
+═══════════════════════════════════════════ */
+.display-title {
+  font-family: var(--display);
+  font-size: clamp(32px, 8vw, 52px);
+  font-weight: 900;
+  letter-spacing: -0.02em; line-height: 0.95;
+  color: var(--t1);
+}
+.display-title .gold { color: var(--gold2); text-shadow: var(--gold-glow); }
+
+.section-head {
+  font-family: var(--display);
+  font-size: 11px; font-weight: 800; letter-spacing: 0.18em;
+  color: var(--t3); text-transform: uppercase;
+  display: flex; align-items: center; gap: 10px;
+}
+.section-head::after {
+  content: ''; flex: 1; height: 1px;
+  background: linear-gradient(90deg, var(--bd), transparent);
+}
+
+.card-title {
+  font-family: var(--display);
+  font-size: clamp(20px, 5vw, 26px);
+  font-weight: 900;
+  letter-spacing: -0.01em; line-height: 1.1;
+  color: var(--t1); margin-bottom: 6px;
+}
+
+.body-text {
+  font-size: 14px; color: var(--t2);
+  line-height: 1.80; letter-spacing: 0.01em;
+}
+.body-text strong { color: var(--t1); font-weight: 700; }
+.body-text em { color: var(--gold); font-style: normal; font-weight: 600; }
+
+.label-text {
+  font-size: 11px; font-weight: 700; color: var(--t3);
+  letter-spacing: 0.10em; text-transform: uppercase;
+}
+
+/* ═══════════════════════════════════════════
+   BUTTONS
+═══════════════════════════════════════════ */
+.btn {
+  padding: 13px 18px; border-radius: var(--r2);
+  border: 1px solid var(--bd); background: var(--sf);
+  color: var(--t1); font-family: var(--body);
+  font-size: 13px; font-weight: 700; cursor: pointer;
+  transition: all 0.22s var(--ease);
+  display: inline-flex; align-items: center;
+  justify-content: center; gap: 8px;
+  -webkit-backdrop-filter: var(--blur2); backdrop-filter: var(--blur2);
+  min-height: 48px; line-height: 1.2; letter-spacing: 0.02em;
+  text-align: center;
+}
+.btn:hover { background: var(--sf3); border-color: var(--bd2); transform: translateY(-2px); }
+.btn:active { transform: translateY(0); opacity: 0.85; }
+.btn:disabled { opacity: 0.38; pointer-events: none; }
+.btn.prim { background: var(--gold-bg); border-color: var(--gold-bd); color: var(--gold); }
+.btn.prim:hover { background: rgba(201,168,76,0.20); }
+.btn.dng { background: var(--danger-bg); border-color: var(--danger-bd); color: var(--danger); }
+.btn.full { width: 100%; }
+.btn-row { display: flex; gap: 10px; flex-wrap: wrap; }
+.btn-row .btn { flex: 1; min-width: 0; }
+
+/* ═══════════════════════════════════════════
+   PORTRAIT
+═══════════════════════════════════════════ */
+.portrait {
+  border-radius: 50%; overflow: hidden; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+.p64 { width: 64px; height: 64px; border: 2px solid var(--gold-bd); }
+.p52 { width: 52px; height: 52px; border: 1.5px solid var(--bd2); }
+.p40 { width: 40px; height: 40px; border: 1px solid var(--bd); }
+
+/* ═══════════════════════════════════════════
+   CONSEQUENCE PREVIEW
+═══════════════════════════════════════════ */
+.cp-wrap { margin: 14px 0; }
+.cp-label {
+  font-size: 10px; font-weight: 800; letter-spacing: 0.12em;
+  color: var(--t3); text-transform: uppercase; margin-bottom: 10px;
+}
+.cp-row {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.cp-row:last-child { border-bottom: none; padding-bottom: 0; }
+.cp-text { font-size: 13px; color: var(--t2); line-height: 1.65; flex: 1; }
+
+/* ═══════════════════════════════════════════
+   NARRATION BLOCK
+═══════════════════════════════════════════ */
+.narration {
+  font-size: 14px; color: var(--t2); line-height: 1.80;
+  padding: 16px 18px;
+  background: rgba(255,255,255,0.025);
+  border-left: 3px solid var(--gold-bd);
+  border-radius: 0 var(--r2) var(--r2) 0;
+  letter-spacing: 0.01em;
+}
+.narration strong { color: var(--gold); font-weight: 700; }
+.narration em { font-style: italic; color: var(--t1); }
+
+/* ═══════════════════════════════════════════
+   DIALOGUE
+═══════════════════════════════════════════ */
+.dialogue {
+  font-size: 14px; color: var(--t2); line-height: 1.78;
+  background: rgba(255,255,255,0.025);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: var(--r2);
+  padding: 16px 16px 16px 26px;
+  position: relative; margin-bottom: 16px;
+  letter-spacing: 0.01em;
+}
+.dialogue::before {
+  content: '"'; position: absolute; top: 8px; left: 10px;
+  font-size: 32px; line-height: 1; font-family: Georgia, serif;
+  color: var(--gold); opacity: 0.35;
+}
+.pidgin-tag {
+  font-size: 10px; font-weight: 600; font-style: italic;
+  color: var(--gold); opacity: 0.75; margin-top: 10px;
+}
+
+/* ═══════════════════════════════════════════
+   SCENE 1
+═══════════════════════════════════════════ */
+.s1-intro {
+  text-align: center;
+  padding: 14px 0 8px;
+}
+.s1-eyebrow {
+  font-size: 12px; font-weight: 700; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--gold);
+  opacity: 0.85; margin-bottom: 12px;
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+}
+.s1-eyebrow::before, .s1-eyebrow::after {
+  content: ''; display: block; height: 1px; width: 28px;
+  background: linear-gradient(90deg, transparent, var(--gold));
+}
+.s1-eyebrow::after { transform: scaleX(-1); }
+
+.s1-scenario {
+  font-family: var(--display);
+  font-size: clamp(18px, 5vw, 26px);
+  letter-spacing: 0.14em; color: var(--t2);
+  margin-bottom: 6px;
+}
+
+/* Player card row */
+.player-row { display: flex; align-items: center; gap: 18px; }
+.player-name-txt {
+  font-family: var(--display);
+  font-size: clamp(22px, 6vw, 30px);
+  font-weight: 900;
+  letter-spacing: -0.01em; line-height: 1.05;
+  color: var(--t1); margin-bottom: 6px;
+}
+.player-chips { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 8px; }
+.player-party { font-size: 12px; color: var(--t2); font-weight: 500; }
+.player-life {
+  display: flex; gap: 14px; margin-top: 8px;
+  font-size: 12px; color: var(--t2);
+}
+.life-item { display: flex; align-items: center; gap: 4px; font-weight: 600; }
+
+.election-block {
+  display: flex; align-items: center;
+  justify-content: space-between; gap: 16px; flex-wrap: wrap;
+}
+.countdown-big {
+  display: flex; flex-direction: column; gap: 4px;
+}
+.countdown-lbl { font-size: 11px; font-weight: 700; color: var(--t3); text-transform: uppercase; letter-spacing: 0.10em; }
+.countdown-num {
+  font-family: var(--display);
+  font-size: clamp(44px, 12vw, 64px);
+  font-weight: 900;
+  letter-spacing: -0.03em; line-height: 1;
+  color: var(--gold); text-shadow: var(--gold-glow);
+}
+.countdown-unit { font-size: 14px; color: var(--t2); font-weight: 600; margin-left: 4px; }
+.countdown-sub { font-size: 11px; color: var(--t3); margin-top: 2px; }
+.election-chips { display: flex; flex-direction: column; gap: 7px; align-items: flex-end; }
+
+/* Transport */
+.transport-grid { display: flex; gap: 10px; flex-wrap: wrap; }
+.t-item {
+  display: flex; align-items: center; gap: 10px;
+  flex: 1; min-width: 90px;
+  background: rgba(255,255,255,0.025);
+  border: 1px solid rgba(255,255,255,0.055);
+  border-radius: var(--r2); padding: 12px 14px;
+}
+.t-icon { font-size: 20px; flex-shrink: 0; }
+.t-name { font-size: 12px; font-weight: 700; color: var(--t1); margin-bottom: 2px; }
+.t-sub { font-size: 10px; color: var(--t3); }
+
+/* ═══════════════════════════════════════════
+   SCENE 2
+═══════════════════════════════════════════ */
+.npc-hdr { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+.npc-name-txt { font-family: var(--display); font-size: 22px; font-weight: 900; letter-spacing: -0.01em; line-height: 1.1; margin-bottom: 4px; }
+.npc-role-txt { font-size: 12px; color: var(--t2); margin-bottom: 8px; }
+.rel-row { display: flex; align-items: center; gap: 8px; }
+.rel-bar { flex: 1; max-width: 72px; height: 3px; border-radius: 2px; background: rgba(255,255,255,0.08); overflow: hidden; }
+.rel-fill { height: 100%; border-radius: 2px; background: linear-gradient(90deg, var(--pos), var(--teal)); }
+.rel-val { font-size: 10px; font-weight: 900; color: var(--pos); }
+
+/* ═══════════════════════════════════════════
+   SCENE 3 — SOCIAL FEED
+═══════════════════════════════════════════ */
+.feed-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 14px; }
+.feed-platform-txt {
+  font-family: var(--display);
+  font-size: 26px; font-weight: 900; letter-spacing: -0.01em; color: var(--t1); line-height: 1;
+}
+.feed-sub { font-size: 11px; color: var(--t3); letter-spacing: 0.06em; margin-top: 4px; }
+
+.feed-card {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 14px; border-radius: var(--r2);
+  border: 1px solid rgba(255,255,255,0.055);
+  background: rgba(255,255,255,0.02);
+  margin-bottom: 10px;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+.feed-card:hover { background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.10); }
+.feed-card:last-child { margin-bottom: 0; }
+.feed-avi {
+  width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 18px;
+}
+.feed-body { flex: 1; min-width: 0; }
+.feed-top { display: flex; align-items: baseline; gap: 7px; flex-wrap: wrap; margin-bottom: 4px; }
+.feed-name { font-size: 13px; font-weight: 800; color: var(--t1); }
+.feed-handle { font-size: 11px; color: var(--t3); }
+.feed-time { font-size: 10px; color: var(--t4); margin-left: auto; }
+.feed-chips { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 7px; }
+.feed-text { font-size: 13px; color: var(--t2); line-height: 1.65; letter-spacing: 0.01em; }
+.feed-reacts { display: flex; gap: 16px; margin-top: 10px; }
+.react-btn {
+  display: flex; align-items: center; gap: 4px;
+  font-size: 12px; color: var(--t3); background: none;
+  border: none; font-family: var(--body); cursor: pointer;
+  padding: 0; transition: color 0.2s ease;
+}
+.react-btn:hover { color: var(--gold); }
+
+/* ═══════════════════════════════════════════
+   SCENE 4 — EMERGENCY
+═══════════════════════════════════════════ */
+.emergency {
+  display: flex; align-items: flex-start; gap: 16px;
+  padding: 20px; background: var(--danger-bg);
+  border: 1px solid var(--danger-bd); border-radius: var(--r);
+  box-shadow: 0 0 30px rgba(239,68,68,0.12), 0 0 60px rgba(239,68,68,0.06);
+}
+.em-icon { font-size: 28px; flex-shrink: 0; animation: em-blink 1.1s infinite; }
+@keyframes em-blink { 0%,100%{opacity:1}50%{opacity:0.35} }
+.em-title {
+  font-family: var(--display);
+  font-size: 24px; font-weight: 900; letter-spacing: -0.01em;
+  color: var(--danger); margin-bottom: 6px; line-height: 1;
+}
+.em-body { font-size: 13px; color: var(--t2); line-height: 1.70; }
+.em-chips { display: flex; gap: 7px; flex-wrap: wrap; margin-top: 10px; }
+
+/* Counterfactual toggle */
+.cf-toggle {
+  display: flex; align-items: center; justify-content: space-between; gap: 14px;
+  padding: 14px 16px;
+  border: 1px dashed var(--cf-bd); border-radius: var(--r2);
+  cursor: pointer; transition: all 0.22s ease;
+  background: var(--cf-bg);
+}
+.cf-toggle:hover { background: rgba(130,130,150,0.16); }
+.cf-toggle:focus { outline: 2px solid var(--cf); outline-offset: 2px; }
+.cf-inner { display: flex; align-items: center; gap: 12px; flex: 1; }
+.cf-ico { font-size: 20px; color: var(--cf); flex-shrink: 0; }
+.cf-lbl {
+  font-family: var(--display);
+  font-size: 15px; font-weight: 900; letter-spacing: 0.04em; color: var(--cf);
+}
+.cf-sub { font-size: 11px; color: rgba(200,200,222,0.45); margin-top: 2px; }
+.tog {
+  width: 40px; height: 22px; border-radius: 11px; flex-shrink: 0;
+  background: rgba(200,200,222,0.12); border: 1px solid var(--cf-bd);
+  position: relative; transition: all 0.25s ease;
+}
+.tog.on { background: rgba(130,130,150,0.42); }
+.tog::after {
+  content: ''; position: absolute; top: 3px; left: 3px;
+  width: 14px; height: 14px; border-radius: 50%;
+  background: var(--cf); transition: transform 0.25s ease;
+}
+.tog.on::after { transform: translateX(18px); }
+
+.cf-panel {
+  display: none; position: relative;
+  background: rgba(7,8,13,0.90); border: 1px solid var(--cf-bd);
+  border-radius: var(--r); padding: 22px 18px 18px;
+  filter: saturate(0.32);
+}
+.cf-panel.on { display: block; animation: scene-in 0.28s ease; }
+.cf-badge-bar {
+  position: absolute; top: -11px; left: 50%; transform: translateX(-50%);
+  background: var(--bg); padding: 3px 14px;
+  border: 1px solid var(--cf-bd); border-radius: var(--pill);
+  display: flex; align-items: center; gap: 6px;
+  font-size: 9px; font-weight: 900; color: var(--cf);
+  letter-spacing: 0.12em; text-transform: uppercase; white-space: nowrap;
+}
+.cf-text { font-size: 13px; color: rgba(200,200,222,0.60); line-height: 1.72; }
+.cf-stats { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+.cf-st {
+  flex: 1; min-width: 72px;
+  background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05);
+  border-radius: var(--r3); padding: 10px 12px;
+}
+.cf-st .l { font-size: 9px; color: rgba(200,200,222,0.42); text-transform: uppercase; letter-spacing: 0.06em; }
+.cf-st .v {
+  font-family: var(--display);
+  font-size: 24px; font-weight: 900; letter-spacing: -0.01em;
+  color: rgba(220,100,100,0.65); margin-top: 2px; line-height: 1;
+}
+
+/* AI Modal */
+#ai-modal {
+  display: none; position: fixed; inset: 0; z-index: 500;
+  background: rgba(3,4,8,0.90);
+  -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+  align-items: flex-end; justify-content: center;
+  padding: 24px 16px;
+}
+#ai-modal.on { display: flex; }
+.ai-card {
+  width: 100%; max-width: 560px;
+  background: rgba(10,12,22,0.97);
+  border: 1px solid var(--bd2); border-radius: var(--r);
+  padding: 24px; animation: scene-in 0.28s ease;
+}
+.ai-hdr { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+.ai-title {
+  font-family: var(--display);
+  font-size: 22px; font-weight: 900; letter-spacing: -0.01em;
+  display: flex; align-items: center; gap: 10px;
+}
+.ai-close-btn {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: var(--sf); border: 1px solid var(--bd);
+  color: var(--t2); font-size: 18px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--body); transition: all 0.2s ease;
+}
+.ai-close-btn:hover { background: var(--sf2); }
+.ai-body { font-size: 14px; color: var(--t2); line-height: 1.78; letter-spacing: 0.01em; }
+.ai-body strong { color: var(--t1); }
+.ai-body .hl { color: var(--ai); font-weight: 600; }
+.ai-body p { margin-bottom: 12px; }
+.ai-body p:last-child { margin-bottom: 0; }
+.ai-foot {
+  display: flex; align-items: center; gap: 8px;
+  margin-top: 18px; padding-top: 16px;
+  border-top: 1px solid var(--bd);
+  font-size: 11px; color: var(--t4);
+}
+
+/* ═══════════════════════════════════════════
+   SCENE 5
+═══════════════════════════════════════════ */
+.receipt-hdr { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 16px; }
+.receipt-ico { font-size: 28px; flex-shrink: 0; margin-top: 2px; }
+.receipt-title {
+  font-family: var(--display);
+  font-size: 22px; font-weight: 900; letter-spacing: -0.01em; color: var(--pos); line-height: 1.1; margin-bottom: 4px;
+}
+.receipt-sub { font-size: 12px; color: var(--t2); }
+
+.delta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+.delta {
+  background: rgba(255,255,255,0.025);
+  border: 1px solid rgba(255,255,255,0.055);
+  border-radius: var(--r2); padding: 14px 14px 12px;
+}
+.d-lbl { font-size: 10px; font-weight: 700; color: var(--t3); text-transform: uppercase; letter-spacing: 0.08em; }
+.d-val {
+  font-family: var(--display);
+  font-size: 28px; font-weight: 900; letter-spacing: -0.02em; line-height: 1.1; margin-top: 4px;
+}
+.d-pos { color: var(--pos); } .d-neg { color: var(--danger); }
+
+.next-att {
+  display: flex; align-items: flex-start; gap: 12px;
+  background: var(--gold-bg); border: 1px solid var(--gold-bd);
+  border-radius: var(--r2); padding: 16px; margin-bottom: 16px;
+}
+.next-att-icon { font-size: 22px; flex-shrink: 0; margin-top: 2px; }
+.next-att-title {
+  font-size: 11px; font-weight: 800; color: var(--gold);
+  text-transform: uppercase; letter-spacing: 0.10em; margin-bottom: 5px;
+}
+.next-att-body { font-size: 13px; color: var(--t2); line-height: 1.68; }
+
+.travel-wrap {
+  display: flex; align-items: center; gap: 14px;
+  padding: 16px; border-radius: var(--r); margin-bottom: 2px;
+}
+.travel-fot { display: flex; align-items: center; gap: 12px; flex: 1; }
+.t-from {
+  font-family: var(--display);
+  font-size: clamp(20px,5vw,26px); font-weight: 900; letter-spacing: -0.01em; color: var(--kwara2);
+}
+.t-arr { font-size: 20px; color: var(--t3); }
+.t-to {
+  font-family: var(--display);
+  font-size: clamp(20px,5vw,26px); font-weight: 900; letter-spacing: -0.01em; color: var(--enugu2);
+}
+.travel-time { text-align: right; flex-shrink: 0; }
+.travel-time .tl { font-size: 10px; color: var(--t3); text-transform: uppercase; letter-spacing: 0.08em; }
+.travel-time .tv { font-family: var(--display); font-size: 24px; font-weight: 900; letter-spacing: -0.01em; color: var(--enugu2); }
+
+.region-compare { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 14px; }
+.rc-col { flex: 1; min-width: 120px; }
+.rc-title {
+  font-size: 10px; font-weight: 800; text-transform: uppercase;
+  letter-spacing: 0.10em; margin-bottom: 8px;
+}
+.rc-body { font-size: 12px; color: var(--t2); line-height: 1.72; }
+
+#arrived { display: none; }
+#arrived.on { display: block; animation: scene-in 0.4s ease; }
+
+.proto-summary { text-align: center; padding: 24px 16px; }
+.proto-title {
+  font-family: var(--display);
+  font-size: clamp(28px, 7vw, 36px); font-weight: 900; letter-spacing: -0.01em;
+  color: var(--t1); margin-bottom: 10px;
+  text-shadow: var(--gold-glow);
+}
+.proto-body { font-size: 13px; color: var(--t2); line-height: 1.75; margin-bottom: 18px; }
+.proto-chips { display: flex; flex-wrap: wrap; gap: 7px; justify-content: center; }
+
+/* ═══════════════════════════════════════════
+   NAV
+═══════════════════════════════════════════ */
+#nav {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 200;
+  height: var(--nav-h);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 24px calc(14px + env(safe-area-inset-bottom));
+  background: rgba(5,6,10,0.90);
+  -webkit-backdrop-filter: var(--blur); backdrop-filter: var(--blur);
+  border-top: 1px solid var(--bd);
+}
+.nav-btn {
+  display: flex; align-items: center; gap: 7px;
+  padding: 11px 20px; border-radius: var(--r2);
+  border: 1px solid var(--bd); background: var(--sf);
+  color: var(--t1); font-family: var(--body);
+  font-size: 13px; font-weight: 800; cursor: pointer;
+  transition: all 0.22s ease; min-width: 90px;
+  justify-content: center; min-height: 48px;
+}
+.nav-btn:hover { background: var(--sf2); border-color: var(--bd2); }
+.nav-btn:disabled { opacity: 0.28; pointer-events: none; }
+.nav-btn.go { background: var(--gold-bg); border-color: var(--gold-bd); color: var(--gold); }
+.nav-btn.go:hover { background: rgba(201,168,76,0.20); }
+
+.nav-mid { display: flex; flex-direction: column; align-items: center; gap: 7px; }
+.nav-lbl { font-size: 10px; font-weight: 800; color: var(--t4); letter-spacing: 0.10em; text-transform: uppercase; }
+.dot-row { display: flex; gap: 8px; align-items: center; }
+.dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: rgba(255,255,255,0.16); cursor: pointer;
+  transition: all 0.25s ease;
+}
+.dot.on {
+  background: var(--gold); transform: scale(1.5);
+  box-shadow: 0 0 12px var(--gold);
+}
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════ */
+@media (min-width: 600px) {
+  #sc { align-items: center; padding-top: 20px; }
+  .scene { max-width: 600px; }
+}
+@media (min-width: 1024px) {
+  .scene { max-width: 700px; }
+  .gc { padding: 26px; }
+  #hud { padding: 0 28px; }
+  #nav { padding-left: 28px; padding-right: 28px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════
+     ARTICLE 5 — FICTIONAL SIMULATION NOTICE
+════════════════════════════════════════ -->
+<div id="splash" role="dialog" aria-modal="true" aria-label="NATASHAS entry — fictional simulation disclaimer">
+  <div class="splash-wrap">
+    <div class="gf-badge">⬡ GameForge Flagship Title</div>
+
+    <div class="splash-title" aria-label="NATASHAS game title">
+      NATA<span class="gold-letters">SHAS</span>
+    </div>
+    <div class="splash-tagline">NAIJA TABLE SHAKERS</div>
+    <div class="splash-naija">"Power belongs to whoever can keep it."</div>
+
+    <div class="gold-line" aria-hidden="true"></div>
+
+    <div class="notice-box" role="alert" aria-label="Fictional simulation notice">
+      <div class="notice-head">⚠ Before You Enter — Read This</div>
+      <div class="notice-body">
+        <p>This is a <strong>fictional political strategy and social simulation game</strong> inspired by Nigerian society, politics and culture.</p>
+        <p>All political characters, parties, governments, events, conspiracies and outcomes within the game are <strong>entirely fictional and simulated for entertainment purposes</strong>. No content constitutes factual reporting about real persons, organisations or governments.</p>
+        <p>This game does not encourage or facilitate real-world violence, criminal activity, political disruption, harassment, intimidation or interference with democratic processes.</p>
+      </div>
+      <div class="notice-stamp" aria-hidden="true">What happens in the game stays in the game.</div>
+    </div>
+
+    <button class="enter-btn" onclick="enterGame()" aria-label="Agree to disclaimer and enter game">
+      I Understand &amp; Enter
+    </button>
+
+    <div class="splash-foot">
+      A <span>GameForge</span> Production · Prototype v0.2.0<br>
+      NATASHAS · Fictional Nigerian Political Universe<br>
+      Built on CLAUDE Design System · <span>Nigeria First</span>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     WORLD
+════════════════════════════════════════ -->
+<div id="world" class="wk" aria-hidden="true">
+  <div class="star" style="width:1px;height:1px;left:8%;top:12%;--d:6s;--dl:0s;--lo:.06;--hi:.5"></div>
+  <div class="star" style="width:2px;height:2px;left:24%;top:7%;--d:8s;--dl:1.2s;--lo:.04;--hi:.4"></div>
+  <div class="star" style="width:1px;height:1px;left:48%;top:10%;--d:5s;--dl:2s;--lo:.06;--hi:.48"></div>
+  <div class="star" style="width:2px;height:2px;left:68%;top:18%;--d:7s;--dl:.5s;--lo:.04;--hi:.38"></div>
+  <div class="star" style="width:1px;height:1px;left:84%;top:8%;--d:9s;--dl:3s;--lo:.05;--hi:.52"></div>
+  <div class="star" style="width:1px;height:1px;left:38%;top:5%;--d:5s;--dl:1.8s;--lo:.04;--hi:.42"></div>
+  <div class="star" style="width:2px;height:2px;left:92%;top:22%;--d:7s;--dl:4s;--lo:.05;--hi:.36"></div>
+  <div class="star" style="width:1px;height:1px;left:15%;top:28%;--d:6s;--dl:.9s;--lo:.04;--hi:.44"></div>
+  <div class="star" style="width:1px;height:1px;left:60%;top:14%;--d:8s;--dl:2.8s;--lo:.06;--hi:.50"></div>
+  <div class="star" style="width:2px;height:2px;left:76%;top:6%;--d:6s;--dl:1.5s;--lo:.04;--hi:.40"></div>
+  <div id="glow-orb"></div>
+
+  <svg id="ls" viewBox="0 0 1440 220" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="kH1" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" stop-color="rgba(46,107,62,0.40)"/>
+        <stop offset="100%" stop-color="rgba(46,107,62,0.04)"/>
+      </linearGradient>
+      <linearGradient id="kH2" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" stop-color="rgba(46,107,62,0.20)"/>
+        <stop offset="100%" stop-color="rgba(46,107,62,0.02)"/>
+      </linearGradient>
+      <linearGradient id="eH1" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" stop-color="rgba(28,77,150,0.40)"/>
+        <stop offset="100%" stop-color="rgba(28,77,150,0.04)"/>
+      </linearGradient>
+      <linearGradient id="eH2" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" stop-color="rgba(28,77,150,0.20)"/>
+        <stop offset="100%" stop-color="rgba(28,77,150,0.02)"/>
+      </linearGradient>
+      <pattern id="rd" x="0" y="0" width="40" height="6" patternUnits="userSpaceOnUse">
+        <rect width="40" height="6" fill="none"/>
+        <rect x="0" y="2.5" width="14" height="1" fill="rgba(255,255,200,0.22)"/>
+        <rect x="26" y="2.5" width="14" height="1" fill="rgba(255,255,200,0.22)"/>
+      </pattern>
+    </defs>
+
+    <!-- KWARA -->
+    <g id="k-ls">
+      <path d="M0,165 Q160,105 340,148 Q520,78 720,128 Q920,72 1120,118 Q1310,88 1440,132 L1440,220 L0,220Z" fill="url(#kH1)" opacity="0.7"/>
+      <path d="M0,185 Q260,155 520,175 Q780,148 1040,168 Q1260,148 1440,170 L1440,220 L0,220Z" fill="url(#kH2)" opacity="0.8"/>
+      <!-- Mosque — Ilorin Emirate -->
+      <g transform="translate(700,72)" opacity="0.44">
+        <rect x="-42" y="18" width="8" height="60" fill="rgba(74,124,89,.88)"/>
+        <path d="M-42,18 Q-38,4 -34,18Z" fill="rgba(201,168,76,.82)"/>
+        <circle cx="-38" cy="16" r="3.5" fill="rgba(201,168,76,.65)"/>
+        <rect x="34" y="18" width="8" height="60" fill="rgba(74,124,89,.88)"/>
+        <path d="M34,18 Q38,4 42,18Z" fill="rgba(201,168,76,.82)"/>
+        <circle cx="38" cy="16" r="3.5" fill="rgba(201,168,76,.65)"/>
+        <rect x="-30" y="54" width="60" height="24" fill="rgba(74,124,89,.75)"/>
+        <ellipse cx="0" cy="54" rx="24" ry="15" fill="rgba(74,124,89,.88)"/>
+        <ellipse cx="0" cy="43" rx="9" ry="7" fill="rgba(74,124,89,.95)"/>
+        <path d="M-2.5,37 Q0,30 2.5,37Z" fill="rgba(201,168,76,.92)"/>
+        <rect x="-24" y="58" width="8" height="14" rx="4" fill="rgba(7,9,13,.55)"/>
+        <rect x="-5" y="58" width="8" height="14" rx="4" fill="rgba(7,9,13,.55)"/>
+        <rect x="14" y="58" width="8" height="14" rx="4" fill="rgba(7,9,13,.55)"/>
+        <rect x="-30" y="52" width="60" height="3" fill="rgba(201,168,76,.38)"/>
+        <rect x="-30" y="76" width="60" height="2" fill="rgba(201,168,76,.22)"/>
+      </g>
+      <!-- Yoruba adire-inspired linear pattern -->
+      <line x1="0" y1="212" x2="1440" y2="212" stroke="rgba(201,168,76,0.25)" stroke-width="0.6" stroke-dasharray="8,5"/>
+      <line x1="0" y1="217" x2="1440" y2="217" stroke="rgba(201,168,76,0.12)" stroke-width="0.4" stroke-dasharray="4,9"/>
+      <!-- Arabic-Yoruba signboard -->
+      <g opacity="0.30" transform="translate(115,155)">
+        <rect width="112" height="28" rx="4" fill="rgba(74,124,89,.45)" stroke="rgba(201,168,76,.38)" stroke-width="0.8"/>
+        <text x="56" y="18" text-anchor="middle" font-family="serif" font-size="11" fill="rgba(201,168,76,.88)">ايلورين · ILORIN</text>
+      </g>
+      <!-- State watermark -->
+      <text x="1290" y="195" font-family="sans-serif" font-size="9" font-weight="900" fill="rgba(74,124,89,0.12)" letter-spacing="4">KWARA STATE</text>
+      <!-- Road -->
+      <rect x="0" y="210" width="1440" height="10" fill="rgba(22,30,22,.65)"/>
+      <rect x="0" y="210" width="1440" height="10" fill="url(#rd)"/>
+    </g>
+
+    <!-- ENUGU — hidden initially -->
+    <g id="e-ls" opacity="0" style="display:none">
+      <path d="M0,152 Q210,122 400,145 Q500,112 640,140 Q700,124 760,140 Q960,108 1160,132 Q1340,115 1440,136 L1440,220 L0,220Z" fill="url(#eH1)" opacity="0.7"/>
+      <path d="M0,182 Q380,158 760,172 Q1100,150 1440,168 L1440,220 L0,220Z" fill="url(#eH2)" opacity="0.8"/>
+      <!-- Coal headframe — Enugu identity -->
+      <g transform="translate(715,58)" opacity="0.40">
+        <line x1="0" y1="8" x2="-25" y2="88" stroke="rgba(45,95,166,.90)" stroke-width="3.5" stroke-linecap="round"/>
+        <line x1="0" y1="8" x2="25" y2="88" stroke="rgba(45,95,166,.90)" stroke-width="3.5" stroke-linecap="round"/>
+        <line x1="-10" y1="36" x2="10" y2="36" stroke="rgba(45,95,166,.82)" stroke-width="2.5"/>
+        <line x1="-18" y1="62" x2="18" y2="62" stroke="rgba(45,95,166,.82)" stroke-width="2.5"/>
+        <line x1="-25" y1="88" x2="25" y2="88" stroke="rgba(45,95,166,.90)" stroke-width="3.5"/>
+        <circle cx="0" cy="8" r="8" fill="none" stroke="rgba(201,168,76,.55)" stroke-width="2"/>
+        <circle cx="0" cy="8" r="4" fill="rgba(45,95,166,.7)"/>
+        <line x1="-8" y1="8" x2="8" y2="8" stroke="rgba(201,168,76,.4)" stroke-width="1"/>
+        <line x1="0" y1="0" x2="0" y2="16" stroke="rgba(201,168,76,.4)" stroke-width="1"/>
+        <rect x="-4" y="-4" width="8" height="14" fill="rgba(45,95,166,.55)"/>
+        <rect x="-36" y="88" width="72" height="30" fill="rgba(45,95,166,.52)"/>
+        <rect x="-30" y="96" width="12" height="22" rx="1.5" fill="rgba(7,9,14,.55)"/>
+        <rect x="-7" y="96" width="12" height="22" rx="1.5" fill="rgba(7,9,14,.55)"/>
+        <rect x="18" y="96" width="12" height="22" rx="1.5" fill="rgba(7,9,14,.55)"/>
+        <path d="M-36,88 L0,78 L36,88Z" fill="rgba(45,95,166,.62)"/>
+        <path d="M-12,78 Q-14,62 -10,52 Q-8,44 -12,36" stroke="rgba(110,130,155,.18)" stroke-width="5" fill="none" stroke-linecap="round"/>
+        <path d="M6,80 Q5,65 9,55 Q11,47 8,40" stroke="rgba(110,130,155,.12)" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+      </g>
+      <!-- Igbo signboard -->
+      <g opacity="0.28" transform="translate(115,158)">
+        <rect width="125" height="28" rx="4" fill="rgba(45,95,166,.42)" stroke="rgba(91,150,224,.32)" stroke-width="0.8"/>
+        <text x="62" y="18" text-anchor="middle" font-family="sans-serif" font-size="9.5" font-weight="800" fill="rgba(91,150,224,.92)">ENUGU — ILO OJI ANA</text>
+      </g>
+      <!-- State watermark -->
+      <text x="1285" y="195" font-family="sans-serif" font-size="9" font-weight="900" fill="rgba(45,95,166,0.12)" letter-spacing="4">ENUGU STATE</text>
+      <!-- Road -->
+      <rect x="0" y="210" width="1440" height="10" fill="rgba(18,22,36,.65)"/>
+      <rect x="0" y="210" width="1440" height="10" fill="url(#rd)"/>
+    </g>
+  </svg>
+</div>
+
+<!-- ════════════════════════════════════════
+     HUD TOP
+════════════════════════════════════════ -->
+<header id="hud" role="banner" aria-label="Game HUD">
+  <div class="hud-region">
+    <div class="rpip k" id="rp"></div>
+    <span class="rtxt" id="rlbl">Ilorin, Kwara State</span>
+  </div>
+  <div class="hud-mid">
+    <div class="hud-time" id="ht" aria-label="In-game time">07:30</div>
+    <div class="hud-day">Tuesday</div>
+  </div>
+  <div class="hud-right">
+    <div class="e-pill" title="Energy level">⚡ <span id="ev">83</span></div>
+    <div class="fic-pill" title="This is a fictional simulation" aria-label="Fictional simulation">🎭 Fictional</div>
+  </div>
+</header>
+
+<!-- ════════════════════════════════════════
+     ALL 8 CAPITALS
+════════════════════════════════════════ -->
+<div id="caps" role="region" aria-label="Political capital indicators">
+  <div class="cap" title="Financial Capital — Money to act">
+    <div class="cap-ic">💰</div>
+    <div class="cap-v" id="cv-fin">68</div>
+    <div class="cap-l">Finance</div>
+    <div class="cap-d up" id="cd-fin">+2</div>
+  </div>
+  <div class="cap" title="Political Capital — Align political actors">
+    <div class="cap-ic">🏛️</div>
+    <div class="cap-v" id="cv-pol">54</div>
+    <div class="cap-l">Political</div>
+    <div class="cap-d nt" id="cd-pol">—</div>
+  </div>
+  <div class="cap" title="Social Capital — Relationships and trust">
+    <div class="cap-ic">🤝</div>
+    <div class="cap-v" id="cv-soc">71</div>
+    <div class="cap-l">Social</div>
+    <div class="cap-d up" id="cd-soc">+4</div>
+  </div>
+  <div class="cap" title="Institutional Capital — Decision-making access">
+    <div class="cap-ic">⚖️</div>
+    <div class="cap-v" id="cv-ins">60</div>
+    <div class="cap-l">Instit.</div>
+    <div class="cap-d nt" id="cd-ins">—</div>
+  </div>
+  <div class="cap" title="Media Capital — Narrative reach">
+    <div class="cap-ic">📢</div>
+    <div class="cap-v" id="cv-med">42</div>
+    <div class="cap-l">Media</div>
+    <div class="cap-d dn" id="cd-med">−8</div>
+  </div>
+  <div class="cap" title="Grassroots Capital — Community strength">
+    <div class="cap-ic">🌾</div>
+    <div class="cap-v" id="cv-grs">79</div>
+    <div class="cap-l">Grassrts</div>
+    <div class="cap-d up" id="cd-grs">+6</div>
+  </div>
+  <div class="cap" title="Intelligence Capital — Trusted information">
+    <div class="cap-ic">🔎</div>
+    <div class="cap-v" id="cv-int">47</div>
+    <div class="cap-l">Intel</div>
+    <div class="cap-d nt" id="cd-int">—</div>
+  </div>
+  <div class="cap" title="Reputation Capital — Public credibility">
+    <div class="cap-ic">⭐</div>
+    <div class="cap-v" id="cv-rep">61</div>
+    <div class="cap-l">Reputatn</div>
+    <div class="cap-d nt" id="cd-rep">—</div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     SCENES
+════════════════════════════════════════ -->
+<main id="sc" aria-label="Game scenes">
+
+  <!-- SCENE 1 — WORLD ENTRY -->
+  <div class="scene on" id="s1" aria-label="Scene 1: World Entry — Ilorin, Kwara State">
+
+    <div class="s1-intro">
+      <div class="s1-eyebrow">NATASHAS Interactive Prototype</div>
+      <div class="display-title" style="font-size:clamp(36px,9vw,58px);text-align:center;line-height:1">
+        A Day in the Life<br>of a <span class="gold">Governor</span>
+      </div>
+      <div class="s1-scenario" style="margin-top:10px;text-align:center">5-Scene Story · GameForge · Fictional Universe</div>
+    </div>
+
+    <div class="section-head">Player Identity</div>
+
+    <div class="gc gold-card">
+      <div class="player-row">
+        <div class="portrait p64">
+          <svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <radialGradient id="sk" cx="48%" cy="36%" r="58%">
+                <stop offset="0%" stop-color="#a07c50"/>
+                <stop offset="55%" stop-color="#7a5530"/>
+                <stop offset="100%" stop-color="#4e3018"/>
+              </radialGradient>
+              <linearGradient id="ag" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#2e6844"/>
+                <stop offset="100%" stop-color="#173c26"/>
+              </linearGradient>
+            </defs>
+            <path d="M5,56 Q15,42 24,48 L24,64 L5,64Z" fill="url(#ag)"/>
+            <path d="M59,56 Q49,42 40,48 L40,64 L59,64Z" fill="url(#ag)"/>
+            <ellipse cx="32" cy="56" rx="24" ry="12" fill="url(#ag)"/>
+            <path d="M18,47 Q32,54 46,47" stroke="#c9a84c" stroke-width="2" fill="none" opacity=".88"/>
+            <path d="M22,49.5 Q32,55 42,49.5" stroke="#c9a84c" stroke-width="1" fill="none" opacity=".5"/>
+            <rect x="27" y="35" width="10" height="10" rx="3" fill="url(#sk)"/>
+            <ellipse cx="32" cy="27" rx="13" ry="14.5" fill="url(#sk)"/>
+            <rect x="18.5" y="10" width="27" height="12" rx="2.5" fill="#1e4928"/>
+            <ellipse cx="32" cy="10" rx="13" ry="5.5" fill="#27583a"/>
+            <line x1="18.5" y1="21" x2="45.5" y2="21" stroke="#c9a84c" stroke-width="1.4" opacity=".92"/>
+            <line x1="19.5" y1="18.5" x2="44.5" y2="18.5" stroke="#c9a84c" stroke-width=".6" opacity=".45"/>
+            <rect x="18.5" y="17" width="27" height="10" rx="0" fill="url(#sk)" opacity=".85"/>
+            <ellipse cx="25.5" cy="27.5" rx="2.5" ry="1.8" fill="#1a0d06"/>
+            <ellipse cx="38.5" cy="27.5" rx="2.5" ry="1.8" fill="#1a0d06"/>
+            <ellipse cx="26" cy="27" rx="1.1" ry=".9" fill="rgba(255,255,255,0.14)"/>
+            <ellipse cx="39" cy="27" rx="1.1" ry=".9" fill="rgba(255,255,255,0.14)"/>
+            <path d="M29.5,31 Q32,34.5 34.5,31" stroke="#3d1a08" stroke-width="1.3" fill="none"/>
+            <path d="M26.5,36 Q32,40 37.5,36" stroke="#2d1408" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+            <path d="M22.5,38 Q25,44 32,45.5 Q39,44 41.5,38" stroke="rgba(180,165,145,.62)" stroke-width="2.4" fill="none"/>
+            <path d="M26,40 Q32,46 38,40" stroke="rgba(180,165,145,.38)" stroke-width="1.6" fill="none"/>
+            <path d="M5,56 Q11,48 16,50" stroke="#c9a84c" stroke-width="1" fill="none" opacity=".55"/>
+            <path d="M59,56 Q53,48 48,50" stroke="#c9a84c" stroke-width="1" fill="none" opacity=".55"/>
+          </svg>
+        </div>
+        <div>
+          <div class="player-name-txt">Alhaji Tunde Adeyemi</div>
+          <div class="player-chips">
+            <span class="chip cg">Governor</span>
+            <span class="chip ct">Kwara State</span>
+          </div>
+          <div class="player-party">Nigerian People's Alliance (NPA)</div>
+          <div class="player-life">
+            <div class="life-item" title="Wealth">💳 <span>₦G 4.2M</span></div>
+            <div class="life-item" title="Health">❤️ <span style="color:var(--pos)">74</span></div>
+            <div class="life-item" title="Stress">🌡 <span style="color:var(--warn)">43</span></div>
+            <div class="life-item" title="Energy">⚡ <span style="color:var(--ai)">83</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-head">World · Ilorin, Kwara State</div>
+
+    <div class="gc kw">
+      <div class="narration">
+        <strong>Tuesday, 7:30 AM · Kwara State Government House, Ilorin.</strong><br><br>
+        The call to Fajr still carries across the old city. Outside the gate, the first <em>keke napep</em> engines hum to life — Ilorin is already awake. Your Chief of Staff waits with <strong>three urgent matters</strong>. The governorship election is <strong>90 days away</strong>. Your rivals are watching your every move. Na so this game dey go.
+      </div>
+    </div>
+
+    <div class="gc">
+      <div class="election-block">
+        <div class="countdown-big">
+          <div class="countdown-lbl">Election Countdown</div>
+          <div class="countdown-num">90<span class="countdown-unit">days</span></div>
+          <div class="countdown-sub">NAEC Election Date · January 14</div>
+        </div>
+        <div class="election-chips">
+          <span class="chip cw">⚠ 3 Urgent Events</span>
+          <span class="chip cp">↑ Polls +4pts This Week</span>
+          <span class="chip cd">📢 Media Under Attack</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-head">Regional Transport DNA · Kwara</div>
+
+    <div class="gc">
+      <div class="transport-grid">
+        <div class="t-item">
+          <div class="t-icon">🛺</div>
+          <div><div class="t-name">Keke Napep</div><div class="t-sub">Primary urban · Ilorin</div></div>
+        </div>
+        <div class="t-item">
+          <div class="t-icon">🚌</div>
+          <div><div class="t-name">Danfo Bus</div><div class="t-sub">Inter-city · Offa / Jebba</div></div>
+        </div>
+        <div class="t-item">
+          <div class="t-icon">🏍️</div>
+          <div><div class="t-name">Okada</div><div class="t-sub">Ward routes · Local</div></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SCENE 2 — NPC ENCOUNTER -->
+  <div class="scene" id="s2" aria-label="Scene 2: NPC Encounter — Chief of Staff morning briefing">
+
+    <div class="section-head">NPC Encounter · Trusted Ally</div>
+
+    <div class="gc">
+      <div class="npc-hdr">
+        <div class="portrait p52">
+          <svg width="52" height="52" viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <radialGradient id="sk2" cx="50%" cy="36%" r="58%">
+                <stop offset="0%" stop-color="#906238"/>
+                <stop offset="100%" stop-color="#4a2c10"/>
+              </radialGradient>
+            </defs>
+            <ellipse cx="26" cy="48" rx="22" ry="11" fill="#17202e"/>
+            <path d="M4,46 Q12,36 20,40 L20,52 L4,52Z" fill="#17202e"/>
+            <path d="M48,46 Q40,36 32,40 L32,52 L48,52Z" fill="#17202e"/>
+            <rect x="22" y="37" width="8" height="11" fill="rgba(240,237,232,.92)"/>
+            <rect x="24.5" y="37" width="3" height="11" fill="#c9a84c" opacity=".7"/>
+            <rect x="20" y="37" width="4" height="7" fill="#17202e"/>
+            <rect x="28" y="37" width="4" height="7" fill="#17202e"/>
+            <rect x="22" y="29" width="8" height="8" rx="2.5" fill="url(#sk2)"/>
+            <ellipse cx="26" cy="22" rx="11" ry="12" fill="url(#sk2)"/>
+            <path d="M15,20 Q17,9 26,10 Q35,9 37,20 Q35,14 26,14.5 Q17,14 15,20Z" fill="#1a0d04"/>
+            <ellipse cx="21.5" cy="22" rx="2.2" ry="1.7" fill="#120904"/>
+            <ellipse cx="30.5" cy="22" rx="2.2" ry="1.7" fill="#120904"/>
+            <ellipse cx="22" cy="21.6" rx=".9" ry=".75" fill="rgba(255,255,255,.14)"/>
+            <ellipse cx="31" cy="21.6" rx=".9" ry=".75" fill="rgba(255,255,255,.14)"/>
+            <path d="M23.5,25.5 Q26,28 28.5,25.5" stroke="#2d1408" stroke-width="1.1" fill="none"/>
+            <path d="M22,30.5 Q26,33 30,30.5" stroke="#2d1408" stroke-width="1.3" fill="none"/>
+            <rect x="17.5" y="20" width="6.5" height="5" rx="2.5" fill="none" stroke="rgba(201,168,76,.52)" stroke-width=".9"/>
+            <rect x="28" y="20" width="6.5" height="5" rx="2.5" fill="none" stroke="rgba(201,168,76,.52)" stroke-width=".9"/>
+            <line x1="24" y1="22.5" x2="28" y2="22.5" stroke="rgba(201,168,76,.52)" stroke-width=".9"/>
+            <line x1="17.5" y1="22.5" x2="15.5" y2="23.5" stroke="rgba(201,168,76,.4)" stroke-width=".9"/>
+            <line x1="34.5" y1="22.5" x2="36.5" y2="23.5" stroke="rgba(201,168,76,.4)" stroke-width=".9"/>
+          </svg>
+        </div>
+        <div>
+          <div class="npc-name-txt">Barr. Chidi Okafor</div>
+          <div class="npc-role-txt">Chief of Staff · NPA Inner Circle · Enugu State origin</div>
+          <div class="rel-row">
+            <span class="label-text">Relationship</span>
+            <div class="rel-bar"><div class="rel-fill" style="width:82%"></div></div>
+            <span class="rel-val">82/100</span>
+            <span class="chip ct" style="margin-left:4px">✓ ALLY</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="dialogue">
+        E don dey, Your Excellency — good morning, sir. Before morning cabinet, three things.
+        The Federal Minister, Alhaji Danladi, him request private meeting this week. That man never call without a deal in hand — he always wants something.
+        The NUT teachers' union dey threaten seven-day strike unless you release the ₦G 1.2B salary backlog by Friday.
+        And… there is a recording. Someone recorded your conversation at the Abuja dinner last month. We don't yet know who or how far it has spread.
+        <div class="pidgin-tag">↑ Authentic Pidgin English — Kwara/Abuja political context</div>
+      </div>
+
+      <div class="cp-wrap">
+        <div class="cp-label">Consequence Preview — Accept the Federal Minister's meeting</div>
+        <div class="cp-row">
+          <span class="chip ck">✓ KNOWN</span>
+          <span class="cp-text">He will request your endorsement for his party's candidate in the Kogi Senatorial by-election, scheduled for March.</span>
+        </div>
+        <div class="cp-row">
+          <span class="chip cl">~ LIKELY</span>
+          <span class="cp-text">He will offer Federal road contracts worth <strong style="color:var(--t1)">₦G 2.4B</strong> for Kwara infrastructure (+18 Financial Capital) in exchange for the endorsement.</span>
+        </div>
+        <div class="cp-row">
+          <span class="chip cu">? UNCERTAIN</span>
+          <span class="cp-text">The Minister may already know about the recording. This meeting could be a deliberate political trap designed to leverage your current vulnerability.</span>
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn prim" onclick="doAct('accept')">✓ Accept Meeting</button>
+        <button class="btn" onclick="doAct('defer')">⟳ Defer to Friday</button>
+        <button class="btn dng" onclick="doAct('investigate')">🔍 Investigate First</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SCENE 3 — SOCIAL FEED -->
+  <div class="scene" id="s3" aria-label="Scene 3: NaijaPulse social feed">
+
+    <div class="section-head">NaijaPulse · Live Feed</div>
+
+    <div class="gc">
+      <div class="feed-header">
+        <div>
+          <div class="feed-platform-txt">NaijaPulse</div>
+          <div class="feed-sub">Political Feed · Kwara State trending · Live</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:5px;align-items:flex-end">
+          <span class="chip cd">🔴 BREAKING</span>
+          <span style="font-size:10px;color:var(--t3)">3 items need attention</span>
+        </div>
+      </div>
+
+      <div class="feed-card" role="article">
+        <div class="feed-avi" style="background:var(--danger-bg);border:1px solid var(--danger-bd)">🔥</div>
+        <div class="feed-body">
+          <div class="feed-top">
+            <span class="feed-name">PoliticsNG</span>
+            <span class="feed-handle">@politicsng</span>
+            <span class="feed-time">4m ago</span>
+          </div>
+          <div class="feed-chips">
+            <span class="chip cd">⚠ SCANDAL</span>
+            <span class="chip cr">? UNVERIFIED</span>
+          </div>
+          <div class="feed-text">BREAKING: Audio recording allegedly featuring Governor Adeyemi discussing electoral arrangements has surfaced online. NPA has not yet responded. Authenticity unverified. <strong style="color:var(--danger)">#KwaraGate</strong> is now trending.</div>
+          <div class="feed-reacts">
+            <button class="react-btn">❤ 1.9K</button>
+            <button class="react-btn">🔁 1.2K</button>
+            <button class="react-btn">💬 446</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="feed-card" role="article">
+        <div class="feed-avi" style="background:var(--pos-bg);border:1px solid var(--pos-bd)">🏆</div>
+        <div class="feed-body">
+          <div class="feed-top">
+            <span class="feed-name">Kwara Spotlight</span>
+            <span class="feed-handle">@kwaraspotlight</span>
+            <span class="feed-time">24m ago</span>
+          </div>
+          <div class="feed-chips">
+            <span class="chip cp">↑ POSITIVE</span>
+            <span class="chip ct">✓ VERIFIED</span>
+          </div>
+          <div class="feed-text">Gov. Adeyemi's rural electrification project don bring light to 47 communities in Ilorin East LGA. Residents dey celebrate o. New polls show +4-point approval jump this week. Abeg, e try well-well!</div>
+          <div class="feed-reacts">
+            <button class="react-btn">❤ 3.7K</button>
+            <button class="react-btn">🔁 1.6K</button>
+            <button class="react-btn">💬 302</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="feed-card" role="article">
+        <div class="feed-avi" style="background:var(--rumour-bg);border:1px solid var(--rumour-bd);font-size:20px;font-weight:900;color:var(--rumour)">?</div>
+        <div class="feed-body">
+          <div class="feed-top">
+            <span class="feed-name">InsiderKwara</span>
+            <span class="feed-handle">@insiderkwara</span>
+            <span class="feed-time">1h ago</span>
+          </div>
+          <div class="feed-chips">
+            <span class="chip cr">? RUMOUR</span>
+            <span class="chip ca">✦ AI FLAGGED</span>
+          </div>
+          <div class="feed-text">Word on ground say Federal Minister Danladi dey quietly pull support from our Governor before election season. Source say private lunch meeting already confirmed. Unconfirmed o — take am with pinch of salt.</div>
+          <div class="feed-reacts">
+            <button class="react-btn">❤ 812</button>
+            <button class="react-btn">🔁 345</button>
+            <button class="react-btn">💬 118</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="gc dg" style="padding:16px 20px">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap">
+        <div class="body-text" style="flex:1">The recording story is gaining speed. Your Media Capital is bleeding <strong>−8</strong>. You have a narrow window to act.</div>
+        <button class="btn dng" style="flex:0;white-space:nowrap" onclick="nextScene()">→ Respond to Crisis</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SCENE 4 — EMERGENCY + AI + COUNTERFACTUAL -->
+  <div class="scene" id="s4" aria-label="Scene 4: Emergency — recording crisis, AI analysis, counterfactual engine">
+
+    <div class="emergency" role="alert" aria-live="assertive">
+      <div class="em-icon" aria-hidden="true">⚠️</div>
+      <div>
+        <div class="em-title">CRISIS: Recording Leak</div>
+        <div class="em-body">An audio recording is now circulating across NaijaPulse and ChannelsPrime TV. Your Media Capital is falling fast. You have <strong style="color:var(--warn)">4 hours</strong> before the full press cycle locks in the narrative against you.</div>
+        <div class="em-chips">
+          <span class="chip cw">⏰ 4-Hour Window</span>
+          <span class="chip cr">? Source Unknown</span>
+          <span class="chip cd">⚠ EMERGENCY</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-head">Consequence Preview</div>
+
+    <div class="gc">
+      <div class="cp-label">If you issue an immediate press statement:</div>
+      <div class="cp-row">
+        <span class="chip ck">✓ KNOWN</span>
+        <span class="cp-text">Statement production costs <strong style="color:var(--t1)">−12 Media Capital</strong>. Press secretary can deliver within 2 hours.</span>
+      </div>
+      <div class="cp-row">
+        <span class="chip cl">~ LIKELY</span>
+        <span class="cp-text">Opposition will challenge your claims for 48 hours. Expect further <strong style="color:var(--t1)">−5 Political Capital</strong> drain as rivals sharpen their attacks.</span>
+      </div>
+      <div class="cp-row">
+        <span class="chip cu">? UNCERTAIN</span>
+        <span class="cp-text">If the recording is genuine, a statement may amplify rather than contain the story. Advisors remain unsure of the origin.</span>
+      </div>
+    </div>
+
+    <div class="cf-toggle" role="button" tabindex="0" aria-label="Toggle WHAT IF counterfactual simulation" onclick="toggleCF()" onkeydown="if(event.key==='Enter')toggleCF()">
+      <div class="cf-inner">
+        <div class="cf-ico">⟳</div>
+        <div>
+          <div class="cf-lbl">WHAT IF? — Simulate Silence</div>
+          <div class="cf-sub">Model what happens if you stay silent for 24 hours</div>
+        </div>
+      </div>
+      <div class="tog" id="cf-tog"></div>
+    </div>
+
+    <div class="cf-panel" id="cf-panel" role="region" aria-label="Counterfactual simulation — not your live world">
+      <div class="cf-badge-bar">⟳ WHAT IF? · NOT YOUR LIVE WORLD · SIMULATION ONLY</div>
+      <div class="cf-text">
+        <strong style="color:rgba(200,200,222,.84)">Simulation: You say nothing for 24 hours.</strong><br><br>
+        Hour 6 — three major outlets amplify the story. Hour 12 — your main opponent Chief Bello Danlami holds a press conference demanding your resignation. Hour 24 — approval falls 9 points and the NUT teachers exploit the distraction, announcing their strike.
+      </div>
+      <div class="cf-stats">
+        <div class="cf-st"><div class="l">Media Capital</div><div class="v">−22</div></div>
+        <div class="cf-st"><div class="l">Reputation</div><div class="v">−9</div></div>
+        <div class="cf-st"><div class="l">Social Capital</div><div class="v">−5</div></div>
+        <div class="cf-st"><div class="l">Approval</div><div class="v">−9pts</div></div>
+      </div>
+    </div>
+
+    <button class="btn full" onclick="openAI()" aria-label="Open AI political risk analysis">
+      <span class="chip ca">✦ AI</span>
+      Explain the political risk of this crisis
+    </button>
+
+    <div class="btn-row">
+      <button class="btn prim" onclick="doAct('statement')">📢 Issue Statement Now</button>
+      <button class="btn" onclick="doAct('consult')">🤝 Consult Inner Circle</button>
+      <button class="btn dng" onclick="doAct('deny')">✗ Deny Everything</button>
+    </div>
+
+  </div>
+
+  <!-- SCENE 5 — ACTION RECEIPT + TRAVEL -->
+  <div class="scene" id="s5" aria-label="Scene 5: Action receipt and regional travel to Enugu">
+
+    <div class="section-head">Action Receipt</div>
+
+    <div class="gc pg">
+      <div class="receipt-hdr">
+        <div class="receipt-ico">✅</div>
+        <div>
+          <div class="receipt-title">Statement Issued Successfully</div>
+          <div class="receipt-sub">Tuesday, 11:45 AM · Kwara State Government House Press Room</div>
+        </div>
+      </div>
+      <div class="body-text" style="margin-bottom:16px">
+        Your press secretary delivered a measured, confident denial. The statement was on-brand — calm, factual, and unapologetic. The recording's origin is now under active investigation. Narrative: <strong>partially controlled</strong>. Opposition response expected within 48 hours.
+      </div>
+      <div class="delta-grid" role="region" aria-label="Capital changes from action">
+        <div class="delta"><div class="d-lbl">Political Capital</div><div class="d-val d-pos">+12</div></div>
+        <div class="delta"><div class="d-lbl">Media Capital</div><div class="d-val d-neg">−8</div></div>
+        <div class="delta"><div class="d-lbl">Reputation</div><div class="d-val d-neg">−5</div></div>
+        <div class="delta"><div class="d-lbl">Social Capital</div><div class="d-val d-pos">+3</div></div>
+        <div class="delta"><div class="d-lbl">Intelligence</div><div class="d-val d-pos">+4</div></div>
+        <div class="delta"><div class="d-lbl">Wealth (₦G)</div><div class="d-val d-neg">−280K</div></div>
+      </div>
+      <div class="next-att">
+        <div class="next-att-icon">🎯</div>
+        <div>
+          <div class="next-att-title">Next Attention Item</div>
+          <div class="next-att-body">NUT teachers' union deadline: Friday — ₦G 1.2B salary backlog. South-East Governors' Summit in Enugu signals national ambition. Your flight departs in 3 hours. Ko si wahala, Oga — but hurry.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-head">Regional Identity Engine · Travel</div>
+
+    <div class="gc en">
+      <div class="travel-wrap">
+        <span style="font-size:28px">✈️</span>
+        <div class="travel-fot">
+          <span class="t-from">Kwara</span>
+          <span class="t-arr">→</span>
+          <span class="t-to">Enugu</span>
+        </div>
+        <div class="travel-time">
+          <div class="tl">Departs</div>
+          <div class="tv">14:30</div>
+        </div>
+      </div>
+      <div class="region-compare">
+        <div class="rc-col">
+          <div class="rc-title" style="color:var(--kwara2)">● Leaving: Kwara</div>
+          <div class="rc-body">Savanna terrain · Yoruba geometric ornament · Fila caps + Agbada · Arabic-Yoruba signage · Emirate mosque skyline · Deep green palette · Keke napep culture</div>
+        </div>
+        <div style="width:1px;background:var(--bd);flex-shrink:0"></div>
+        <div class="rc-col">
+          <div class="rc-title" style="color:var(--enugu2)">● Arriving: Enugu</div>
+          <div class="rc-body">Coal plateau terrain · Igbo-language signage · Headframe silhouettes · Isi-agu fabric · Church architecture · Deep blue palette · Yellow Peugeot taxis</div>
+        </div>
+      </div>
+      <button class="btn prim full" style="margin-top:16px" onclick="travelEnugu()">
+        ✈ Depart for Enugu — Begin South-East Summit
+      </button>
+    </div>
+
+    <div class="gc en" id="arrived">
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:14px">
+        <span style="font-size:28px">🏙️</span>
+        <div>
+          <div class="card-title" style="color:var(--enugu2)">Arrived: Enugu State</div>
+          <div class="body-text" style="font-size:12px;margin-top:2px">4:15 PM · Akanu Ibiam International Airport</div>
+        </div>
+      </div>
+      <div class="body-text" style="margin-bottom:14px">
+        The air is different here — cooler, denser. The Coal City plateau rises around you, a different rhythm to the streets. Igbo protocol greetings from the state delegation: <em>"Ndewo, Your Excellency."</em> The world has shifted. <strong>The South-East Governors' Summit begins tomorrow.</strong>
+      </div>
+      <div style="display:flex;gap:7px;flex-wrap:wrap">
+        <span class="chip ct">✓ REGION CHANGED: Enugu</span>
+        <span class="chip cp">↑ Regional Relationship +8</span>
+        <span class="chip ca">✦ Context Engine Updated</span>
+      </div>
+    </div>
+
+    <div class="gc">
+      <div class="proto-summary">
+        <div class="proto-title">Prototype Complete</div>
+        <div class="proto-body">
+          This 5-scene prototype demonstrates the NATASHAS Game-First Visual Hierarchy, all 8 Political Capitals, Regional Identity Engine (Kwara → Enugu), Nigerian cultural and linguistic context, Visual State Language, Consequence Preview, Action Receipts, AI Contextual Tool, and the WHAT IF? Counterfactual Engine.
+        </div>
+        <div class="proto-chips">
+          <span class="chip ct">✓ World-First Layout</span>
+          <span class="chip ct">✓ All 8 Capitals</span>
+          <span class="chip ct">✓ Regional Identity</span>
+          <span class="chip ct">✓ Visual State Language</span>
+          <span class="chip ct">✓ Glass Card System</span>
+          <span class="chip ct">✓ Nigerian Cultural Context</span>
+          <span class="chip ct">✓ Pidgin English</span>
+          <span class="chip ct">✓ Transport DNA</span>
+          <span class="chip ct">✓ ₦G Currency</span>
+          <span class="chip ca">✦ AI Contextual Tool</span>
+          <span class="chip ccf">⟳ Counterfactual Engine</span>
+          <span class="chip cw">⚠ Article 5 Disclaimer</span>
+          <span class="chip cg">⬡ GameForge Flagship</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<!-- ════════════════════════════════════════
+     NAV BAR
+════════════════════════════════════════ -->
+<nav id="nav" aria-label="Scene navigation">
+  <button class="nav-btn" id="bp" onclick="prev()" disabled aria-label="Previous scene">← Prev</button>
+  <div class="nav-mid">
+    <div class="nav-lbl" id="nl">Scene 1 of 5</div>
+    <div class="dot-row" role="tablist" aria-label="Scene indicators">
+      <div class="dot on" onclick="go(1)" role="tab" tabindex="0" aria-label="Scene 1" aria-selected="true"></div>
+      <div class="dot" onclick="go(2)" role="tab" tabindex="0" aria-label="Scene 2" aria-selected="false"></div>
+      <div class="dot" onclick="go(3)" role="tab" tabindex="0" aria-label="Scene 3" aria-selected="false"></div>
+      <div class="dot" onclick="go(4)" role="tab" tabindex="0" aria-label="Scene 4" aria-selected="false"></div>
+      <div class="dot" onclick="go(5)" role="tab" tabindex="0" aria-label="Scene 5" aria-selected="false"></div>
+    </div>
+  </div>
+  <button class="nav-btn go" id="bn" onclick="next()" aria-label="Next scene">Next →</button>
+</nav>
+
+<!-- ════════════════════════════════════════
+     AI MODAL
+════════════════════════════════════════ -->
+<div id="ai-modal" role="dialog" aria-modal="true" aria-label="AI political risk analysis" onclick="closeAI(event)">
+  <div class="ai-card">
+    <div class="ai-hdr">
+      <div class="ai-title"><span class="chip ca">✦ AI</span> Political Risk Analysis</div>
+      <button class="ai-close-btn" onclick="closeAI()" aria-label="Close AI panel">×</button>
+    </div>
+    <div class="ai-body">
+      <p>The <strong>recording crisis</strong> is dangerous for three compounding reasons specific to your position as governor.</p>
+      <p>First, <span class="hl">timing</span>: at 90 days before the NAEC election, any integrity scandal spreads exponentially faster than a correction ever can. Voters are now paying full attention to every move you make.</p>
+      <p>Second, <span class="hl">the source is unknown</span>. If it is an opposition plant, your statement puts them on the defensive. If it is a disgruntled ally — someone inside NPA — a statement may instead escalate a factional conflict you cannot yet see clearly.</p>
+      <p>Third, <span class="hl">the teachers' strike threat is concurrent</span>. Your opponents will attempt to merge both stories into a single "government in trouble" narrative. A fast, clear response fragments that strategy before it can cohere in the news cycle.</p>
+      <p><em>He who controls the morning, controls the day.</em> Your window is now, Your Excellency.</p>
+    </div>
+    <div class="ai-foot">
+      <span class="chip ca">✦ AI</span>
+      Contextual analysis · Based on current world state · This is a fictional simulation prototype
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     JS
+════════════════════════════════════════ -->
+<script>
+'use strict';
+const N = 5;
+let cur = 1, cfOn = false;
+const times = ['','07:30','08:20','09:05','10:35','14:20'];
+const lbls  = ['','World Entry — Ilorin, Kwara','NPC Encounter — Chief of Staff','Social Feed — NaijaPulse','Crisis Response + AI','Action Receipt + Enugu Travel'];
+
+function enterGame(){
+  document.getElementById('splash').classList.add('out');
+}
+
+function show(n){
+  document.querySelectorAll('.scene').forEach((s,i)=>{
+    const on=i+1===n;
+    s.classList.toggle('on',on);
+    s.setAttribute('aria-hidden',on?'false':'true');
+  });
+  document.querySelectorAll('.dot').forEach((d,i)=>{
+    const on=i+1===n;
+    d.classList.toggle('on',on);
+    d.setAttribute('aria-selected',on?'true':'false');
+  });
+  document.getElementById('bp').disabled=n===1;
+  document.getElementById('bn').disabled=n===N;
+  document.getElementById('nl').textContent=`Scene ${n} of ${N} — ${lbls[n]}`;
+  document.getElementById('ht').textContent=times[n];
+
+  // Scroll to top of scene container
+  const sc=document.getElementById('sc');
+  sc.scrollTop=0;
+
+  // Region
+  const isE=n===5;
+  document.getElementById('world').className=isE?'we':'wk';
+  const rp=document.getElementById('rp'), rl=document.getElementById('rlbl');
+  if(isE){
+    rp.className='rpip e'; rl.textContent='Enugu, Enugu State'; rl.style.color='var(--enugu2)';
+    document.getElementById('glow-orb').style.setProperty('--gc','rgba(45,95,166,.09)');
+  } else {
+    rp.className='rpip k'; rl.textContent='Ilorin, Kwara State'; rl.style.color='';
+    document.getElementById('glow-orb').style.setProperty('--gc','rgba(74,124,89,.09)');
+  }
+  // Landscape
+  const kl=document.getElementById('k-ls'), el=document.getElementById('e-ls');
+  if(isE){
+    kl.style.transition='opacity 1s ease'; kl.style.opacity='0';
+    el.style.display='block'; el.style.opacity='0';
+    el.style.transition='opacity 1s ease';
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{ el.style.opacity='1'; }));
+  } else {
+    el.style.opacity='0';
+    setTimeout(()=>{ el.style.display='none'; },1000);
+    kl.style.transition='opacity 1s ease'; kl.style.opacity='1';
+  }
+  cur=n;
+}
+
+function next(){ if(cur<N) show(cur+1); }
+function prev(){ if(cur>1) show(cur-1); }
+function go(n){ show(n); }
+
+function doAct(t){
+  const btns=document.querySelectorAll('#s'+cur+' .btn-row .btn');
+  btns.forEach(b=>{ b.disabled=true; b.style.opacity='.45'; });
+  setTimeout(()=>{ btns.forEach(b=>{ b.disabled=false; b.style.opacity=''; }); next(); }, 650);
+}
+
+function toggleCF(){
+  cfOn=!cfOn;
+  document.getElementById('cf-tog').classList.toggle('on',cfOn);
+  document.getElementById('cf-panel').classList.toggle('on',cfOn);
+}
+
+function openAI(){ document.getElementById('ai-modal').classList.add('on'); }
+function closeAI(e){
+  if(!e||e.target===document.getElementById('ai-modal')||e.currentTarget?.classList?.contains('ai-close-btn'))
+    document.getElementById('ai-modal').classList.remove('on');
+}
+
+function travelEnugu(){
+  const btn=document.querySelector('#s5 .btn.prim');
+  if(btn){ btn.textContent='✈ Travelling to Enugu…'; btn.disabled=true; }
+  setTimeout(()=>{
+    show(5);
+    // Update capitals post-action
+    const ud={pol:[66,'+12','up'],med:[34,'−8','dn'],rep:[56,'−5','dn'],soc:[74,'+3','up'],int:[51,'+4','up']};
+    Object.entries(ud).forEach(([k,[v,d,cls]])=>{
+      const ve=document.getElementById('cv-'+k), de=document.getElementById('cd-'+k);
+      if(ve) ve.textContent=v;
+      if(de){ de.textContent=d; de.className='cap-d '+cls; }
+    });
+    document.getElementById('ev').textContent='61';
+    const arr=document.getElementById('arrived');
+    if(arr){ arr.style.display='block'; arr.classList.add('on'); }
+  }, 1100);
+}
+
+// Keyboard nav
+document.addEventListener('keydown',e=>{
+  if(document.getElementById('ai-modal').classList.contains('on')){
+    if(e.key==='Escape') closeAI(); return;
+  }
+  if(e.key==='ArrowRight'||e.key==='ArrowDown') next();
+  if(e.key==='ArrowLeft'||e.key==='ArrowUp') prev();
+});
+
+show(1);
+</script>
+</body>
+</html>

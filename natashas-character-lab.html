@@ -1,0 +1,2709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#07080c">
+<title>NATASHAS — Character Asset Production Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<style>
+:root {
+  --bg:#07080c; --bg2:#0b0d15; --bg3:#0f1118;
+  --sf:rgba(255,255,255,0.04); --sf2:rgba(255,255,255,0.07); --sf3:rgba(255,255,255,0.11);
+  --bd:rgba(255,255,255,0.08); --bd2:rgba(255,255,255,0.15); --bd3:rgba(255,255,255,0.22);
+  --t1:#f4f0ea; --t2:rgba(244,240,234,0.62); --t3:rgba(244,240,234,0.38); --t4:rgba(244,240,234,0.22);
+  --gold:#c9a84c; --gold2:#e2c06a; --gold-bg:rgba(201,168,76,0.10); --gold-bd:rgba(201,168,76,0.26);
+  --gold-glow:0 0 40px rgba(201,168,76,0.18),0 0 80px rgba(201,168,76,0.08);
+  --kwara:#2e6b3e; --kwara2:#52a06c; --kwara-bg:rgba(46,107,62,0.14); --kwara-bd:rgba(46,107,62,0.30);
+  --enugu:#1c4d96; --enugu2:#4a82d4; --enugu-bg:rgba(28,77,150,0.14); --enugu-bd:rgba(28,77,150,0.30);
+  --ng-green:#008751; --ng-bg:rgba(0,135,81,0.10); --ng-bd:rgba(0,135,81,0.28);
+  --laterite:#b84520; --lat-bg:rgba(184,69,32,0.10); --lat-bd:rgba(184,69,32,0.28);
+  --adire:#1a3759;
+  --pos:#22c55e; --pos-bg:rgba(34,197,94,0.10); --pos-bd:rgba(34,197,94,0.24);
+  --warn:#f59e0b; --warn-bg:rgba(245,158,11,0.10); --warn-bd:rgba(245,158,11,0.24);
+  --danger:#ef4444; --danger-bg:rgba(239,68,68,0.10); --danger-bd:rgba(239,68,68,0.24);
+  --rumour:#a78bfa; --ai:#38bdf8; --ai-bg:rgba(56,189,248,0.10); --ai-bd:rgba(56,189,248,0.24);
+  --teal:#2dd4bf; --teal-bg:rgba(45,212,191,0.10); --teal-bd:rgba(45,212,191,0.24);
+  --r:14px; --r2:10px; --r3:6px; --pill:100px;
+  --blur:blur(24px); --blur2:blur(16px);
+  --f:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  --ease:cubic-bezier(0.35,0,0.25,1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;background:var(--bg);color:var(--t1);font-family:var(--f);font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased;}
+body{overflow-x:hidden;}
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.12);border-radius:2px;}
+
+/* ── HEADER ── */
+.lab-header{
+  position:sticky;top:0;z-index:100;
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  padding:0 20px;height:56px;
+  background:rgba(5,6,10,0.88);
+  backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);
+  border-bottom:1px solid var(--bd);
+}
+.lab-logo{
+  font-size:18px;font-weight:900;letter-spacing:-0.02em;color:var(--t1);
+  display:flex;align-items:center;gap:8px;
+}
+.lab-logo span{color:var(--gold);}
+.lab-sep{width:1px;height:20px;background:var(--bd);flex-shrink:0;}
+.lab-subtitle{font-size:11px;font-weight:700;color:var(--t3);letter-spacing:0.10em;text-transform:uppercase;}
+.header-pills{display:flex;gap:6px;margin-left:auto;flex-wrap:wrap;}
+.pill{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:3px 10px;border-radius:var(--pill);
+  font-size:9px;font-weight:900;letter-spacing:0.10em;text-transform:uppercase;
+  border:1px solid transparent;white-space:nowrap;
+}
+.pill-gf{background:var(--gold-bg);color:var(--gold);border-color:var(--gold-bd);}
+.pill-fic{background:var(--danger-bg);color:var(--danger);border-color:var(--danger-bd);}
+.pill-phase{background:var(--ai-bg);color:var(--ai);border-color:var(--ai-bd);}
+
+/* ── CHAR TABS ── */
+.char-tabs{
+  display:flex;gap:0;
+  background:rgba(5,6,10,0.70);
+  border-bottom:1px solid var(--bd);
+  overflow-x:auto;
+}
+.char-tab{
+  display:flex;align-items:center;gap:10px;
+  padding:12px 20px;cursor:pointer;
+  border-bottom:2px solid transparent;
+  transition:all 0.22s var(--ease);
+  white-space:nowrap;flex-shrink:0;
+  border-right:1px solid var(--bd);
+}
+.char-tab:hover{background:var(--sf);}
+.char-tab.on{border-bottom-color:var(--gold);background:var(--gold-bg);}
+.char-tab .ct-avi{
+  width:32px;height:32px;border-radius:50%;
+  overflow:hidden;flex-shrink:0;
+  border:1.5px solid var(--bd);
+}
+.char-tab.on .ct-avi{border-color:var(--gold-bd);}
+.ct-name{font-size:13px;font-weight:800;color:var(--t1);}
+.ct-role{font-size:10px;color:var(--t3);margin-top:1px;}
+.ct-state{
+  font-size:9px;font-weight:900;padding:2px 7px;border-radius:var(--r3);
+  letter-spacing:0.08em;text-transform:uppercase;margin-left:4px;
+}
+
+/* ── MAIN LAYOUT ── */
+.lab-main{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:0;
+  min-height:calc(100vh - 56px - 48px);
+}
+@media(min-width:900px){
+  .lab-main{grid-template-columns:320px 1fr;}
+}
+@media(min-width:1200px){
+  .lab-main{grid-template-columns:360px 1fr 280px;}
+}
+
+/* ── PORTRAIT PANEL ── */
+.portrait-panel{
+  border-right:1px solid var(--bd);
+  display:flex;flex-direction:column;
+  align-items:center;
+  padding:24px 20px;
+  background:rgba(5,6,10,0.40);
+  position:relative;
+}
+.asset-state-bar{
+  width:100%;display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:20px;
+}
+.asset-state-lbl{font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:0.10em;}
+.asset-state-val{
+  font-size:10px;font-weight:900;padding:3px 10px;border-radius:var(--r3);
+  letter-spacing:0.08em;text-transform:uppercase;
+}
+.state-concept{background:var(--lat-bg);color:var(--laterite);border:1px solid var(--lat-bd);}
+.state-prototype{background:var(--warn-bg);color:var(--warn);border:1px solid var(--warn-bd);}
+.state-candidate{background:var(--ai-bg);color:var(--ai);border:1px solid var(--ai-bd);}
+.state-approved{background:var(--pos-bg);color:var(--pos);border:1px solid var(--pos-bd);}
+.state-locked{background:var(--gold-bg);color:var(--gold);border:1px solid var(--gold-bd);}
+
+/* Portrait viewer */
+.portrait-viewer{
+  width:100%;max-width:280px;
+  aspect-ratio:4/5;
+  position:relative;
+  border-radius:var(--r);
+  overflow:hidden;
+  border:1px solid var(--bd2);
+  margin-bottom:16px;
+}
+.portrait-viewer svg{width:100%;height:100%;}
+.portrait-region-tag{
+  position:absolute;bottom:10px;left:10px;
+  font-size:9px;font-weight:900;padding:3px 8px;
+  border-radius:var(--r3);letter-spacing:0.10em;text-transform:uppercase;
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+}
+
+/* Expressions */
+.expr-row{
+  width:100%;display:flex;gap:6px;flex-wrap:wrap;
+  justify-content:center;margin-bottom:16px;
+}
+.expr-btn{
+  padding:6px 10px;border-radius:var(--r2);
+  border:1px solid var(--bd);background:var(--sf);
+  color:var(--t2);font-family:var(--f);font-size:11px;font-weight:700;
+  cursor:pointer;transition:all 0.20s ease;
+  letter-spacing:0.03em;
+}
+.expr-btn:hover{background:var(--sf2);color:var(--t1);}
+.expr-btn.on{background:var(--gold-bg);border-color:var(--gold-bd);color:var(--gold);}
+
+/* Wardrobe switcher */
+.wardrobe-row{
+  width:100%;display:flex;gap:6px;flex-wrap:wrap;
+  justify-content:center;margin-bottom:4px;
+}
+.wd-btn{
+  padding:5px 10px;border-radius:var(--r3);
+  border:1px solid var(--bd);background:transparent;
+  color:var(--t3);font-family:var(--f);font-size:10px;font-weight:700;
+  cursor:pointer;transition:all 0.20s ease;letter-spacing:0.03em;
+}
+.wd-btn:hover{background:var(--sf);color:var(--t2);}
+.wd-btn.on{background:var(--sf2);border-color:var(--bd2);color:var(--t1);}
+.wd-label{
+  font-size:10px;color:var(--t4);text-align:center;letter-spacing:0.05em;margin-top:4px;
+}
+
+/* ── INFO PANEL ── */
+.info-panel{
+  display:flex;flex-direction:column;
+  overflow-y:auto;
+  max-height:calc(100vh - 56px - 48px);
+}
+.info-tabs{
+  display:flex;gap:0;
+  border-bottom:1px solid var(--bd);
+  position:sticky;top:0;z-index:10;
+  background:rgba(7,8,12,0.95);
+  backdrop-filter:var(--blur2);
+}
+.info-tab{
+  padding:10px 16px;cursor:pointer;
+  font-size:11px;font-weight:700;color:var(--t3);
+  letter-spacing:0.06em;text-transform:uppercase;
+  border-bottom:2px solid transparent;
+  transition:all 0.20s ease;white-space:nowrap;
+}
+.info-tab:hover{color:var(--t2);}
+.info-tab.on{color:var(--gold);border-bottom-color:var(--gold);}
+.info-pane{display:none;padding:20px;flex-direction:column;gap:14px;}
+.info-pane.on{display:flex;}
+
+/* ── DNA PANEL (3rd col) ── */
+.dna-panel{
+  border-left:1px solid var(--bd);
+  padding:20px;
+  overflow-y:auto;
+  max-height:calc(100vh - 56px - 48px);
+  display:none;
+  flex-direction:column;gap:14px;
+}
+@media(min-width:1200px){.dna-panel{display:flex;}}
+
+/* ── GLASS CARD ── */
+.gc{
+  background:rgba(11,13,22,0.80);
+  backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);
+  border:1px solid var(--bd);border-radius:var(--r);
+  padding:18px;
+}
+.gc.kw{border-color:var(--kwara-bd);background:rgba(6,14,8,0.82);}
+.gc.en{border-color:var(--enugu-bd);background:rgba(5,9,20,0.82);}
+.gc.gold{border-color:var(--gold-bd);background:rgba(14,12,6,0.82);}
+
+/* ── SECTION LABEL ── */
+.sec{
+  font-size:10px;font-weight:800;letter-spacing:0.16em;
+  text-transform:uppercase;color:var(--t3);
+  display:flex;align-items:center;gap:8px;margin-bottom:10px;
+}
+.sec::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,var(--bd),transparent);}
+
+/* ── DATA ROW ── */
+.dr{display:flex;align-items:baseline;gap:8px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.04);}
+.dr:last-child{border-bottom:none;}
+.dr-k{font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:0.08em;min-width:90px;flex-shrink:0;}
+.dr-v{font-size:13px;color:var(--t1);font-weight:600;flex:1;}
+.dr-v.dim{color:var(--t2);}
+
+/* ── CHIPS ── */
+.chip{
+  display:inline-flex;align-items:center;gap:3px;
+  padding:2px 8px;border-radius:var(--r3);
+  font-size:9px;font-weight:900;letter-spacing:0.08em;text-transform:uppercase;
+  white-space:nowrap;border:1px solid transparent;
+}
+.cg{background:var(--gold-bg);color:var(--gold);border-color:var(--gold-bd);}
+.cp{background:var(--pos-bg);color:var(--pos);border-color:var(--pos-bd);}
+.cw{background:var(--warn-bg);color:var(--warn);border-color:var(--warn-bd);}
+.cd{background:var(--danger-bg);color:var(--danger);border-color:var(--danger-bd);}
+.ca{background:var(--ai-bg);color:var(--ai);border-color:var(--ai-bd);}
+.ct{background:var(--teal-bg);color:var(--teal);border-color:var(--teal-bd);}
+.ck{background:var(--kwara-bg);color:var(--kwara2);border-color:var(--kwara-bd);}
+.ce{background:var(--enugu-bg);color:var(--enugu2);border-color:var(--enugu-bd);}
+.cn{background:var(--ng-bg);color:var(--ng-green);border-color:var(--ng-bd);}
+
+/* ── PERSONALITY TAGS ── */
+.tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;}
+.tag{
+  padding:4px 10px;border-radius:var(--pill);
+  background:var(--sf2);border:1px solid var(--bd);
+  font-size:11px;color:var(--t2);font-weight:600;
+}
+
+/* ── CONTEXT ENGINE ── */
+.ctx-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.ctx-item{
+  background:var(--sf);border:1px solid var(--bd);
+  border-radius:var(--r2);padding:10px 12px;
+}
+.ctx-k{font-size:9px;font-weight:800;color:var(--t4);text-transform:uppercase;letter-spacing:0.10em;margin-bottom:4px;}
+.ctx-v{font-size:12px;font-weight:700;color:var(--t1);}
+
+/* ── LIFECYCLE ── */
+.lifecycle{display:flex;align-items:center;gap:0;width:100%;overflow-x:auto;padding:4px 0;}
+.lc-step{
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  flex:1;min-width:52px;position:relative;
+}
+.lc-step:not(:last-child)::after{
+  content:'';position:absolute;top:12px;right:-50%;
+  width:100%;height:1px;background:var(--bd);z-index:0;
+}
+.lc-dot{
+  width:24px;height:24px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:10px;font-weight:900;z-index:1;
+  border:1.5px solid var(--bd);background:var(--bg2);color:var(--t4);
+  position:relative;
+}
+.lc-dot.done{background:var(--pos-bg);border-color:var(--pos-bd);color:var(--pos);}
+.lc-dot.current{background:var(--warn-bg);border-color:var(--warn-bd);color:var(--warn);box-shadow:0 0 12px var(--warn);}
+.lc-lbl{font-size:8px;font-weight:700;color:var(--t4);text-transform:uppercase;letter-spacing:0.06em;text-align:center;}
+.lc-lbl.done{color:var(--pos);}
+.lc-lbl.current{color:var(--warn);}
+
+/* ── REGIONAL COMPARE ── */
+.region-compare{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.rc-card{
+  border-radius:var(--r);padding:14px;
+  border:1px solid var(--bd);
+}
+.rc-card.kw{background:rgba(6,14,8,0.70);border-color:var(--kwara-bd);}
+.rc-card.en{background:rgba(5,9,20,0.70);border-color:var(--enugu-bd);}
+.rc-title{font-size:11px;font-weight:900;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:8px;}
+.rc-row{font-size:11px;color:var(--t2);margin-bottom:4px;display:flex;gap:6px;align-items:flex-start;}
+.rc-row::before{content:'—';color:var(--t4);flex-shrink:0;}
+
+/* ── BOTTOM BAR ── */
+.lab-footer{
+  position:sticky;bottom:0;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 20px;height:48px;
+  background:rgba(5,6,10,0.92);
+  backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);
+  border-top:1px solid var(--bd);
+  font-size:11px;color:var(--t4);
+  gap:12px;
+}
+.footer-id{font-size:10px;font-weight:700;color:var(--t4);font-family:monospace;letter-spacing:0.05em;}
+.footer-nav{display:flex;gap:8px;}
+.fn-btn{
+  padding:6px 14px;border-radius:var(--r2);
+  border:1px solid var(--bd);background:var(--sf);
+  color:var(--t2);font-family:var(--f);font-size:11px;font-weight:700;
+  cursor:pointer;transition:all 0.20s ease;
+}
+.fn-btn:hover{background:var(--sf2);}
+.fn-btn.go{background:var(--gold-bg);border-color:var(--gold-bd);color:var(--gold);}
+
+/* ── DNA TABLE ── */
+.dna-table{width:100%;border-collapse:collapse;}
+.dna-table td{
+  padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.04);
+  font-size:11px;vertical-align:top;
+}
+.dna-table td:first-child{
+  color:var(--t4);font-weight:700;letter-spacing:0.06em;
+  text-transform:uppercase;font-size:9px;padding-right:10px;
+  white-space:nowrap;width:38%;
+}
+.dna-table td:last-child{color:var(--t1);font-weight:600;}
+.dna-table tr:last-child td{border-bottom:none;}
+
+/* ── CONSISTENCY LAB ── */
+.consist-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;}
+.consist-item{
+  background:var(--sf);border:1px solid var(--bd);
+  border-radius:var(--r2);padding:10px;text-align:center;
+}
+.consist-ico{font-size:22px;margin-bottom:6px;}
+.consist-lbl{font-size:10px;font-weight:700;color:var(--t2);}
+.consist-status{font-size:9px;color:var(--t3);margin-top:3px;}
+
+/* ── MOBILE TAB SCROLL ── */
+@media(max-width:899px){
+  .info-panel{max-height:none;}
+  .dna-panel{display:flex;border-left:none;border-top:1px solid var(--bd);max-height:none;}
+  .portrait-panel{border-right:none;border-bottom:1px solid var(--bd);}
+}
+
+/* ── CHARACTER VISIBILITY ── */
+.char-view{display:none;}
+.char-view.on{display:contents;}
+
+/* ── VIEW SWITCHER ── */
+.view-sw{width:100%;display:flex;gap:4px;margin-bottom:12px;}
+.vsw-btn{
+  flex:1;padding:6px 4px;border-radius:var(--r3);
+  border:1px solid var(--bd);background:transparent;
+  color:var(--t3);font-family:var(--f);font-size:10px;font-weight:700;
+  cursor:pointer;transition:all 0.18s ease;letter-spacing:0.04em;text-align:center;
+}
+.vsw-btn:hover{background:var(--sf);color:var(--t2);}
+.vsw-btn.on{background:var(--sf2);border-color:var(--bd2);color:var(--t1);}
+
+/* ── FULL-BODY VIEWER ── */
+.fullbody-viewer{
+  width:100%;max-width:160px;
+  aspect-ratio:2/5;
+  position:relative;border-radius:var(--r);
+  overflow:hidden;border:1px solid var(--bd2);
+  margin:0 auto 16px;
+}
+.fullbody-viewer svg{width:100%;height:100%;}
+
+/* ── SOCIAL AVATAR SECTION ── */
+.avatar-section{
+  width:100%;display:flex;gap:14px;
+  justify-content:center;flex-wrap:wrap;margin-bottom:16px;
+}
+.avatar-card{display:flex;flex-direction:column;align-items:center;gap:6px;}
+.avatar-circle{
+  width:76px;height:76px;border-radius:50%;
+  overflow:hidden;border:2px solid var(--bd2);
+}
+.avatar-circle.kw{border-color:var(--kwara-bd);}
+.avatar-circle.en{border-color:var(--enugu-bd);}
+.avatar-circle svg{width:100%;height:100%;}
+.avatar-label{font-size:9px;font-weight:700;color:var(--t3);text-align:center;letter-spacing:0.08em;text-transform:uppercase;}
+
+/* ── CAMPAIGN VIEWER ── */
+.campaign-viewer{
+  width:100%;aspect-ratio:16/7;
+  position:relative;border-radius:var(--r);
+  overflow:hidden;border:1px solid var(--bd2);margin-bottom:16px;
+}
+.campaign-viewer svg{width:100%;height:100%;}
+
+/* ── AUDIO PANEL ── */
+.audio-region{margin-bottom:14px;}
+.audio-row{
+  display:flex;gap:10px;padding:8px 0;
+  border-bottom:1px solid rgba(255,255,255,0.04);
+  align-items:flex-start;
+}
+.audio-row:last-child{border-bottom:none;}
+.audio-k{font-size:9px;font-weight:800;color:var(--t4);text-transform:uppercase;letter-spacing:0.10em;min-width:100px;flex-shrink:0;padding-top:1px;}
+.audio-v{font-size:12px;color:var(--t2);font-weight:500;line-height:1.55;}
+
+/* ── 3D VIEWER ── */
+.pv-3d{
+  width:100%;max-width:280px;height:300px;
+  position:relative;border-radius:var(--r);
+  overflow:hidden;border:1px solid var(--bd2);
+  margin-bottom:14px;background:#07080c;
+}
+.pv-3d canvas{display:block;width:100%!important;height:100%!important;}
+.three-controls{
+  width:100%;display:flex;gap:6px;flex-wrap:wrap;
+  justify-content:center;margin-bottom:10px;
+}
+.anim-btn,.wd3d-btn{
+  padding:5px 10px;border-radius:var(--r3);
+  border:1px solid var(--bd);background:transparent;
+  color:var(--t3);font-family:var(--f);font-size:10px;font-weight:700;
+  cursor:pointer;transition:all 0.18s ease;letter-spacing:0.03em;
+}
+.anim-btn:hover,.wd3d-btn:hover{background:var(--sf);color:var(--t2);}
+.anim-btn.on{background:var(--ai-bg);border-color:var(--ai-bd);color:var(--ai);}
+.wd3d-btn.on{background:var(--kwara-bg);border-color:var(--kwara-bd);color:var(--kwara2);}
+.three-hint{font-size:9px;color:var(--t4);text-align:center;letter-spacing:0.05em;margin-bottom:12px;}
+.three-placeholder{
+  width:100%;height:100%;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:10px;color:var(--t4);font-size:11px;font-weight:600;
+  letter-spacing:0.06em;text-transform:uppercase;
+}
+</style>
+</head>
+<body>
+
+<!-- ══ HEADER ══ -->
+<header class="lab-header">
+  <div class="lab-logo">NATA<span>SHAS</span></div>
+  <div class="lab-sep"></div>
+  <div class="lab-subtitle">Character Asset Production Lab</div>
+  <div class="header-pills">
+    <span class="pill pill-phase">✦ Phase 2</span>
+    <span class="pill pill-gf">⬡ GameForge</span>
+    <span class="pill pill-fic">🎭 Fictional</span>
+  </div>
+</header>
+
+<!-- ══ CHARACTER TABS ══ -->
+<div class="char-tabs" role="tablist">
+  <div class="char-tab on" onclick="selectChar('gov')" role="tab" aria-selected="true">
+    <div class="ct-avi" id="tab-avi-gov">
+      <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+        <rect width="32" height="32" fill="#0a1410"/>
+        <ellipse cx="16" cy="22" rx="12" ry="6" fill="#1e5232"/>
+        <ellipse cx="16" cy="13" rx="7" ry="7.5" fill="#7a5530"/>
+        <rect x="9" y="6" width="14" height="6" rx="1" fill="#1e5232"/>
+        <line x1="9" y1="11" x2="23" y2="11" stroke="#c9a84c" stroke-width="0.8" opacity=".9"/>
+      </svg>
+    </div>
+    <div>
+      <div class="ct-name">Alhaji Tunde Adeyemi</div>
+      <div class="ct-role">Executive Governor <span class="ct-state ck">Kwara</span></div>
+    </div>
+    <span class="chip cg" style="margin-left:auto">HERO</span>
+  </div>
+  <div class="char-tab" onclick="selectChar('cos')" role="tab" aria-selected="false">
+    <div class="ct-avi" id="tab-avi-cos">
+      <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+        <rect width="32" height="32" fill="#080c16"/>
+        <ellipse cx="16" cy="23" rx="12" ry="6" fill="#12223a"/>
+        <ellipse cx="16" cy="13" rx="7" ry="7.5" fill="#7a5530"/>
+        <rect x="11" y="11" width="10" height="4" rx="2" fill="none" stroke="#c9a84c" stroke-width="0.9"/>
+        <line x1="11" y1="13" x2="21" y2="13" stroke="#c9a84c" stroke-width="0.6" opacity=".6"/>
+      </svg>
+    </div>
+    <div>
+      <div class="ct-name">Barr. Chidi Okafor</div>
+      <div class="ct-role">Chief of Staff <span class="ct-state ce">Enugu</span></div>
+    </div>
+    <span class="chip ca" style="margin-left:auto">SUPPORT</span>
+  </div>
+  <div class="char-tab" onclick="selectChar('npc')" role="tab" aria-selected="false">
+    <div class="ct-avi" id="tab-avi-npc">
+      <svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+        <rect width="32" height="32" fill="#07100f"/>
+        <ellipse cx="16" cy="23" rx="12" ry="6" fill="#1a6a7a"/>
+        <ellipse cx="16" cy="13" rx="7" ry="7.5" fill="#8a6035"/>
+        <path d="M9,13 Q10,7 16,7 Q22,7 23,13" fill="#1a6a7a"/>
+        <path d="M9,13 Q9.5,11 16,10.5 Q22.5,11 23,13" fill="#2a8a9a" opacity=".7"/>
+      </svg>
+    </div>
+    <div>
+      <div class="ct-name">Mama Fatima Abdullahi</div>
+      <div class="ct-role">Market Trader <span class="ct-state ck">Kwara</span></div>
+    </div>
+    <span class="chip ct" style="margin-left:auto">NPC</span>
+  </div>
+</div>
+
+<!-- ══ MAIN GRID ══ -->
+<div class="lab-main">
+
+  <!-- ── PORTRAIT PANEL ── -->
+  <div class="portrait-panel">
+
+    <!-- GOVERNOR -->
+    <div class="char-view on" id="cv-gov">
+      <div class="asset-state-bar">
+        <span class="asset-state-lbl">Asset State</span>
+        <span class="asset-state-val state-prototype">● Prototype</span>
+      </div>
+      <!-- View switcher -->
+      <div class="view-sw">
+        <button class="vsw-btn on" onclick="setView('gov','portrait',this)">Portrait</button>
+        <button class="vsw-btn" onclick="setView('gov','fullbody',this)">Full Body</button>
+        <button class="vsw-btn" onclick="setView('gov','avatar',this)">Avatar</button>
+        <button class="vsw-btn" onclick="setView('gov','campaign',this)">Campaign</button>
+        <button class="vsw-btn" onclick="setView('gov','3d',this)">3D ◎</button>
+      </div>
+      <!-- Portrait view (existing) -->
+      <div class="portrait-viewer pv-portrait" id="pv-gov">
+        <svg viewBox="0 0 260 320" xmlns="http://www.w3.org/2000/svg" id="svg-gov">
+          <defs>
+            <radialGradient id="gv-BG" cx="50%" cy="78%" r="72%">
+              <stop offset="0%" stop-color="rgba(46,107,62,0.40)"/>
+              <stop offset="100%" stop-color="rgba(7,8,12,1)"/>
+            </radialGradient>
+            <radialGradient id="gv-Sk" cx="46%" cy="30%" r="64%">
+              <stop offset="0%" stop-color="#b07838"/>
+              <stop offset="42%" stop-color="#8a5a28"/>
+              <stop offset="100%" stop-color="#4e2e12"/>
+            </radialGradient>
+            <radialGradient id="gv-Iris" cx="38%" cy="34%" r="60%">
+              <stop offset="0%" stop-color="#5c3818"/>
+              <stop offset="60%" stop-color="#1e0e04"/>
+              <stop offset="100%" stop-color="#0e0602"/>
+            </radialGradient>
+            <linearGradient id="gv-Ag" x1="5%" y1="0%" x2="8%" y2="100%">
+              <stop offset="0%" stop-color="#2e6638"/>
+              <stop offset="50%" stop-color="#1e5232"/>
+              <stop offset="100%" stop-color="#0e2818"/>
+            </linearGradient>
+            <linearGradient id="gv-Cap" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#163d22"/>
+              <stop offset="40%" stop-color="#245c30"/>
+              <stop offset="72%" stop-color="#2a6838"/>
+              <stop offset="100%" stop-color="#1a4828"/>
+            </linearGradient>
+            <filter id="gv-sf" x="-30%" y="-30%" width="160%" height="160%">
+              <feGaussianBlur stdDeviation="2.8"/>
+            </filter>
+          </defs>
+          <!-- Background -->
+          <rect width="260" height="320" fill="url(#gv-BG)"/>
+          <!-- Agbada body — draping with realistic fold shadows -->
+          <path d="M5,268 Q22,200 65,188 L88,178 Q130,236 172,178 L195,188 Q238,200 255,268 L260,320 L0,320Z" fill="url(#gv-Ag)"/>
+          <!-- Agbada fold shadows (fabric draping) -->
+          <path d="M82,192 Q90,222 88,268" stroke="rgba(0,0,0,0.18)" stroke-width="2.5" fill="none"/>
+          <path d="M178,192 Q170,222 172,268" stroke="rgba(0,0,0,0.18)" stroke-width="2.5" fill="none"/>
+          <path d="M108,190 Q105,230 107,275" stroke="rgba(0,0,0,0.12)" stroke-width="1.8" fill="none"/>
+          <path d="M152,190 Q155,230 153,275" stroke="rgba(0,0,0,0.12)" stroke-width="1.8" fill="none"/>
+          <path d="M95,192 Q94,242 96,278" stroke="rgba(0,0,0,0.08)" stroke-width="1.2" fill="none"/>
+          <path d="M165,192 Q166,242 164,278" stroke="rgba(0,0,0,0.08)" stroke-width="1.2" fill="none"/>
+          <!-- Agbada centre light highlight -->
+          <path d="M120,190 Q124,242 122,290 L138,290 Q136,242 140,190Z" fill="rgba(255,255,255,0.04)"/>
+          <!-- Gold collar embroidery — triple layer -->
+          <path d="M82,180 Q130,204 178,180" stroke="#c9a84c" stroke-width="2.8" fill="none" opacity=".90"/>
+          <path d="M86,186 Q130,208 174,186" stroke="#c9a84c" stroke-width="1.5" fill="none" opacity=".55"/>
+          <path d="M98,178 Q130,190 162,178" stroke="#c9a84c" stroke-width="1.2" fill="none" opacity=".65"/>
+          <circle cx="130" cy="185" r="3.8" fill="#c9a84c" opacity=".65"/>
+          <circle cx="110" cy="180" r="2.2" fill="#c9a84c" opacity=".45"/>
+          <circle cx="150" cy="180" r="2.2" fill="#c9a84c" opacity=".45"/>
+          <circle cx="118" cy="183" r="1.5" fill="#c9a84c" opacity=".35"/>
+          <circle cx="142" cy="183" r="1.5" fill="#c9a84c" opacity=".35"/>
+          <!-- Neck anatomy -->
+          <path d="M112,165 Q120,188 130,190 Q140,188 148,165 L144,162 Q130,172 116,162Z" fill="#7a5028"/>
+          <path d="M113,165 Q116,180 120,188" stroke="rgba(0,0,0,0.22)" stroke-width="4" fill="none" stroke-linecap="round"/>
+          <path d="M128,164 L128,185" stroke="rgba(180,130,80,0.22)" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <!-- HEAD — realistic face shape path (wider temples, defined jaw) -->
+          <path d="M130,74 C108,74 84,88 80,110 C76,132 79,150 86,164 C94,178 112,186 130,188 C148,186 166,178 174,164 C181,150 184,132 180,110 C176,88 152,74 130,74Z" fill="url(#gv-Sk)"/>
+          <!-- Facial plane shadows (3D modelling) -->
+          <path d="M80,110 Q78,130 86,164" stroke="rgba(0,0,0,0.16)" stroke-width="6" fill="none" stroke-linecap="round"/>
+          <path d="M180,110 Q182,130 174,164" stroke="rgba(0,0,0,0.16)" stroke-width="6" fill="none" stroke-linecap="round"/>
+          <path d="M86,164 Q96,182 130,186 Q164,182 174,164 Q164,172 130,174 Q96,172 86,164Z" fill="rgba(0,0,0,0.18)"/>
+          <!-- Cheekbone highlights -->
+          <path d="M88,132 Q96,126 110,128" stroke="rgba(200,155,90,0.18)" stroke-width="6" fill="none" stroke-linecap="round"/>
+          <path d="M172,132 Q164,126 150,128" stroke="rgba(200,155,90,0.18)" stroke-width="6" fill="none" stroke-linecap="round"/>
+          <!-- Fila cap — 3D cylindrical with gradient -->
+          <rect x="80" y="70" width="100" height="40" rx="3" fill="url(#gv-Cap)"/>
+          <ellipse cx="130" cy="70" rx="50" ry="10" fill="#2a6038"/>
+          <rect x="80" y="70" width="28" height="40" rx="3" fill="rgba(0,0,0,0.22)"/>
+          <rect x="150" y="72" width="18" height="32" fill="rgba(255,255,255,0.07)"/>
+          <rect x="80" y="107" width="100" height="5" fill="#163a20"/>
+          <rect x="80" y="95" width="100" height="4.5" fill="#c9a84c" opacity=".72"/>
+          <rect x="80" y="100" width="100" height="2" fill="#c9a84c" opacity=".38"/>
+          <path d="M84,82 L88,77 L92,82 L96,77 L100,82 L104,77 L108,82 L112,77 L116,82 L120,77 L124,82 L128,77 L132,82 L136,77 L140,82 L144,77 L148,82 L152,77 L156,82 L160,77 L164,82 L168,77 L172,82 L176,77" stroke="#c9a84c" stroke-width="0.9" fill="none" opacity=".42"/>
+          <!-- LEFT EAR — anatomical concha detail -->
+          <path d="M76,112 Q70,122 72,132 Q74,142 80,148 Q84,152 84,146 Q86,138 84,128 Q83,120 80,114Z" fill="#7a5028"/>
+          <path d="M76,116 Q73,125 75,133 Q77,140 80,144" stroke="#60401a" stroke-width="2.5" fill="none" stroke-linecap="round" opacity=".65"/>
+          <path d="M78,120 Q76,128 78,136" stroke="#4e3010" stroke-width="1.5" fill="none" opacity=".45"/>
+          <!-- RIGHT EAR — anatomical concha detail -->
+          <path d="M184,112 Q190,122 188,132 Q186,142 180,148 Q176,152 176,146 Q174,138 176,128 Q177,120 180,114Z" fill="#7a5028"/>
+          <path d="M184,116 Q187,125 185,133 Q183,140 180,144" stroke="#60401a" stroke-width="2.5" fill="none" stroke-linecap="round" opacity=".65"/>
+          <path d="M182,120 Q184,128 182,136" stroke="#4e3010" stroke-width="1.5" fill="none" opacity=".45"/>
+          <!-- BEARD — layered grey with strand highlights -->
+          <path d="M88,158 Q92,178 108,192 Q120,200 130,202 Q140,200 152,192 Q168,178 172,158" fill="#686868" opacity=".82"/>
+          <path d="M92,158 Q96,174 112,186 Q122,193 130,195 Q138,193 148,186 Q164,174 168,158" fill="#909090" opacity=".58"/>
+          <path d="M98,162 Q100,178 106,188" stroke="rgba(210,210,210,0.35)" stroke-width="1.2" fill="none"/>
+          <path d="M112,160 Q112,178 114,192" stroke="rgba(210,210,210,0.25)" stroke-width="1.0" fill="none"/>
+          <path d="M130,160 L130,195" stroke="rgba(210,210,210,0.20)" stroke-width="1.0" fill="none"/>
+          <path d="M150,162 Q148,178 144,188" stroke="rgba(210,210,210,0.25)" stroke-width="1.0" fill="none"/>
+          <!-- Moustache -->
+          <path d="M113,152 Q122,157 130,156 Q138,157 147,152 Q138,154 130,154 Q122,154 113,152Z" fill="#7a7a7a" opacity=".82"/>
+          <!-- NOSE — bridge + nostrils + philtrum -->
+          <path d="M126,112 L124,136 Q126,142 130,144 Q134,142 136,136 L134,112" fill="rgba(40,20,5,0.08)"/>
+          <path d="M129,112 L128.5,136" stroke="rgba(185,140,80,0.28)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <ellipse cx="130" cy="141" rx="7.5" ry="5.5" fill="rgba(50,25,8,0.12)"/>
+          <path d="M118,140 Q114,146 118,150 Q122,153 126,150 Q129,146 124,140 Q121,137 118,140Z" fill="rgba(15,6,1,0.38)"/>
+          <path d="M142,140 Q146,146 142,150 Q138,153 134,150 Q131,146 136,140 Q139,137 142,140Z" fill="rgba(15,6,1,0.38)"/>
+          <path d="M118,138 Q115,143 118,148" stroke="rgba(50,25,8,0.30)" stroke-width="1.2" fill="none"/>
+          <path d="M142,138 Q145,143 142,148" stroke="rgba(50,25,8,0.30)" stroke-width="1.2" fill="none"/>
+          <path d="M126,150 Q130,155 134,150" stroke="rgba(50,25,8,0.30)" stroke-width="1" fill="none"/>
+
+          <!-- EXPRESSION LAYERS — Neutral (default) -->
+          <g id="gov-expr-neutral" class="gov-expr">
+            <ellipse cx="107" cy="122" rx="14" ry="10" fill="rgba(0,0,0,0.18)" filter="url(#gv-sf)"/>
+            <ellipse cx="153" cy="122" rx="14" ry="10" fill="rgba(0,0,0,0.18)" filter="url(#gv-sf)"/>
+            <!-- LEFT EYE -->
+            <path d="M95,120 Q107,112 119,120 Q107,128 95,120Z" fill="#f0ebe0"/>
+            <circle cx="107" cy="120" r="6" fill="url(#gv-Iris)"/>
+            <circle cx="107" cy="120" r="3.2" fill="#0a0602"/>
+            <ellipse cx="109.5" cy="117" rx="1.8" ry="1.4" fill="rgba(255,255,255,0.92)"/>
+            <circle cx="104.5" cy="123.5" r="0.9" fill="rgba(255,255,255,0.38)"/>
+            <path d="M95,120 Q107,111 119,120" stroke="#2a1508" stroke-width="1.8" fill="none"/>
+            <path d="M96,121 Q107,128 118,121" stroke="#3a2010" stroke-width="0.9" fill="none" opacity=".55"/>
+            <path d="M97,117 Q107,114 117,117" stroke="#2a1508" stroke-width="0.7" fill="none" opacity=".45"/>
+            <line x1="97" y1="119" x2="95" y2="115" stroke="#1a0a04" stroke-width="1.1"/>
+            <line x1="101" y1="114" x2="100" y2="110" stroke="#1a0a04" stroke-width="1.1"/>
+            <line x1="107" y1="112" x2="107" y2="108" stroke="#1a0a04" stroke-width="1.1"/>
+            <line x1="113" y1="114" x2="114" y2="110" stroke="#1a0a04" stroke-width="1.1"/>
+            <line x1="117" y1="119" x2="119" y2="115" stroke="#1a0a04" stroke-width="1.1"/>
+            <!-- RIGHT EYE -->
+            <path d="M141,120 Q153,112 165,120 Q153,128 141,120Z" fill="#f0ebe0"/>
+            <circle cx="153" cy="120" r="6" fill="url(#gv-Iris)"/>
+            <circle cx="153" cy="120" r="3.2" fill="#0a0602"/>
+            <ellipse cx="155.5" cy="117" rx="1.8" ry="1.4" fill="rgba(255,255,255,0.92)"/>
+            <circle cx="150.5" cy="123.5" r="0.9" fill="rgba(255,255,255,0.38)"/>
+            <path d="M141,120 Q153,111 165,120" stroke="#2a1508" stroke-width="1.8" fill="none"/>
+            <path d="M142,121 Q153,128 164,121" stroke="#3a2010" stroke-width="0.9" fill="none" opacity=".55"/>
+            <path d="M143,117 Q153,114 163,117" stroke="#2a1508" stroke-width="0.7" fill="none" opacity=".45"/>
+            <line x1="143" y1="119" x2="141" y2="115" stroke="#1a0a04" stroke-width="1.1"/>
+            <line x1="147" y1="114" x2="146" y2="110" stroke="#1a0a04" stroke-width="1.1"/>
+            <line x1="153" y1="112" x2="153" y2="108" stroke="#1a0a04" stroke-width="1.1"/>
+            <line x1="159" y1="114" x2="160" y2="110" stroke="#1a0a04" stroke-width="1.1"/>
+            <line x1="163" y1="119" x2="165" y2="115" stroke="#1a0a04" stroke-width="1.1"/>
+            <!-- EYEBROWS — layered with hair texture -->
+            <path d="M94,110 Q103,104 117,107" stroke="#2a1508" stroke-width="4" stroke-linecap="round" fill="none"/>
+            <path d="M95,111 Q103,106 115,108" stroke="#3a2010" stroke-width="2" stroke-linecap="round" fill="none" opacity=".6"/>
+            <line x1="96" y1="112" x2="94" y2="108" stroke="#2a1508" stroke-width="0.9"/>
+            <line x1="101" y1="108" x2="100" y2="104" stroke="#2a1508" stroke-width="0.9"/>
+            <line x1="107" y1="106" x2="107" y2="102" stroke="#2a1508" stroke-width="0.9"/>
+            <line x1="112" y1="107" x2="113" y2="103" stroke="#2a1508" stroke-width="0.9"/>
+            <line x1="116" y1="109" x2="118" y2="106" stroke="#2a1508" stroke-width="0.9"/>
+            <path d="M143,107 Q157,104 166,110" stroke="#2a1508" stroke-width="4" stroke-linecap="round" fill="none"/>
+            <path d="M145,108 Q157,106 165,111" stroke="#3a2010" stroke-width="2" stroke-linecap="round" fill="none" opacity=".6"/>
+            <line x1="144" y1="109" x2="142" y2="106" stroke="#2a1508" stroke-width="0.9"/>
+            <line x1="149" y1="106" x2="148" y2="102" stroke="#2a1508" stroke-width="0.9"/>
+            <line x1="155" y1="105" x2="155" y2="101" stroke="#2a1508" stroke-width="0.9"/>
+            <line x1="160" y1="107" x2="161" y2="103" stroke="#2a1508" stroke-width="0.9"/>
+            <line x1="164" y1="110" x2="166" y2="107" stroke="#2a1508" stroke-width="0.9"/>
+            <!-- LIPS — cupid's bow + philtrum -->
+            <path d="M113,157 Q120,152 124,154 Q127,152 130,153 Q133,152 136,154 Q140,152 147,157 Q140,155 136,156 Q130,157 124,156 Q120,155 113,157Z" fill="#5a2a12"/>
+            <path d="M113,157 Q122,167 130,168 Q138,167 147,157 Q138,163 130,164 Q122,163 113,157Z" fill="#6a3018"/>
+            <path d="M124,162 Q130,165 136,162" stroke="rgba(200,150,90,0.28)" stroke-width="2" fill="none" stroke-linecap="round"/>
+            <path d="M113,157 Q130,154 147,157" stroke="#2a0e04" stroke-width="0.8" fill="none" opacity=".70"/>
+            <circle cx="113" cy="157" r="2" fill="rgba(0,0,0,0.25)"/>
+            <circle cx="147" cy="157" r="2" fill="rgba(0,0,0,0.25)"/>
+          </g>
+
+          <!-- EXPRESSION — Speaking -->
+          <g id="gov-expr-speaking" class="gov-expr" style="display:none">
+            <ellipse cx="107" cy="121" rx="14" ry="10" fill="rgba(0,0,0,0.18)" filter="url(#gv-sf)"/>
+            <ellipse cx="153" cy="121" rx="14" ry="10" fill="rgba(0,0,0,0.18)" filter="url(#gv-sf)"/>
+            <path d="M95,120 Q107,112 119,120 Q107,128 95,120Z" fill="#f0ebe0"/>
+            <circle cx="107" cy="120" r="6" fill="url(#gv-Iris)"/>
+            <circle cx="107" cy="120" r="3.2" fill="#0a0602"/>
+            <ellipse cx="109.5" cy="117" rx="1.8" ry="1.4" fill="rgba(255,255,255,0.92)"/>
+            <path d="M95,120 Q107,111 119,120" stroke="#2a1508" stroke-width="1.8" fill="none"/>
+            <path d="M96,121 Q107,128 118,121" stroke="#3a2010" stroke-width="0.9" fill="none" opacity=".55"/>
+            <line x1="97" y1="119" x2="95" y2="115" stroke="#1a0a04" stroke-width="1.1"/>
+            <line x1="107" y1="112" x2="107" y2="108" stroke="#1a0a04" stroke-width="1.1"/>
+            <line x1="117" y1="119" x2="119" y2="115" stroke="#1a0a04" stroke-width="1.1"/>
+            <path d="M141,120 Q153,112 165,120 Q153,128 141,120Z" fill="#f0ebe0"/>
+            <circle cx="153" cy="120" r="6" fill="url(#gv-Iris)"/>
+            <circle cx="153" cy="120" r="3.2" fill="#0a0602"/>
+            <ellipse cx="155.5" cy="117" rx="1.8" ry="1.4" fill="rgba(255,255,255,0.92)"/>
+            <path d="M141,120 Q153,111 165,120" stroke="#2a1508" stroke-width="1.8" fill="none"/>
+            <path d="M142,121 Q153,128 164,121" stroke="#3a2010" stroke-width="0.9" fill="none" opacity=".55"/>
+            <line x1="143" y1="119" x2="141" y2="115" stroke="#1a0a04" stroke-width="1.1"/>
+            <line x1="153" y1="112" x2="153" y2="108" stroke="#1a0a04" stroke-width="1.1"/>
+            <line x1="163" y1="119" x2="165" y2="115" stroke="#1a0a04" stroke-width="1.1"/>
+            <path d="M94,108 Q103,102 117,105" stroke="#2a1508" stroke-width="4" stroke-linecap="round" fill="none"/>
+            <path d="M143,105 Q157,102 166,108" stroke="#2a1508" stroke-width="4" stroke-linecap="round" fill="none"/>
+            <path d="M112,155 Q120,150 124,152 Q130,150 136,152 Q140,150 148,155 Q142,158 136,158 Q130,159 124,158 Q118,158 112,155Z" fill="#5a2a12"/>
+            <path d="M112,155 Q122,168 130,170 Q138,168 148,155 Q140,165 130,166 Q120,165 112,155Z" fill="#0e0806"/>
+            <path d="M118,162 Q130,167 142,162" fill="#c04060" opacity=".55"/>
+            <line x1="116" y1="156" x2="144" y2="156" stroke="rgba(240,220,200,0.40)" stroke-width="1.5"/>
+          </g>
+
+          <!-- EXPRESSION — Concerned -->
+          <g id="gov-expr-concerned" class="gov-expr" style="display:none">
+            <ellipse cx="107" cy="122" rx="14" ry="10" fill="rgba(0,0,0,0.18)" filter="url(#gv-sf)"/>
+            <ellipse cx="153" cy="122" rx="14" ry="10" fill="rgba(0,0,0,0.18)" filter="url(#gv-sf)"/>
+            <path d="M95,120 Q107,112 119,120 Q107,128 95,120Z" fill="#f0ebe0"/>
+            <circle cx="107" cy="120" r="6" fill="url(#gv-Iris)"/>
+            <circle cx="107" cy="120" r="3.2" fill="#0a0602"/>
+            <ellipse cx="109.5" cy="117" rx="1.8" ry="1.4" fill="rgba(255,255,255,0.85)"/>
+            <path d="M95,120 Q107,111 119,120" stroke="#2a1508" stroke-width="1.8" fill="none"/>
+            <path d="M96,121 Q107,128 118,121" stroke="#3a2010" stroke-width="0.9" fill="none" opacity=".55"/>
+            <path d="M141,120 Q153,112 165,120 Q153,128 141,120Z" fill="#f0ebe0"/>
+            <circle cx="153" cy="120" r="6" fill="url(#gv-Iris)"/>
+            <circle cx="153" cy="120" r="3.2" fill="#0a0602"/>
+            <ellipse cx="155.5" cy="117" rx="1.8" ry="1.4" fill="rgba(255,255,255,0.85)"/>
+            <path d="M141,120 Q153,111 165,120" stroke="#2a1508" stroke-width="1.8" fill="none"/>
+            <path d="M142,121 Q153,128 164,121" stroke="#3a2010" stroke-width="0.9" fill="none" opacity=".55"/>
+            <path d="M94,115 Q103,107 117,111" stroke="#2a1508" stroke-width="4" stroke-linecap="round" fill="none"/>
+            <path d="M143,111 Q157,107 166,115" stroke="#2a1508" stroke-width="4" stroke-linecap="round" fill="none"/>
+            <path d="M123,102 Q128,97 133,102" stroke="rgba(0,0,0,0.28)" stroke-width="1.2" fill="none"/>
+            <path d="M121,106 Q128,102 135,106" stroke="rgba(0,0,0,0.18)" stroke-width="0.9" fill="none"/>
+            <path d="M113,157 Q120,152 124,154 Q130,153 136,154 Q140,152 147,157 Q130,156 113,157Z" fill="#5a2a12"/>
+            <path d="M113,157 Q122,163 130,162 Q138,163 147,157 Q130,161 113,157Z" fill="#6a3018"/>
+            <path d="M113,159 Q122,162 130,162 Q138,162 147,159" stroke="#2a0e04" stroke-width="1.5" fill="none"/>
+          </g>
+
+          <!-- EXPRESSION — Determined -->
+          <g id="gov-expr-determined" class="gov-expr" style="display:none">
+            <ellipse cx="107" cy="122" rx="14" ry="10" fill="rgba(0,0,0,0.22)" filter="url(#gv-sf)"/>
+            <ellipse cx="153" cy="122" rx="14" ry="10" fill="rgba(0,0,0,0.22)" filter="url(#gv-sf)"/>
+            <path d="M95,121 Q107,113 119,121 Q107,129 95,121Z" fill="#f0ebe0"/>
+            <circle cx="107" cy="121" r="5.8" fill="url(#gv-Iris)"/>
+            <circle cx="107" cy="121" r="3.2" fill="#0a0602"/>
+            <ellipse cx="109.5" cy="118" rx="1.6" ry="1.2" fill="rgba(255,255,255,0.85)"/>
+            <path d="M95,121 Q107,112 119,121" stroke="#2a1508" stroke-width="2" fill="none"/>
+            <path d="M96,122 Q107,129 118,122" stroke="#3a2010" stroke-width="0.9" fill="none" opacity=".55"/>
+            <path d="M141,121 Q153,113 165,121 Q153,129 141,121Z" fill="#f0ebe0"/>
+            <circle cx="153" cy="121" r="5.8" fill="url(#gv-Iris)"/>
+            <circle cx="153" cy="121" r="3.2" fill="#0a0602"/>
+            <ellipse cx="155.5" cy="118" rx="1.6" ry="1.2" fill="rgba(255,255,255,0.85)"/>
+            <path d="M141,121 Q153,112 165,121" stroke="#2a1508" stroke-width="2" fill="none"/>
+            <path d="M142,122 Q153,129 164,122" stroke="#3a2010" stroke-width="0.9" fill="none" opacity=".55"/>
+            <path d="M93,113 Q103,109 117,111" stroke="#2a1508" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+            <path d="M143,111 Q157,109 167,113" stroke="#2a1508" stroke-width="4.5" stroke-linecap="round" fill="none"/>
+            <path d="M113,157 Q120,152 124,154 Q130,152 136,154 Q140,152 147,157 Q130,155 113,157Z" fill="#5a2a12"/>
+            <path d="M113,157 Q122,163 130,163 Q138,163 147,157 Q130,161 113,157Z" fill="#5a2a12"/>
+            <path d="M113,157 Q130,155 147,157" stroke="#1a0804" stroke-width="1.5" fill="none"/>
+          </g>
+
+          <!-- EXPRESSION — Amused -->
+          <g id="gov-expr-amused" class="gov-expr" style="display:none">
+            <ellipse cx="107" cy="122" rx="14" ry="10" fill="rgba(0,0,0,0.15)" filter="url(#gv-sf)"/>
+            <ellipse cx="153" cy="122" rx="14" ry="10" fill="rgba(0,0,0,0.15)" filter="url(#gv-sf)"/>
+            <path d="M95,121 Q107,114 119,121 Q107,128 95,121Z" fill="#f0ebe0"/>
+            <circle cx="107" cy="121" r="5.5" fill="url(#gv-Iris)"/>
+            <circle cx="107" cy="121" r="3" fill="#0a0602"/>
+            <ellipse cx="109.5" cy="118" rx="1.8" ry="1.4" fill="rgba(255,255,255,0.92)"/>
+            <path d="M95,121 Q107,113 119,121" stroke="#2a1508" stroke-width="1.8" fill="none"/>
+            <path d="M96,122 Q107,127 118,122" stroke="#3a2010" stroke-width="1.2" fill="none" opacity=".70"/>
+            <path d="M141,121 Q153,114 165,121 Q153,128 141,121Z" fill="#f0ebe0"/>
+            <circle cx="153" cy="121" r="5.5" fill="url(#gv-Iris)"/>
+            <circle cx="153" cy="121" r="3" fill="#0a0602"/>
+            <ellipse cx="155.5" cy="118" rx="1.8" ry="1.4" fill="rgba(255,255,255,0.92)"/>
+            <path d="M141,121 Q153,113 165,121" stroke="#2a1508" stroke-width="1.8" fill="none"/>
+            <path d="M142,122 Q153,127 164,122" stroke="#3a2010" stroke-width="1.2" fill="none" opacity=".70"/>
+            <path d="M94,109 Q103,104 117,107" stroke="#2a1508" stroke-width="4" stroke-linecap="round" fill="none"/>
+            <path d="M143,107 Q157,104 166,109" stroke="#2a1508" stroke-width="4" stroke-linecap="round" fill="none"/>
+            <path d="M96,128 Q99,134 97,140" stroke="rgba(50,25,8,0.28)" stroke-width="1.5" fill="none"/>
+            <path d="M164,128 Q161,134 163,140" stroke="rgba(50,25,8,0.28)" stroke-width="1.5" fill="none"/>
+            <path d="M110,154 Q120,163 130,165 Q140,163 150,154 Q140,161 130,162 Q120,161 110,154Z" fill="#0e0806"/>
+            <path d="M113,157 Q130,164 147,157" fill="#c04060" opacity=".50"/>
+            <line x1="114" y1="155" x2="146" y2="155" stroke="rgba(235,215,190,0.45)" stroke-width="1.5"/>
+            <path d="M110,154 Q120,150 124,152 Q130,150 136,152 Q140,150 150,154" stroke="#2a0e04" stroke-width="1" fill="none"/>
+          </g>
+
+          <!-- EXPRESSION — Alert -->
+          <g id="gov-expr-alert" class="gov-expr" style="display:none">
+            <ellipse cx="107" cy="120" rx="15" ry="11" fill="rgba(0,0,0,0.18)" filter="url(#gv-sf)"/>
+            <ellipse cx="153" cy="120" rx="15" ry="11" fill="rgba(0,0,0,0.18)" filter="url(#gv-sf)"/>
+            <path d="M93,120 Q107,111 121,120 Q107,129 93,120Z" fill="#f0ebe0"/>
+            <circle cx="107" cy="120" r="6.5" fill="url(#gv-Iris)"/>
+            <circle cx="107" cy="120" r="3.6" fill="#0a0602"/>
+            <ellipse cx="110" cy="116.5" rx="2.2" ry="1.8" fill="rgba(255,255,255,0.95)"/>
+            <circle cx="104" cy="123.5" r="1" fill="rgba(255,255,255,0.40)"/>
+            <path d="M93,120 Q107,110 121,120" stroke="#2a1508" stroke-width="2" fill="none"/>
+            <path d="M94,121 Q107,130 120,121" stroke="#3a2010" stroke-width="0.9" fill="none" opacity=".55"/>
+            <path d="M139,120 Q153,111 167,120 Q153,129 139,120Z" fill="#f0ebe0"/>
+            <circle cx="153" cy="120" r="6.5" fill="url(#gv-Iris)"/>
+            <circle cx="153" cy="120" r="3.6" fill="#0a0602"/>
+            <ellipse cx="156" cy="116.5" rx="2.2" ry="1.8" fill="rgba(255,255,255,0.95)"/>
+            <circle cx="150" cy="123.5" r="1" fill="rgba(255,255,255,0.40)"/>
+            <path d="M139,120 Q153,110 167,120" stroke="#2a1508" stroke-width="2" fill="none"/>
+            <path d="M140,121 Q153,130 166,121" stroke="#3a2010" stroke-width="0.9" fill="none" opacity=".55"/>
+            <path d="M92,106 Q103,100 117,103" stroke="#2a1508" stroke-width="4" stroke-linecap="round" fill="none"/>
+            <path d="M143,103 Q157,100 168,106" stroke="#2a1508" stroke-width="4" stroke-linecap="round" fill="none"/>
+            <path d="M108,96 Q115,93 122,96" stroke="rgba(0,0,0,0.18)" stroke-width="1" fill="none"/>
+            <path d="M138,96 Q145,93 152,96" stroke="rgba(0,0,0,0.18)" stroke-width="1" fill="none"/>
+            <path d="M114,157 Q122,153 130,153 Q138,153 146,157 Q130,156 114,157Z" fill="#5a2a12"/>
+            <path d="M114,157 Q122,163 130,163 Q138,163 146,157 Q130,161 114,157Z" fill="#6a3018"/>
+            <path d="M114,157 Q130,154 146,157" stroke="#1a0804" stroke-width="1" fill="none"/>
+          </g>
+
+          <!-- EXPRESSION — Celebration -->
+          <g id="gov-expr-celebration" class="gov-expr" style="display:none">
+            <ellipse cx="107" cy="121" rx="14" ry="10" fill="rgba(0,0,0,0.15)" filter="url(#gv-sf)"/>
+            <ellipse cx="153" cy="121" rx="14" ry="10" fill="rgba(0,0,0,0.15)" filter="url(#gv-sf)"/>
+            <path d="M95,121 Q107,115 119,121 Q107,127 95,121Z" fill="#f0ebe0"/>
+            <circle cx="107" cy="121" r="5" fill="url(#gv-Iris)"/>
+            <circle cx="107" cy="121" r="2.8" fill="#0a0602"/>
+            <ellipse cx="109.5" cy="118.5" rx="1.6" ry="1.2" fill="rgba(255,255,255,0.92)"/>
+            <path d="M95,121 Q107,114 119,121" stroke="#2a1508" stroke-width="1.8" fill="none"/>
+            <path d="M96,122 Q107,127 118,122" stroke="#3a2010" stroke-width="1.5" fill="none" opacity=".70"/>
+            <path d="M141,121 Q153,115 165,121 Q153,127 141,121Z" fill="#f0ebe0"/>
+            <circle cx="153" cy="121" r="5" fill="url(#gv-Iris)"/>
+            <circle cx="153" cy="121" r="2.8" fill="#0a0602"/>
+            <ellipse cx="155.5" cy="118.5" rx="1.6" ry="1.2" fill="rgba(255,255,255,0.92)"/>
+            <path d="M141,121 Q153,114 165,121" stroke="#2a1508" stroke-width="1.8" fill="none"/>
+            <path d="M142,122 Q153,127 164,122" stroke="#3a2010" stroke-width="1.5" fill="none" opacity=".70"/>
+            <path d="M93,104 Q103,97 117,101" stroke="#2a1508" stroke-width="4" stroke-linecap="round" fill="none"/>
+            <path d="M143,101 Q157,97 167,104" stroke="#2a1508" stroke-width="4" stroke-linecap="round" fill="none"/>
+            <path d="M95,128 Q98,135 95,143" stroke="rgba(50,25,8,0.30)" stroke-width="1.8" fill="none"/>
+            <path d="M165,128 Q162,135 165,143" stroke="rgba(50,25,8,0.30)" stroke-width="1.8" fill="none"/>
+            <path d="M107,153 Q118,167 130,169 Q142,167 153,153 Q142,162 130,163 Q118,162 107,153Z" fill="#0e0806"/>
+            <path d="M110,156 Q130,166 150,156" fill="#c04060" opacity=".50"/>
+            <line x1="112" y1="154" x2="148" y2="154" stroke="rgba(240,220,200,0.55)" stroke-width="2"/>
+            <path d="M107,153 Q118,148 124,150 Q130,148 136,150 Q142,148 153,153" stroke="#2a0e04" stroke-width="1" fill="none"/>
+          </g>
+          <!-- Character ID watermark -->
+          <text x="10" y="315" font-family="monospace" font-size="8" fill="rgba(201,168,76,0.22)" letter-spacing="2">NATAS-CHAR-001 · GOV-ADEYEMI</text>
+        </svg>
+        <div class="portrait-region-tag" style="background:rgba(6,14,8,0.82);color:var(--kwara2);border:1px solid var(--kwara-bd)">🟢 Kwara · Ilorin</div>
+      </div>
+
+      <!-- ── FULL-BODY VIEW ── -->
+      <div class="fullbody-viewer pv-fullbody" id="fb-gov" style="display:none">
+        <svg viewBox="0 0 160 400" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="fbBG1" cx="50%" cy="85%" r="65%">
+              <stop offset="0%" stop-color="rgba(46,107,62,0.30)"/>
+              <stop offset="100%" stop-color="rgba(7,8,12,1)"/>
+            </radialGradient>
+          </defs>
+          <rect width="160" height="400" fill="url(#fbBG1)"/>
+          <!-- Agbada outer robe — wide bat-wing silhouette -->
+          <path d="M30,115 L12,380 L148,380 L130,115Z" fill="#1e5232"/>
+          <!-- Agbada sleeve wings (hang to waist level) -->
+          <path d="M30,115 L4,210 L38,210 L30,115Z" fill="#1e5232"/>
+          <path d="M130,115 L156,210 L122,210 L130,115Z" fill="#1e5232"/>
+          <!-- Sleeve hem gold line -->
+          <line x1="4" y1="208" x2="38" y2="208" stroke="#c9a84c" stroke-width="1.8"/>
+          <line x1="122" y1="208" x2="156" y2="208" stroke="#c9a84c" stroke-width="1.8"/>
+          <!-- Hem gold embroidery band -->
+          <line x1="12" y1="374" x2="148" y2="374" stroke="#c9a84c" stroke-width="2.5"/>
+          <line x1="12" y1="368" x2="148" y2="368" stroke="#c9a84c" stroke-width="1" opacity=".45"/>
+          <!-- Hem geometric repeat (simplified) -->
+          <path d="M20,370 L26,364 L32,370 L38,364 L44,370 L50,364 L56,370 L62,364 L68,370 L74,364 L80,370 L86,364 L92,370 L98,364 L104,370 L110,364 L116,370 L122,364 L128,370 L134,364 L140,370" stroke="#c9a84c" stroke-width="0.8" fill="none" opacity=".40"/>
+          <!-- Center embroidery strip (V-neck down) -->
+          <path d="M68,118 L80,148 L92,118" fill="#285c3e"/>
+          <path d="M62,117 Q80,126 98,117" stroke="#c9a84c" stroke-width="1.8" fill="none"/>
+          <path d="M66,122 Q80,130 94,122" stroke="#c9a84c" stroke-width="1" fill="none" opacity=".50"/>
+          <!-- Center front panel -->
+          <path d="M68,148 L66,374 L94,374 L92,148Z" fill="#285c3e" opacity=".55"/>
+          <!-- Buba inner garment (visible at neck gap) -->
+          <!-- Sandals -->
+          <ellipse cx="62" cy="390" rx="16" ry="5.5" fill="#2a1808"/>
+          <ellipse cx="98" cy="390" rx="16" ry="5.5" fill="#2a1808"/>
+          <line x1="54" y1="386" x2="70" y2="386" stroke="#c9a84c" stroke-width="0.8" opacity=".5"/>
+          <line x1="90" y1="386" x2="106" y2="386" stroke="#c9a84c" stroke-width="0.8" opacity=".5"/>
+          <!-- Neck -->
+          <rect x="68" y="96" width="24" height="22" rx="7" fill="#7a5028"/>
+          <!-- Head -->
+          <ellipse cx="80" cy="72" rx="30" ry="32" fill="#7a5028"/>
+          <!-- Face highlight -->
+          <ellipse cx="80" cy="72" rx="26" ry="28" fill="#8a6030" opacity=".45"/>
+          <!-- Grey beard -->
+          <path d="M57,82 Q60,96 66,104 Q80,110 94,104 Q100,96 103,82" fill="#8a8a8a" opacity=".80"/>
+          <!-- Fila cap -->
+          <rect x="51" y="38" width="58" height="26" rx="3" fill="#1e5232"/>
+          <ellipse cx="80" cy="38" rx="29" ry="8" fill="#285c3e"/>
+          <rect x="51" y="57" width="58" height="3.5" fill="#c9a84c" opacity=".70"/>
+          <!-- Face minimal: eyes + nose -->
+          <ellipse cx="70" cy="68" rx="6" ry="4.5" fill="#f0ede8"/>
+          <ellipse cx="70" cy="68" rx="4.5" ry="3.5" fill="#1a0d06"/>
+          <ellipse cx="90" cy="68" rx="6" ry="4.5" fill="#f0ede8"/>
+          <ellipse cx="90" cy="68" rx="4.5" ry="3.5" fill="#1a0d06"/>
+          <path d="M74,78 Q80,83 86,78" stroke="#3a1e08" stroke-width="1.8" fill="none"/>
+          <!-- Asset ID -->
+          <text x="6" y="397" font-family="monospace" font-size="6" fill="rgba(201,168,76,0.22)" letter-spacing="1.5">CHAR-001 · FULL-BODY-01 · AGBADA</text>
+        </svg>
+      </div>
+
+      <!-- ── AVATAR VIEW ── -->
+      <div class="pv-avatar" id="av-gov" style="display:none">
+        <div class="avatar-section">
+          <div class="avatar-card">
+            <div class="avatar-circle kw">
+              <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+                <defs><clipPath id="clip-av-gov"><circle cx="40" cy="40" r="38"/></clipPath></defs>
+                <rect width="80" height="80" fill="#0a1410"/>
+                <ellipse cx="40" cy="60" rx="28" ry="12" fill="#1e5232"/>
+                <ellipse cx="40" cy="36" rx="20" ry="22" fill="#7a5028"/>
+                <path d="M22,48 Q24,56 28,60 Q40,66 52,60 Q56,56 58,48" fill="#888" opacity=".75"/>
+                <rect x="22" y="12" width="36" height="17" rx="2" fill="#1e5232"/>
+                <ellipse cx="40" cy="12" rx="18" ry="5.5" fill="#285c3e"/>
+                <rect x="22" y="23" width="36" height="2.5" fill="#c9a84c" opacity=".7"/>
+                <ellipse cx="32" cy="34" rx="6" ry="4.5" fill="#f0ede8"/>
+                <ellipse cx="32" cy="34" rx="4" ry="3.5" fill="#1a0d06"/>
+                <ellipse cx="48" cy="34" rx="6" ry="4.5" fill="#f0ede8"/>
+                <ellipse cx="48" cy="34" rx="4" ry="3.5" fill="#1a0d06"/>
+                <circle cx="40" cy="40" r="38" fill="none" stroke="rgba(46,107,62,0.40)" stroke-width="1.5" clip-path="url(#clip-av-gov)"/>
+              </svg>
+            </div>
+            <div class="avatar-label">Social</div>
+          </div>
+          <div class="avatar-card">
+            <div class="avatar-circle" style="border-color:var(--gold-bd)">
+              <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+                <defs><clipPath id="clip-av-gov2"><circle cx="40" cy="40" r="38"/></clipPath></defs>
+                <rect width="80" height="80" fill="#0e0b05"/>
+                <circle cx="40" cy="40" r="38" fill="url(#fbBG1)" clip-path="url(#clip-av-gov2)"/>
+                <ellipse cx="40" cy="62" rx="30" ry="14" fill="#1e5232"/>
+                <ellipse cx="40" cy="36" rx="20" ry="22" fill="#7a5028"/>
+                <rect x="22" y="12" width="36" height="17" rx="2" fill="#1e5232"/>
+                <rect x="22" y="23" width="36" height="2.5" fill="#c9a84c" opacity=".7"/>
+                <ellipse cx="32" cy="34" rx="6" ry="4.5" fill="#f0ede8"/>
+                <ellipse cx="32" cy="34" rx="4" ry="3.5" fill="#1a0d06"/>
+                <ellipse cx="48" cy="34" rx="6" ry="4.5" fill="#f0ede8"/>
+                <ellipse cx="48" cy="34" rx="4" ry="3.5" fill="#1a0d06"/>
+                <circle cx="40" cy="40" r="37" fill="none" stroke="rgba(201,168,76,0.50)" stroke-width="2"/>
+              </svg>
+            </div>
+            <div class="avatar-label">Profile</div>
+          </div>
+          <div class="avatar-card">
+            <div class="avatar-circle" style="border-color:var(--lat-bd)">
+              <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+                <defs><clipPath id="clip-av-gov3"><circle cx="40" cy="40" r="38"/></clipPath></defs>
+                <rect width="80" height="80" fill="#120806"/>
+                <ellipse cx="40" cy="62" rx="32" ry="14" fill="#1e5232"/>
+                <ellipse cx="40" cy="36" rx="20" ry="22" fill="#7a5028"/>
+                <path d="M22,50 Q24,58 28,63 Q40,68 52,63 Q56,58 58,50" fill="#888" opacity=".75"/>
+                <rect x="23" y="12" width="34" height="17" rx="2" fill="#1e5232"/>
+                <rect x="23" y="23" width="34" height="2.5" fill="#c9a84c" opacity=".7"/>
+                <ellipse cx="33" cy="34" rx="6" ry="4.5" fill="#f0ede8"/>
+                <ellipse cx="33" cy="34" rx="4" ry="3.5" fill="#1a0d06"/>
+                <ellipse cx="47" cy="34" rx="6" ry="4.5" fill="#f0ede8"/>
+                <ellipse cx="47" cy="34" rx="4" ry="3.5" fill="#1a0d06"/>
+                <path d="M34,43 Q40,46 46,43" stroke="#3a1e08" stroke-width="1.5" fill="none"/>
+                <circle cx="40" cy="40" r="37" fill="none" stroke="rgba(184,69,32,0.40)" stroke-width="1.5"/>
+              </svg>
+            </div>
+            <div class="avatar-label">Campaign</div>
+          </div>
+        </div>
+        <div style="font-size:10px;color:var(--t4);text-align:center;letter-spacing:0.06em;">NATAS-CHAR-001 · Avatar Variants · 80×80</div>
+      </div>
+
+      <!-- ── CAMPAIGN VIEW ── -->
+      <div class="campaign-viewer pv-campaign" id="cp-gov" style="display:none">
+        <svg viewBox="0 0 260 114" xmlns="http://www.w3.org/2000/svg">
+          <!-- Campaign banner background -->
+          <rect width="260" height="114" fill="#060e08"/>
+          <!-- Nigerian flag-inspired stripe (left edge) -->
+          <rect x="0" y="0" width="5" height="114" fill="#008751"/>
+          <rect x="5" y="0" width="5" height="114" fill="#f4f0ea" opacity=".15"/>
+          <!-- Background radial glow -->
+          <radialGradient id="campBG1" cx="30%" cy="50%" r="55%">
+            <stop offset="0%" stop-color="rgba(46,107,62,0.28)"/>
+            <stop offset="100%" stop-color="rgba(0,0,0,0)"/>
+          </radialGradient>
+          <rect width="260" height="114" fill="url(#campBG1)"/>
+          <!-- Gold accent line top -->
+          <rect x="0" y="0" width="260" height="2" fill="#c9a84c" opacity=".60"/>
+          <!-- Gold accent line bottom -->
+          <rect x="0" y="112" width="260" height="2" fill="#c9a84c" opacity=".60"/>
+          <!-- Character silhouette (right side) -->
+          <!-- Head -->
+          <ellipse cx="208" cy="46" rx="22" ry="24" fill="#7a5028"/>
+          <!-- Fila cap -->
+          <rect x="187" y="18" width="42" height="18" rx="2" fill="#1e5232"/>
+          <ellipse cx="208" cy="18" rx="21" ry="6" fill="#285c3e"/>
+          <rect x="187" y="30" width="42" height="2.5" fill="#c9a84c" opacity=".7"/>
+          <!-- Agbada bust shape -->
+          <path d="M172,68 L168,114 L248,114 L244,68Z" fill="#1e5232"/>
+          <path d="M172,68 L160,105 L180,105 L172,68Z" fill="#1e5232"/>
+          <path d="M244,68 L256,105 L236,105 L244,68Z" fill="#1e5232"/>
+          <!-- Gold collar -->
+          <path d="M191,70 Q208,78 225,70" stroke="#c9a84c" stroke-width="1.8" fill="none"/>
+          <!-- Face -->
+          <ellipse cx="200" cy="44" rx="5" ry="3.8" fill="#f0ede8"/>
+          <ellipse cx="200" cy="44" rx="3.5" ry="3" fill="#1a0d06"/>
+          <ellipse cx="216" cy="44" rx="5" ry="3.8" fill="#f0ede8"/>
+          <ellipse cx="216" cy="44" rx="3.5" ry="3" fill="#1a0d06"/>
+          <!-- Beard -->
+          <path d="M188,54 Q190,62 194,67 Q208,71 222,67 Q226,62 228,54" fill="#888" opacity=".70"/>
+          <!-- Campaign text -->
+          <text x="20" y="36" font-family="Inter,sans-serif" font-size="9" font-weight="900" fill="rgba(244,240,234,0.38)" letter-spacing="0.18em">NIGERIAN PEOPLE'S ALLIANCE</text>
+          <text x="20" y="58" font-family="Inter,sans-serif" font-size="18" font-weight="900" fill="#f4f0ea" letter-spacing="-0.02em">ADEYEMI</text>
+          <text x="20" y="73" font-family="Inter,sans-serif" font-size="11" font-weight="700" fill="#c9a84c" letter-spacing="0.05em">For Kwara · 2026</text>
+          <!-- Party crest placeholder -->
+          <circle cx="32" cy="95" r="10" fill="none" stroke="#c9a84c" stroke-width="1.5" opacity=".6"/>
+          <text x="27" y="99" font-family="Inter,sans-serif" font-size="9" font-weight="900" fill="#c9a84c" opacity=".7">NPA</text>
+          <!-- Fictional simulation notice -->
+          <text x="60" y="98" font-family="monospace" font-size="6" fill="rgba(239,68,68,0.55)" letter-spacing="0.12em">FICTIONAL SIMULATION · NOT A REAL CAMPAIGN</text>
+          <text x="20" y="108" font-family="monospace" font-size="6" fill="rgba(201,168,76,0.25)" letter-spacing="1">NATAS-CHAR-001 · CAMPAIGN-IMAGE-01</text>
+        </svg>
+      </div>
+
+      <!-- 3D View -->
+      <div class="pv-3d" id="pv3d-gov" style="display:none"></div>
+      <!-- 3D Animation controls (shown only in 3D view) -->
+      <div class="three-controls" id="3dctrl-gov" style="display:none">
+        <button class="anim-btn on" id="abtn-idle" onclick="setAnim3D('idle',this)">Idle</button>
+        <button class="anim-btn" id="abtn-walk" onclick="setAnim3D('walk',this)">Walking</button>
+        <button class="anim-btn" id="abtn-speak" onclick="setAnim3D('speak',this)">Speaking</button>
+        <button class="wd3d-btn on" id="wbtn-agbada" onclick="setWd3D('agbada',this)">Agbada</button>
+        <button class="wd3d-btn" id="wbtn-suit" onclick="setWd3D('suit',this)">Western</button>
+      </div>
+      <div class="three-hint" id="3dhint-gov" style="display:none">Drag to orbit · Scroll to zoom · Touch supported</div>
+
+      <!-- Expressions -->
+      <div class="expr-row" id="expr-gov">
+        <button class="expr-btn on" onclick="setExpr('gov','neutral',this)">Neutral</button>
+        <button class="expr-btn" onclick="setExpr('gov','speaking',this)">Speaking</button>
+        <button class="expr-btn" onclick="setExpr('gov','concerned',this)">Concerned</button>
+        <button class="expr-btn" onclick="setExpr('gov','determined',this)">Determined</button>
+        <button class="expr-btn" onclick="setExpr('gov','amused',this)">Amused</button>
+        <button class="expr-btn" onclick="setExpr('gov','alert',this)">Alert</button>
+        <button class="expr-btn" onclick="setExpr('gov','celebration',this)">Celebration</button>
+      </div>
+      <!-- Wardrobe -->
+      <div class="sec" style="width:100%">Wardrobe</div>
+      <div class="wardrobe-row">
+        <button class="wd-btn on" onclick="setWd('gov',0,this,'Government (Agbada + Fila)')">Gov't</button>
+        <button class="wd-btn" onclick="setWd('gov',1,this,'Professional (Western Suit)')">Western</button>
+        <button class="wd-btn" onclick="setWd('gov',2,this,'NPA Campaign Attire')">Campaign</button>
+        <button class="wd-btn" onclick="setWd('gov',3,this,'Full Traditional Yoruba')">Traditional</button>
+      </div>
+      <div class="wd-label" id="wd-label-gov">Government (Agbada + Fila)</div>
+    </div>
+
+    <!-- CHIEF OF STAFF -->
+    <div class="char-view" id="cv-cos">
+      <div class="asset-state-bar">
+        <span class="asset-state-lbl">Asset State</span>
+        <span class="asset-state-val state-prototype">● Prototype</span>
+      </div>
+      <div class="view-sw">
+        <button class="vsw-btn on" onclick="setView('cos','portrait',this)">Portrait</button>
+        <button class="vsw-btn" onclick="setView('cos','fullbody',this)">Full Body</button>
+        <button class="vsw-btn" onclick="setView('cos','avatar',this)">Avatar</button>
+        <button class="vsw-btn" onclick="setView('cos','campaign',this)">Campaign</button>
+        <button class="vsw-btn" onclick="setView('cos','3d',this)">3D ◎</button>
+      </div>
+      <div class="portrait-viewer pv-portrait" id="pv-cos">
+        <svg viewBox="0 0 260 320" xmlns="http://www.w3.org/2000/svg" id="svg-cos">
+          <defs>
+            <radialGradient id="cs-BG" cx="50%" cy="78%" r="70%">
+              <stop offset="0%" stop-color="rgba(28,77,150,0.32)"/>
+              <stop offset="100%" stop-color="rgba(7,8,12,1)"/>
+            </radialGradient>
+            <radialGradient id="cs-Sk" cx="46%" cy="30%" r="62%">
+              <stop offset="0%" stop-color="#a87038"/>
+              <stop offset="44%" stop-color="#7a4f28"/>
+              <stop offset="100%" stop-color="#4a2a14"/>
+            </radialGradient>
+            <radialGradient id="cs-Iris" cx="36%" cy="33%" r="60%">
+              <stop offset="0%" stop-color="#4a3010"/>
+              <stop offset="58%" stop-color="#180a02"/>
+              <stop offset="100%" stop-color="#0a0400"/>
+            </radialGradient>
+            <filter id="cs-sf" x="-30%" y="-30%" width="160%" height="160%">
+              <feGaussianBlur stdDeviation="2.5"/>
+            </filter>
+          </defs>
+          <rect width="260" height="320" fill="url(#cs-BG)"/>
+          <!-- Suit body — navy blue with sheen -->
+          <path d="M15,265 Q30,205 65,192 L90,182 L108,200 L130,195 L152,200 L170,182 L195,192 Q230,205 245,265 L260,320 L0,320Z" fill="#12223a"/>
+          <!-- Suit fabric highlight (left shoulder) -->
+          <path d="M65,192 Q72,200 80,220 Q70,212 65,192Z" fill="rgba(255,255,255,0.05)"/>
+          <!-- Lapels — notch lapel detail -->
+          <path d="M90,182 L108,200 L130,210 L108,260" fill="#0e1c30"/>
+          <path d="M170,182 L152,200 L130,210 L152,260" fill="#0e1c30"/>
+          <!-- Lapel edge highlight -->
+          <path d="M90,182 L108,200" stroke="rgba(255,255,255,0.08)" stroke-width="1" fill="none"/>
+          <path d="M170,182 L152,200" stroke="rgba(255,255,255,0.08)" stroke-width="1" fill="none"/>
+          <!-- White shirt -->
+          <path d="M108,200 L130,210 L152,200 L148,195 L130,202 L112,195Z" fill="#e8e4de"/>
+          <!-- Gold tie -->
+          <path d="M127,202 L124,215 L130,252 L136,215 L133,202Z" fill="#c9a84c" opacity=".88"/>
+          <!-- Neck anatomy -->
+          <path d="M112,167 Q120,187 130,189 Q140,187 148,167 L144,164 Q130,175 116,164Z" fill="#7a4f28"/>
+          <path d="M113,167 Q116,180 120,187" stroke="rgba(0,0,0,0.22)" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+          <!-- Shirt collar -->
+          <path d="M108,182 L118,172 L130,178 L142,172 L152,182" fill="#e8e4de" opacity=".90"/>
+          <!-- HEAD — realistic face shape (oval, strong jaw, Igbo features) -->
+          <path d="M130,72 C108,72 83,86 80,108 C77,130 80,148 87,162 C95,176 112,184 130,186 C148,184 165,176 173,162 C180,148 183,130 180,108 C177,86 152,72 130,72Z" fill="url(#cs-Sk)"/>
+          <!-- Facial plane shadows -->
+          <path d="M80,108 Q78,128 87,162" stroke="rgba(0,0,0,0.16)" stroke-width="5" fill="none" stroke-linecap="round"/>
+          <path d="M180,108 Q182,128 173,162" stroke="rgba(0,0,0,0.16)" stroke-width="5" fill="none" stroke-linecap="round"/>
+          <path d="M87,162 Q97,180 130,184 Q163,180 173,162 Q163,170 130,172 Q97,170 87,162Z" fill="rgba(0,0,0,0.18)"/>
+          <!-- Cheekbone highlights -->
+          <path d="M90,130 Q98,124 112,126" stroke="rgba(190,145,85,0.16)" stroke-width="5" fill="none" stroke-linecap="round"/>
+          <path d="M170,130 Q162,124 148,126" stroke="rgba(190,145,85,0.16)" stroke-width="5" fill="none" stroke-linecap="round"/>
+          <!-- HAIR — close-cropped natural, slight fade -->
+          <path d="M80,108 Q84,74 130,72 Q176,74 180,108 Q172,82 130,80 Q88,82 80,108Z" fill="#100804"/>
+          <ellipse cx="130" cy="74" rx="50" ry="9" fill="#140a06"/>
+          <!-- Hairline fade (subtle texture) -->
+          <path d="M80,108 Q82,96 90,90" stroke="rgba(16,8,4,0.60)" stroke-width="3" fill="none"/>
+          <path d="M180,108 Q178,96 170,90" stroke="rgba(16,8,4,0.60)" stroke-width="3" fill="none"/>
+          <!-- LEFT EAR -->
+          <path d="M76,110 Q70,120 72,130 Q74,140 80,146 Q83,150 83,144 Q85,136 83,126 Q82,118 79,112Z" fill="#7a4f28"/>
+          <path d="M76,114 Q73,123 75,131 Q77,138 80,142" stroke="#5e3a1a" stroke-width="2.2" fill="none" stroke-linecap="round" opacity=".65"/>
+          <!-- RIGHT EAR -->
+          <path d="M184,110 Q190,120 188,130 Q186,140 180,146 Q177,150 177,144 Q175,136 177,126 Q178,118 181,112Z" fill="#7a4f28"/>
+          <path d="M184,114 Q187,123 185,131 Q183,138 180,142" stroke="#5e3a1a" stroke-width="2.2" fill="none" stroke-linecap="round" opacity=".65"/>
+          <!-- GOLD SPECTACLES — signature identifier -->
+          <rect x="91" y="117" width="30" height="20" rx="10" fill="none" stroke="#c9a84c" stroke-width="2.4"/>
+          <rect x="139" y="117" width="30" height="20" rx="10" fill="none" stroke="#c9a84c" stroke-width="2.4"/>
+          <line x1="121" y1="127" x2="139" y2="127" stroke="#c9a84c" stroke-width="2.2"/>
+          <line x1="91" y1="127" x2="78" y2="129" stroke="#c9a84c" stroke-width="1.8" stroke-linecap="round"/>
+          <line x1="169" y1="127" x2="182" y2="129" stroke="#c9a84c" stroke-width="1.8" stroke-linecap="round"/>
+          <!-- Lens tint -->
+          <rect x="92" y="118" width="28" height="18" rx="9" fill="rgba(40,160,230,0.07)"/>
+          <rect x="140" y="118" width="28" height="18" rx="9" fill="rgba(40,160,230,0.07)"/>
+          <!-- Frame glint -->
+          <path d="M92,119 L96,119" stroke="rgba(255,240,180,0.40)" stroke-width="1.2" stroke-linecap="round"/>
+          <path d="M140,119 L144,119" stroke="rgba(255,240,180,0.40)" stroke-width="1.2" stroke-linecap="round"/>
+          <!-- NOSE — bridge + realistic nostrils -->
+          <path d="M126,114 L124,137 Q126,143 130,145 Q134,143 136,137 L134,114" fill="rgba(35,18,5,0.08)"/>
+          <path d="M129,114 L128.5,137" stroke="rgba(175,130,75,0.25)" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+          <ellipse cx="130" cy="142" rx="7" ry="5" fill="rgba(40,20,5,0.12)"/>
+          <path d="M119,141 Q115,147 119,151 Q123,154 127,151 Q130,147 125,141 Q122,138 119,141Z" fill="rgba(12,5,1,0.36)"/>
+          <path d="M141,141 Q145,147 141,151 Q137,154 133,151 Q130,147 135,141 Q138,138 141,141Z" fill="rgba(12,5,1,0.36)"/>
+          <path d="M127,151 Q130,156 133,151" stroke="rgba(40,20,5,0.28)" stroke-width="1" fill="none"/>
+
+          <!-- EXPRESSIONS — Neutral -->
+          <g id="cos-expr-neutral" class="cos-expr">
+            <ellipse cx="106" cy="128" rx="13" ry="9" fill="rgba(0,0,0,0.15)" filter="url(#cs-sf)"/>
+            <ellipse cx="154" cy="128" rx="13" ry="9" fill="rgba(0,0,0,0.15)" filter="url(#cs-sf)"/>
+            <!-- LEFT EYE (behind spectacle) -->
+            <path d="M94,127 Q106,120 118,127 Q106,134 94,127Z" fill="#f0ebe0"/>
+            <circle cx="106" cy="127" r="5.8" fill="url(#cs-Iris)"/>
+            <circle cx="106" cy="127" r="3" fill="#0a0400"/>
+            <ellipse cx="108.5" cy="124" rx="1.6" ry="1.2" fill="rgba(255,255,255,0.88)"/>
+            <path d="M94,127 Q106,119 118,127" stroke="#1a0d06" stroke-width="1.6" fill="none"/>
+            <path d="M95,128 Q106,135 117,128" stroke="#2a1808" stroke-width="0.8" fill="none" opacity=".50"/>
+            <!-- RIGHT EYE (behind spectacle) -->
+            <path d="M142,127 Q154,120 166,127 Q154,134 142,127Z" fill="#f0ebe0"/>
+            <circle cx="154" cy="127" r="5.8" fill="url(#cs-Iris)"/>
+            <circle cx="154" cy="127" r="3" fill="#0a0400"/>
+            <ellipse cx="156.5" cy="124" rx="1.6" ry="1.2" fill="rgba(255,255,255,0.88)"/>
+            <path d="M142,127 Q154,119 166,127" stroke="#1a0d06" stroke-width="1.6" fill="none"/>
+            <path d="M143,128 Q154,135 165,128" stroke="#2a1808" stroke-width="0.8" fill="none" opacity=".50"/>
+            <!-- Eyebrows (above spectacle) -->
+            <path d="M92,111 Q105,106 118,109" stroke="#1a0d06" stroke-width="3.2" stroke-linecap="round" fill="none"/>
+            <path d="M93,112 Q105,108 116,110" stroke="#2a1808" stroke-width="1.6" stroke-linecap="round" fill="none" opacity=".55"/>
+            <line x1="94" y1="113" x2="92" y2="109" stroke="#1a0d06" stroke-width="0.9"/>
+            <line x1="99" y1="109" x2="98" y2="105" stroke="#1a0d06" stroke-width="0.9"/>
+            <line x1="105" y1="107" x2="105" y2="103" stroke="#1a0d06" stroke-width="0.9"/>
+            <line x1="111" y1="108" x2="112" y2="104" stroke="#1a0d06" stroke-width="0.9"/>
+            <path d="M142,109 Q155,106 166,111" stroke="#1a0d06" stroke-width="3.2" stroke-linecap="round" fill="none"/>
+            <path d="M143,110 Q155,108 164,112" stroke="#2a1808" stroke-width="1.6" stroke-linecap="round" fill="none" opacity=".55"/>
+            <line x1="143" y1="111" x2="141" y2="107" stroke="#1a0d06" stroke-width="0.9"/>
+            <line x1="148" y1="108" x2="147" y2="104" stroke="#1a0d06" stroke-width="0.9"/>
+            <line x1="154" y1="107" x2="154" y2="103" stroke="#1a0d06" stroke-width="0.9"/>
+            <line x1="160" y1="108" x2="161" y2="104" stroke="#1a0d06" stroke-width="0.9"/>
+            <!-- LIPS — composed, professional -->
+            <path d="M115,157 Q122,152 126,154 Q128,152 130,153 Q132,152 134,154 Q138,152 145,157 Q138,155 130,156 Q122,155 115,157Z" fill="#582812"/>
+            <path d="M115,157 Q123,165 130,166 Q137,165 145,157 Q137,162 130,163 Q123,162 115,157Z" fill="#6a3018"/>
+            <path d="M123,161 Q130,164 137,161" stroke="rgba(190,140,80,0.25)" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+            <path d="M115,157 Q130,154 145,157" stroke="#280e04" stroke-width="0.8" fill="none" opacity=".65"/>
+          </g>
+
+          <!-- EXPRESSION — Briefing -->
+          <g id="cos-expr-briefing" class="cos-expr" style="display:none">
+            <ellipse cx="106" cy="128" rx="13" ry="9" fill="rgba(0,0,0,0.15)" filter="url(#cs-sf)"/>
+            <ellipse cx="154" cy="128" rx="13" ry="9" fill="rgba(0,0,0,0.15)" filter="url(#cs-sf)"/>
+            <path d="M94,127 Q106,120 118,127 Q106,134 94,127Z" fill="#f0ebe0"/>
+            <circle cx="106" cy="127" r="5.8" fill="url(#cs-Iris)"/>
+            <circle cx="106" cy="127" r="3" fill="#0a0400"/>
+            <ellipse cx="108.5" cy="124" rx="1.6" ry="1.2" fill="rgba(255,255,255,0.90)"/>
+            <path d="M94,127 Q106,119 118,127" stroke="#1a0d06" stroke-width="1.6" fill="none"/>
+            <path d="M142,127 Q154,120 166,127 Q154,134 142,127Z" fill="#f0ebe0"/>
+            <circle cx="154" cy="127" r="5.8" fill="url(#cs-Iris)"/>
+            <circle cx="154" cy="127" r="3" fill="#0a0400"/>
+            <ellipse cx="156.5" cy="124" rx="1.6" ry="1.2" fill="rgba(255,255,255,0.90)"/>
+            <path d="M142,127 Q154,119 166,127" stroke="#1a0d06" stroke-width="1.6" fill="none"/>
+            <!-- One brow slightly raised (briefing) -->
+            <path d="M92,108 Q105,103 118,107" stroke="#1a0d06" stroke-width="3.2" stroke-linecap="round" fill="none"/>
+            <path d="M142,109 Q155,106 166,111" stroke="#1a0d06" stroke-width="3.2" stroke-linecap="round" fill="none"/>
+            <!-- Slight parted lips -->
+            <path d="M115,155 Q122,150 126,152 Q130,151 134,152 Q138,150 145,155 Q130,154 115,155Z" fill="#582812"/>
+            <path d="M115,155 Q123,162 130,163 Q137,162 145,155 Q130,161 115,155Z" fill="#6a3018"/>
+            <path d="M120,158 Q130,162 140,158" fill="#c03858" opacity=".45"/>
+            <path d="M115,155 Q130,152 145,155" stroke="#280e04" stroke-width="0.8" fill="none"/>
+          </g>
+
+          <!-- EXPRESSION — Concerned -->
+          <g id="cos-expr-concerned" class="cos-expr" style="display:none">
+            <ellipse cx="106" cy="128" rx="13" ry="9" fill="rgba(0,0,0,0.15)" filter="url(#cs-sf)"/>
+            <ellipse cx="154" cy="128" rx="13" ry="9" fill="rgba(0,0,0,0.15)" filter="url(#cs-sf)"/>
+            <path d="M94,127 Q106,120 118,127 Q106,134 94,127Z" fill="#f0ebe0"/>
+            <circle cx="106" cy="127" r="5.8" fill="url(#cs-Iris)"/>
+            <circle cx="106" cy="127" r="3" fill="#0a0400"/>
+            <ellipse cx="108.5" cy="124" rx="1.6" ry="1.2" fill="rgba(255,255,255,0.82)"/>
+            <path d="M94,127 Q106,119 118,127" stroke="#1a0d06" stroke-width="1.6" fill="none"/>
+            <path d="M142,127 Q154,120 166,127 Q154,134 142,127Z" fill="#f0ebe0"/>
+            <circle cx="154" cy="127" r="5.8" fill="url(#cs-Iris)"/>
+            <circle cx="154" cy="127" r="3" fill="#0a0400"/>
+            <ellipse cx="156.5" cy="124" rx="1.6" ry="1.2" fill="rgba(255,255,255,0.82)"/>
+            <path d="M142,127 Q154,119 166,127" stroke="#1a0d06" stroke-width="1.6" fill="none"/>
+            <path d="M92,113 Q105,106 118,111" stroke="#1a0d06" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+            <path d="M142,111 Q155,106 166,113" stroke="#1a0d06" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+            <path d="M123,103 Q128,99 133,103" stroke="rgba(0,0,0,0.25)" stroke-width="1.2" fill="none"/>
+            <path d="M115,160 Q122,156 130,156 Q138,156 145,160" stroke="#3a1e08" stroke-width="2" stroke-linecap="round" fill="none"/>
+            <path d="M115,157 Q130,155 145,157" fill="rgba(88,40,18,0.5)"/>
+          </g>
+
+          <!-- EXPRESSION — Calculating -->
+          <g id="cos-expr-calculating" class="cos-expr" style="display:none">
+            <ellipse cx="106" cy="128" rx="13" ry="9" fill="rgba(0,0,0,0.20)" filter="url(#cs-sf)"/>
+            <ellipse cx="154" cy="128" rx="13" ry="9" fill="rgba(0,0,0,0.20)" filter="url(#cs-sf)"/>
+            <!-- Narrowed eyes (squint) -->
+            <path d="M94,127 Q106,121 118,127 Q106,133 94,127Z" fill="#f0ebe0"/>
+            <circle cx="106" cy="127" r="5.2" fill="url(#cs-Iris)"/>
+            <circle cx="106" cy="127" r="2.8" fill="#0a0400"/>
+            <ellipse cx="108" cy="124.5" rx="1.4" ry="1.0" fill="rgba(255,255,255,0.80)"/>
+            <path d="M94,127 Q106,120 118,127" stroke="#1a0d06" stroke-width="2" fill="none"/>
+            <path d="M95,128 Q106,133 117,128" stroke="#2a1808" stroke-width="1.2" fill="none" opacity=".65"/>
+            <path d="M142,127 Q154,121 166,127 Q154,133 142,127Z" fill="#f0ebe0"/>
+            <circle cx="154" cy="127" r="5.2" fill="url(#cs-Iris)"/>
+            <circle cx="154" cy="127" r="2.8" fill="#0a0400"/>
+            <ellipse cx="156" cy="124.5" rx="1.4" ry="1.0" fill="rgba(255,255,255,0.80)"/>
+            <path d="M142,127 Q154,120 166,127" stroke="#1a0d06" stroke-width="2" fill="none"/>
+            <path d="M143,128 Q154,133 165,128" stroke="#2a1808" stroke-width="1.2" fill="none" opacity=".65"/>
+            <!-- Level brows (analytical) -->
+            <path d="M92,111 Q105,109 118,111" stroke="#1a0d06" stroke-width="3.8" stroke-linecap="round" fill="none"/>
+            <path d="M142,111 Q155,109 166,111" stroke="#1a0d06" stroke-width="3.8" stroke-linecap="round" fill="none"/>
+            <!-- Firm mouth -->
+            <path d="M115,157 Q130,155 145,157" stroke="#3a1e08" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+            <path d="M115,157 Q130,154 145,157" fill="rgba(88,40,18,0.45)"/>
+          </g>
+
+          <!-- EXPRESSION — Satisfied (celebration) -->
+          <g id="cos-expr-celebration" class="cos-expr" style="display:none">
+            <ellipse cx="106" cy="127" rx="13" ry="9" fill="rgba(0,0,0,0.12)" filter="url(#cs-sf)"/>
+            <ellipse cx="154" cy="127" rx="13" ry="9" fill="rgba(0,0,0,0.12)" filter="url(#cs-sf)"/>
+            <path d="M94,127 Q106,120 118,127 Q106,134 94,127Z" fill="#f0ebe0"/>
+            <circle cx="106" cy="127" r="5.8" fill="url(#cs-Iris)"/>
+            <circle cx="106" cy="127" r="3" fill="#0a0400"/>
+            <ellipse cx="108.5" cy="124" rx="1.6" ry="1.2" fill="rgba(255,255,255,0.92)"/>
+            <path d="M94,127 Q106,119 118,127" stroke="#1a0d06" stroke-width="1.6" fill="none"/>
+            <path d="M95,128 Q106,133 117,128" stroke="#2a1808" stroke-width="1" fill="none" opacity=".65"/>
+            <path d="M142,127 Q154,120 166,127 Q154,134 142,127Z" fill="#f0ebe0"/>
+            <circle cx="154" cy="127" r="5.8" fill="url(#cs-Iris)"/>
+            <circle cx="154" cy="127" r="3" fill="#0a0400"/>
+            <ellipse cx="156.5" cy="124" rx="1.6" ry="1.2" fill="rgba(255,255,255,0.92)"/>
+            <path d="M142,127 Q154,119 166,127" stroke="#1a0d06" stroke-width="1.6" fill="none"/>
+            <path d="M143,128 Q154,133 165,128" stroke="#2a1808" stroke-width="1" fill="none" opacity=".65"/>
+            <path d="M92,107 Q105,102 118,106" stroke="#1a0d06" stroke-width="3.2" stroke-linecap="round" fill="none"/>
+            <path d="M142,106 Q155,102 166,107" stroke="#1a0d06" stroke-width="3.2" stroke-linecap="round" fill="none"/>
+            <path d="M98,131 Q100,136 98,141" stroke="rgba(0,0,0,0.15)" stroke-width="1.2" fill="none"/>
+            <path d="M162,131 Q160,136 162,141" stroke="rgba(0,0,0,0.15)" stroke-width="1.2" fill="none"/>
+            <!-- Smile -->
+            <path d="M113,154 Q122,163 130,164 Q138,163 147,154 Q138,161 130,162 Q122,161 113,154Z" fill="#0e0806"/>
+            <path d="M116,157 Q130,163 144,157" fill="#c03858" opacity=".50"/>
+            <line x1="116" y1="155" x2="144" y2="155" stroke="rgba(230,210,185,0.45)" stroke-width="1.5"/>
+            <path d="M113,154 Q122,149 126,151 Q130,149 134,151 Q138,149 147,154" stroke="#280e04" stroke-width="0.9" fill="none"/>
+          </g>
+          <text x="10" y="315" font-family="monospace" font-size="8" fill="rgba(74,130,212,0.22)" letter-spacing="2">NATAS-CHAR-002 · COS-OKAFOR</text>
+        </svg>
+        <div class="portrait-region-tag" style="background:rgba(5,9,20,0.82);color:var(--enugu2);border:1px solid var(--enugu-bd)">🔵 Enugu Origin</div>
+      </div>
+
+      <!-- CoS Full-Body View -->
+      <div class="fullbody-viewer pv-fullbody" id="fb-cos" style="display:none">
+        <svg viewBox="0 0 160 400" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="fbBG2" cx="50%" cy="85%" r="65%">
+              <stop offset="0%" stop-color="rgba(28,77,150,0.25)"/>
+              <stop offset="100%" stop-color="rgba(7,8,12,1)"/>
+            </radialGradient>
+          </defs>
+          <rect width="160" height="400" fill="url(#fbBG2)"/>
+          <!-- Suit trousers -->
+          <path d="M52,230 L44,390 L72,390 L80,280 L88,390 L116,390 L108,230Z" fill="#12223a"/>
+          <!-- Suit jacket body -->
+          <path d="M38,140 L34,240 L126,240 L122,140Z" fill="#12223a"/>
+          <!-- Jacket lapels -->
+          <path d="M80,142 L68,158 L72,240 L80,230 L88,240 L92,158Z" fill="#0e1c30"/>
+          <!-- White shirt + collar visible -->
+          <path d="M72,140 L68,158 L80,165 L92,158 L88,140Z" fill="#e8e4de"/>
+          <!-- Gold tie -->
+          <rect x="77" y="158" width="6" height="60" rx="3" fill="#c9a84c" opacity=".82"/>
+          <!-- Jacket breast pocket -->
+          <rect x="96" y="158" width="16" height="10" rx="2" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="0.8"/>
+          <!-- Pocket square (gold) -->
+          <path d="M98,158 L104,154 L110,158" fill="#c9a84c" opacity=".55"/>
+          <!-- Shirt cuffs -->
+          <rect x="34" y="218" width="14" height="8" rx="3" fill="#e8e4de" opacity=".75"/>
+          <rect x="112" y="218" width="14" height="8" rx="3" fill="#e8e4de" opacity=".75"/>
+          <!-- Brief/folder in right hand -->
+          <rect x="112" y="175" width="22" height="34" rx="2" fill="#8a6830" opacity=".70"/>
+          <line x1="112" y1="182" x2="134" y2="182" stroke="rgba(201,168,76,0.30)" stroke-width="0.8"/>
+          <!-- Dress shoes -->
+          <path d="M44,388 Q50,398 72,398 Q76,390 72,388Z" fill="#1a1008"/>
+          <path d="M88,388 Q92,398 116,398 Q120,390 116,388Z" fill="#1a1008"/>
+          <!-- Neck -->
+          <rect x="68" y="112" width="24" height="30" rx="7" fill="#7a4f28"/>
+          <!-- Head -->
+          <ellipse cx="80" cy="90" rx="28" ry="30" fill="#7a4f28"/>
+          <!-- Hair close-cropped -->
+          <path d="M53,80 Q56,56 80,54 Q104,56 107,80 Q100,64 80,62 Q60,64 53,80Z" fill="#120806"/>
+          <!-- GOLD SPECTACLES — canonical identifier -->
+          <rect x="57" y="87" width="20" height="13" rx="6" fill="none" stroke="#c9a84c" stroke-width="1.8"/>
+          <rect x="83" y="87" width="20" height="13" rx="6" fill="none" stroke="#c9a84c" stroke-width="1.8"/>
+          <line x1="77" y1="93" x2="83" y2="93" stroke="#c9a84c" stroke-width="1.8"/>
+          <line x1="57" y1="93" x2="48" y2="95" stroke="#c9a84c" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="103" y1="93" x2="112" y2="95" stroke="#c9a84c" stroke-width="1.5" stroke-linecap="round"/>
+          <!-- Face: nose + mouth -->
+          <path d="M75,99 Q80,104 85,99" stroke="#4e2e16" stroke-width="1.2" fill="none" opacity=".6"/>
+          <path d="M72,107 Q80,111 88,107" stroke="#3a1e08" stroke-width="1.8" fill="none"/>
+          <text x="6" y="397" font-family="monospace" font-size="6" fill="rgba(74,130,212,0.22)" letter-spacing="1.5">CHAR-002 · FULL-BODY-01 · SUIT</text>
+        </svg>
+      </div>
+
+      <!-- CoS Avatar View -->
+      <div class="pv-avatar" id="av-cos" style="display:none">
+        <div class="avatar-section">
+          <div class="avatar-card">
+            <div class="avatar-circle en">
+              <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+                <rect width="80" height="80" fill="#080c16"/>
+                <ellipse cx="40" cy="60" rx="28" ry="12" fill="#12223a"/>
+                <ellipse cx="40" cy="36" rx="18" ry="20" fill="#7a4f28"/>
+                <path d="M22,50 L22,80 L58,80 L58,50" fill="#12223a"/>
+                <!-- spectacles -->
+                <rect x="26" y="33" width="11" height="8" rx="4" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+                <rect x="43" y="33" width="11" height="8" rx="4" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+                <line x1="37" y1="37" x2="43" y2="37" stroke="#c9a84c" stroke-width="1.5"/>
+                <path d="M22,50 Q24,60 28,64 Q40,69 52,64 Q56,60 58,50" fill="#888" opacity=".5"/>
+                <circle cx="40" cy="40" r="37" fill="none" stroke="rgba(28,77,150,0.40)" stroke-width="1.5"/>
+              </svg>
+            </div>
+            <div class="avatar-label">Social</div>
+          </div>
+          <div class="avatar-card">
+            <div class="avatar-circle" style="border-color:var(--gold-bd)">
+              <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+                <rect width="80" height="80" fill="#070a10"/>
+                <ellipse cx="40" cy="62" rx="30" ry="14" fill="#12223a"/>
+                <ellipse cx="40" cy="36" rx="18" ry="20" fill="#7a4f28"/>
+                <rect x="26" y="33" width="11" height="8" rx="4" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+                <rect x="43" y="33" width="11" height="8" rx="4" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+                <line x1="37" y1="37" x2="43" y2="37" stroke="#c9a84c" stroke-width="1.5"/>
+                <circle cx="40" cy="40" r="37" fill="none" stroke="rgba(201,168,76,0.50)" stroke-width="2"/>
+              </svg>
+            </div>
+            <div class="avatar-label">Profile</div>
+          </div>
+        </div>
+        <div style="font-size:10px;color:var(--t4);text-align:center;letter-spacing:0.06em;">NATAS-CHAR-002 · Avatar Variants · 80×80</div>
+      </div>
+
+      <!-- CoS Campaign View -->
+      <div class="campaign-viewer pv-campaign" id="cp-cos" style="display:none">
+        <svg viewBox="0 0 260 114" xmlns="http://www.w3.org/2000/svg">
+          <rect width="260" height="114" fill="#060810"/>
+          <rect x="0" y="0" width="5" height="114" fill="#1c4d96"/>
+          <radialGradient id="campBG2" cx="30%" cy="50%" r="55%">
+            <stop offset="0%" stop-color="rgba(28,77,150,0.22)"/>
+            <stop offset="100%" stop-color="rgba(0,0,0,0)"/>
+          </radialGradient>
+          <rect width="260" height="114" fill="url(#campBG2)"/>
+          <rect x="0" y="0" width="260" height="2" fill="#4a82d4" opacity=".50"/>
+          <rect x="0" y="112" width="260" height="2" fill="#4a82d4" opacity=".50"/>
+          <!-- Character -->
+          <ellipse cx="210" cy="44" rx="20" ry="22" fill="#7a4f28"/>
+          <path d="M175,70 L173,114 L247,114 L245,70Z" fill="#12223a"/>
+          <!-- spectacles on small figure -->
+          <rect x="201" y="40" width="9" height="6" rx="3" fill="none" stroke="#c9a84c" stroke-width="1.2"/>
+          <rect x="214" y="40" width="9" height="6" rx="3" fill="none" stroke="#c9a84c" stroke-width="1.2"/>
+          <line x1="210" y1="43" x2="214" y2="43" stroke="#c9a84c" stroke-width="1.2"/>
+          <!-- Text -->
+          <text x="20" y="34" font-family="Inter,sans-serif" font-size="8" font-weight="900" fill="rgba(74,130,212,0.55)" letter-spacing="0.15em">OFFICE OF THE CHIEF OF STAFF</text>
+          <text x="20" y="57" font-family="Inter,sans-serif" font-size="17" font-weight="900" fill="#f4f0ea" letter-spacing="-0.02em">OKAFOR</text>
+          <text x="20" y="72" font-family="Inter,sans-serif" font-size="10" font-weight="700" fill="#4a82d4" letter-spacing="0.04em">Barr. Chidi Okafor · CoS Kwara</text>
+          <text x="20" y="98" font-family="monospace" font-size="6" fill="rgba(239,68,68,0.50)" letter-spacing="0.12em">FICTIONAL SIMULATION</text>
+          <text x="20" y="108" font-family="monospace" font-size="6" fill="rgba(74,130,212,0.22)" letter-spacing="1">NATAS-CHAR-002 · CAMPAIGN-IMAGE-01</text>
+        </svg>
+      </div>
+
+      <!-- 3D View — concept state for CoS -->
+      <div class="pv-3d" id="pv3d-cos" style="display:none">
+        <div class="three-placeholder">
+          <span style="font-size:28px;opacity:0.3">◎</span>
+          <span>3D Model</span>
+          <span class="chip ca" style="margin-top:4px">Concept</span>
+          <span style="font-size:10px;color:var(--t4);letter-spacing:0;text-transform:none;margin-top:6px">NATAS-CHAR-002 · 3D pending</span>
+        </div>
+      </div>
+
+      <div class="expr-row" id="expr-cos">
+        <button class="expr-btn on" onclick="setExpr('cos','neutral',this)">Neutral</button>
+        <button class="expr-btn" onclick="setExpr('cos','briefing',this)">Briefing</button>
+        <button class="expr-btn" onclick="setExpr('cos','concerned',this)">Concerned</button>
+        <button class="expr-btn" onclick="setExpr('cos','calculating',this)">Calculating</button>
+        <button class="expr-btn" onclick="setExpr('cos','celebration',this)">Celebration</button>
+      </div>
+      <div class="sec" style="width:100%">Wardrobe</div>
+      <div class="wardrobe-row">
+        <button class="wd-btn on" onclick="setWd('cos',0,this,'Professional (Navy Suit + Gold Tie)')">Pro Suit</button>
+        <button class="wd-btn" onclick="setWd('cos',1,this,'Smart Casual (Kaftan + Trousers)')">Casual</button>
+        <button class="wd-btn" onclick="setWd('cos',2,this,'NPA Campaign Branded Attire')">Campaign</button>
+      </div>
+      <div class="wd-label" id="wd-label-cos">Professional (Navy Suit + Gold Tie)</div>
+    </div>
+
+    <!-- NPC CITIZEN -->
+    <div class="char-view" id="cv-npc">
+      <div class="asset-state-bar">
+        <span class="asset-state-lbl">Asset State</span>
+        <span class="asset-state-val state-concept">◌ Concept</span>
+      </div>
+      <div class="view-sw">
+        <button class="vsw-btn on" onclick="setView('npc','portrait',this)">Portrait</button>
+        <button class="vsw-btn" onclick="setView('npc','fullbody',this)">Full Body</button>
+        <button class="vsw-btn" onclick="setView('npc','avatar',this)">Avatar</button>
+        <button class="vsw-btn" onclick="setView('npc','campaign',this)">Campaign</button>
+        <button class="vsw-btn" onclick="setView('npc','3d',this)">3D ◎</button>
+      </div>
+      <div class="portrait-viewer pv-portrait" id="pv-npc">
+        <svg viewBox="0 0 260 320" xmlns="http://www.w3.org/2000/svg" id="svg-npc">
+          <defs>
+            <radialGradient id="np-BG" cx="50%" cy="78%" r="70%">
+              <stop offset="0%" stop-color="rgba(26,106,122,0.34)"/>
+              <stop offset="100%" stop-color="rgba(7,8,12,1)"/>
+            </radialGradient>
+            <radialGradient id="np-Sk" cx="46%" cy="34%" r="60%">
+              <stop offset="0%" stop-color="#b07840"/>
+              <stop offset="44%" stop-color="#7e5528"/>
+              <stop offset="100%" stop-color="#4a2e13"/>
+            </radialGradient>
+            <radialGradient id="np-Iris" cx="36%" cy="32%" r="60%">
+              <stop offset="0%" stop-color="#503820"/>
+              <stop offset="58%" stop-color="#1c0e04"/>
+              <stop offset="100%" stop-color="#0e0602"/>
+            </radialGradient>
+            <linearGradient id="np-Hij" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#226080"/>
+              <stop offset="55%" stop-color="#1a5870"/>
+              <stop offset="100%" stop-color="#0e3c50"/>
+            </linearGradient>
+            <filter id="np-sf" x="-30%" y="-30%" width="160%" height="160%">
+              <feGaussianBlur stdDeviation="2.4"/>
+            </filter>
+          </defs>
+          <rect width="260" height="320" fill="url(#np-BG)"/>
+          <!-- Market background hint -->
+          <rect x="0" y="245" width="260" height="75" fill="rgba(184,69,32,0.08)"/>
+          <!-- Bubu fabric body with pattern -->
+          <path d="M20,270 Q35,210 70,198 L90,192 Q130,245 170,192 L190,198 Q225,210 240,270 L260,320 L0,320Z" fill="#1a6070" opacity=".82"/>
+          <!-- Bubu fold shadows -->
+          <path d="M88,196 Q92,228 90,272" stroke="rgba(0,0,0,0.14)" stroke-width="2" fill="none"/>
+          <path d="M172,196 Q168,228 170,272" stroke="rgba(0,0,0,0.14)" stroke-width="2" fill="none"/>
+          <!-- Ankara-inspired pattern lines -->
+          <path d="M62,232 Q92,212 130,216 Q168,212 198,232" stroke="rgba(201,168,76,0.22)" stroke-width="1.5" fill="none"/>
+          <path d="M56,248 Q92,228 130,232 Q168,228 204,248" stroke="rgba(201,168,76,0.16)" stroke-width="1" fill="none"/>
+          <!-- Market apron (top stitch detail) -->
+          <rect x="90" y="215" width="80" height="92" rx="4" fill="rgba(22,68,38,0.52)" opacity=".72"/>
+          <path d="M90,225 L170,225" stroke="rgba(201,168,76,0.22)" stroke-width="0.9" fill="none"/>
+          <path d="M90,234 L170,234" stroke="rgba(201,168,76,0.12)" stroke-width="0.6" fill="none"/>
+          <!-- Neck -->
+          <path d="M113,170 Q120,190 130,192 Q140,190 147,170 L143,167 Q130,178 117,167Z" fill="#7e5528"/>
+          <path d="M114,170 Q117,183 121,190" stroke="rgba(0,0,0,0.18)" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+          <!-- HEAD — realistic face path (oval, slightly wider at cheeks) -->
+          <path d="M130,72 C108,72 85,85 82,107 C79,129 82,148 89,162 C97,176 113,184 130,186 C147,184 163,176 171,162 C178,148 181,129 178,107 C175,85 152,72 130,72Z" fill="url(#np-Sk)"/>
+          <!-- Facial plane shadows -->
+          <path d="M82,107 Q80,128 89,162" stroke="rgba(0,0,0,0.14)" stroke-width="5" fill="none" stroke-linecap="round"/>
+          <path d="M178,107 Q180,128 171,162" stroke="rgba(0,0,0,0.14)" stroke-width="5" fill="none" stroke-linecap="round"/>
+          <path d="M89,162 Q99,180 130,184 Q161,180 171,162 Q161,170 130,172 Q99,170 89,162Z" fill="rgba(0,0,0,0.16)"/>
+          <!-- Cheekbone highlights -->
+          <path d="M90,130 Q98,124 112,126" stroke="rgba(190,145,85,0.15)" stroke-width="5" fill="none" stroke-linecap="round"/>
+          <path d="M170,130 Q162,124 148,126" stroke="rgba(190,145,85,0.15)" stroke-width="5" fill="none" stroke-linecap="round"/>
+          <!-- HIJAB (teal/blue — Kwara Islamic identity) -->
+          <path d="M80,124 Q75,88 80,68 Q90,48 130,46 Q170,48 180,68 Q185,88 180,124 Q175,145 164,158 L153,171 L130,179 L107,171 L96,158 Z" fill="url(#np-Hij)"/>
+          <!-- Hijab face opening ellipse -->
+          <ellipse cx="130" cy="128" rx="44" ry="52" fill="url(#np-Sk)"/>
+          <!-- Hijab inner frame (face-framing edge) -->
+          <path d="M86,108 Q90,76 130,72 Q170,76 174,108 Q170,94 130,91 Q90,94 86,108Z" fill="#1a5870"/>
+          <!-- Hijab inner frame shadow/depth -->
+          <path d="M86,108 Q89,96 100,90" stroke="rgba(0,0,0,0.20)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <path d="M174,108 Q171,96 160,90" stroke="rgba(0,0,0,0.20)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <!-- Hijab bottom drape with fabric folds -->
+          <path d="M80,124 Q78,155 80,176 Q95,192 130,197 Q165,192 180,176 Q182,155 180,124" fill="url(#np-Hij)" opacity=".92"/>
+          <!-- Hijab fold lines (draping) -->
+          <path d="M82,130 Q80,152 82,174" stroke="rgba(0,0,0,0.14)" stroke-width="2" fill="none"/>
+          <path d="M178,130 Q180,152 178,174" stroke="rgba(0,0,0,0.14)" stroke-width="2" fill="none"/>
+          <path d="M92,158 Q90,170 92,180" stroke="rgba(0,0,0,0.10)" stroke-width="1.5" fill="none"/>
+          <path d="M168,158 Q170,170 168,180" stroke="rgba(0,0,0,0.10)" stroke-width="1.5" fill="none"/>
+          <!-- Hijab gold geometric pattern (Islamic-inspired border) -->
+          <path d="M82,134 L86,129 L90,134 L94,129 L98,134 L102,129" stroke="rgba(201,168,76,0.24)" stroke-width="0.8" fill="none"/>
+          <path d="M158,134 L162,129 L166,134 L170,129 L174,134 L178,129" stroke="rgba(201,168,76,0.24)" stroke-width="0.8" fill="none"/>
+          <!-- NOSE — realistic with nostrils -->
+          <path d="M126,115 L124,138 Q126,144 130,146 Q134,144 136,138 L134,115" fill="rgba(38,18,5,0.08)"/>
+          <path d="M129,115 L128.5,138" stroke="rgba(180,135,78,0.24)" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <ellipse cx="130" cy="143" rx="7" ry="5.2" fill="rgba(45,22,6,0.12)"/>
+          <path d="M119,142 Q115,148 119,152 Q123,155 127,152 Q130,148 125,142 Q122,139 119,142Z" fill="rgba(12,5,1,0.34)"/>
+          <path d="M141,142 Q145,148 141,152 Q137,155 133,152 Q130,148 135,142 Q138,139 141,142Z" fill="rgba(12,5,1,0.34)"/>
+          <path d="M127,152 Q130,157 133,152" stroke="rgba(45,22,6,0.28)" stroke-width="1" fill="none"/>
+
+          <!-- EXPRESSIONS — Neutral -->
+          <g id="npc-expr-neutral" class="npc-expr">
+            <ellipse cx="109" cy="122" rx="13" ry="9" fill="rgba(0,0,0,0.16)" filter="url(#np-sf)"/>
+            <ellipse cx="151" cy="122" rx="13" ry="9" fill="rgba(0,0,0,0.16)" filter="url(#np-sf)"/>
+            <!-- LEFT EYE -->
+            <path d="M97,121 Q109,113 121,121 Q109,129 97,121Z" fill="#f0ebe0"/>
+            <circle cx="109" cy="121" r="5.8" fill="url(#np-Iris)"/>
+            <circle cx="109" cy="121" r="3" fill="#0a0602"/>
+            <ellipse cx="111.5" cy="118" rx="1.6" ry="1.2" fill="rgba(255,255,255,0.90)"/>
+            <circle cx="106.5" cy="124.5" r="0.8" fill="rgba(255,255,255,0.35)"/>
+            <path d="M97,121 Q109,112 121,121" stroke="#2a1508" stroke-width="1.7" fill="none"/>
+            <path d="M98,122 Q109,129 120,122" stroke="#3a2010" stroke-width="0.8" fill="none" opacity=".52"/>
+            <path d="M99,118 Q109,115 119,118" stroke="#2a1508" stroke-width="0.6" fill="none" opacity=".42"/>
+            <line x1="99" y1="120" x2="97" y2="116" stroke="#1a0a04" stroke-width="1.0"/>
+            <line x1="103" y1="115" x2="102" y2="111" stroke="#1a0a04" stroke-width="1.0"/>
+            <line x1="109" y1="113" x2="109" y2="109" stroke="#1a0a04" stroke-width="1.0"/>
+            <line x1="115" y1="115" x2="116" y2="111" stroke="#1a0a04" stroke-width="1.0"/>
+            <line x1="119" y1="120" x2="121" y2="116" stroke="#1a0a04" stroke-width="1.0"/>
+            <!-- RIGHT EYE -->
+            <path d="M139,121 Q151,113 163,121 Q151,129 139,121Z" fill="#f0ebe0"/>
+            <circle cx="151" cy="121" r="5.8" fill="url(#np-Iris)"/>
+            <circle cx="151" cy="121" r="3" fill="#0a0602"/>
+            <ellipse cx="153.5" cy="118" rx="1.6" ry="1.2" fill="rgba(255,255,255,0.90)"/>
+            <circle cx="148.5" cy="124.5" r="0.8" fill="rgba(255,255,255,0.35)"/>
+            <path d="M139,121 Q151,112 163,121" stroke="#2a1508" stroke-width="1.7" fill="none"/>
+            <path d="M140,122 Q151,129 162,122" stroke="#3a2010" stroke-width="0.8" fill="none" opacity=".52"/>
+            <path d="M141,118 Q151,115 161,118" stroke="#2a1508" stroke-width="0.6" fill="none" opacity=".42"/>
+            <line x1="141" y1="120" x2="139" y2="116" stroke="#1a0a04" stroke-width="1.0"/>
+            <line x1="145" y1="115" x2="144" y2="111" stroke="#1a0a04" stroke-width="1.0"/>
+            <line x1="151" y1="113" x2="151" y2="109" stroke="#1a0a04" stroke-width="1.0"/>
+            <line x1="157" y1="115" x2="158" y2="111" stroke="#1a0a04" stroke-width="1.0"/>
+            <line x1="161" y1="120" x2="163" y2="116" stroke="#1a0a04" stroke-width="1.0"/>
+            <!-- Eyebrows (slightly arched, feminine) -->
+            <path d="M96,111 Q108,105 120,109" stroke="#2a1508" stroke-width="3.2" stroke-linecap="round" fill="none"/>
+            <path d="M97,112 Q108,107 118,110" stroke="#3a2010" stroke-width="1.6" stroke-linecap="round" fill="none" opacity=".55"/>
+            <line x1="97" y1="113" x2="95" y2="109" stroke="#2a1508" stroke-width="0.9"/>
+            <line x1="102" y1="108" x2="101" y2="104" stroke="#2a1508" stroke-width="0.9"/>
+            <line x1="108" y1="106" x2="108" y2="102" stroke="#2a1508" stroke-width="0.9"/>
+            <line x1="114" y1="108" x2="115" y2="104" stroke="#2a1508" stroke-width="0.9"/>
+            <path d="M140,109 Q152,105 162,111" stroke="#2a1508" stroke-width="3.2" stroke-linecap="round" fill="none"/>
+            <path d="M141,110 Q152,107 161,112" stroke="#3a2010" stroke-width="1.6" stroke-linecap="round" fill="none" opacity=".55"/>
+            <line x1="141" y1="111" x2="139" y2="107" stroke="#2a1508" stroke-width="0.9"/>
+            <line x1="146" y1="108" x2="145" y2="104" stroke="#2a1508" stroke-width="0.9"/>
+            <line x1="152" y1="106" x2="152" y2="102" stroke="#2a1508" stroke-width="0.9"/>
+            <line x1="158" y1="108" x2="159" y2="104" stroke="#2a1508" stroke-width="0.9"/>
+            <!-- LIPS — warm, kind expression -->
+            <path d="M114,158 Q121,153 125,155 Q128,153 130,154 Q132,153 135,155 Q139,153 146,158 Q139,156 130,157 Q121,156 114,158Z" fill="#7a3820"/>
+            <path d="M114,158 Q122,167 130,168 Q138,167 146,158 Q138,164 130,165 Q122,164 114,158Z" fill="#8a4228"/>
+            <path d="M124,162 Q130,165 136,162" stroke="rgba(195,145,85,0.28)" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+            <path d="M114,158 Q130,155 146,158" stroke="#3a1808" stroke-width="0.8" fill="none" opacity=".65"/>
+            <circle cx="114" cy="158" r="1.8" fill="rgba(0,0,0,0.20)"/>
+            <circle cx="146" cy="158" r="1.8" fill="rgba(0,0,0,0.20)"/>
+          </g>
+
+          <!-- EXPRESSION — Enthusiastic -->
+          <g id="npc-expr-enthusiastic" class="npc-expr" style="display:none">
+            <ellipse cx="109" cy="122" rx="13" ry="9" fill="rgba(0,0,0,0.14)" filter="url(#np-sf)"/>
+            <ellipse cx="151" cy="122" rx="13" ry="9" fill="rgba(0,0,0,0.14)" filter="url(#np-sf)"/>
+            <path d="M97,121 Q109,113 121,121 Q109,129 97,121Z" fill="#f0ebe0"/>
+            <circle cx="109" cy="121" r="5.8" fill="url(#np-Iris)"/>
+            <circle cx="109" cy="121" r="3" fill="#0a0602"/>
+            <ellipse cx="111.5" cy="118" rx="1.8" ry="1.4" fill="rgba(255,255,255,0.92)"/>
+            <path d="M97,121 Q109,112 121,121" stroke="#2a1508" stroke-width="1.7" fill="none"/>
+            <path d="M98,122 Q109,128 120,122" stroke="#3a2010" stroke-width="1.2" fill="none" opacity=".68"/>
+            <line x1="99" y1="120" x2="97" y2="116" stroke="#1a0a04" stroke-width="1.0"/>
+            <line x1="109" y1="113" x2="109" y2="109" stroke="#1a0a04" stroke-width="1.0"/>
+            <line x1="119" y1="120" x2="121" y2="116" stroke="#1a0a04" stroke-width="1.0"/>
+            <path d="M139,121 Q151,113 163,121 Q151,129 139,121Z" fill="#f0ebe0"/>
+            <circle cx="151" cy="121" r="5.8" fill="url(#np-Iris)"/>
+            <circle cx="151" cy="121" r="3" fill="#0a0602"/>
+            <ellipse cx="153.5" cy="118" rx="1.8" ry="1.4" fill="rgba(255,255,255,0.92)"/>
+            <path d="M139,121 Q151,112 163,121" stroke="#2a1508" stroke-width="1.7" fill="none"/>
+            <path d="M140,122 Q151,128 162,122" stroke="#3a2010" stroke-width="1.2" fill="none" opacity=".68"/>
+            <line x1="141" y1="120" x2="139" y2="116" stroke="#1a0a04" stroke-width="1.0"/>
+            <line x1="151" y1="113" x2="151" y2="109" stroke="#1a0a04" stroke-width="1.0"/>
+            <line x1="161" y1="120" x2="163" y2="116" stroke="#1a0a04" stroke-width="1.0"/>
+            <path d="M96,109 Q108,103 120,107" stroke="#2a1508" stroke-width="3.2" stroke-linecap="round" fill="none"/>
+            <path d="M140,107 Q152,103 162,109" stroke="#2a1508" stroke-width="3.2" stroke-linecap="round" fill="none"/>
+            <path d="M97,130 Q100,136 97,142" stroke="rgba(50,25,8,0.28)" stroke-width="1.5" fill="none"/>
+            <path d="M163,130 Q160,136 163,142" stroke="rgba(50,25,8,0.28)" stroke-width="1.5" fill="none"/>
+            <!-- Big smile -->
+            <path d="M111,155 Q120,166 130,167 Q140,166 149,155 Q140,163 130,164 Q120,163 111,155Z" fill="#0e0806"/>
+            <path d="M114,158 Q130,165 146,158" fill="#b84060" opacity=".50"/>
+            <line x1="114" y1="156" x2="146" y2="156" stroke="rgba(230,210,185,0.45)" stroke-width="1.5"/>
+            <path d="M111,155 Q121,150 125,152 Q130,150 135,152 Q139,150 149,155" stroke="#3a1808" stroke-width="0.9" fill="none"/>
+          </g>
+
+          <!-- EXPRESSION — Skeptical -->
+          <g id="npc-expr-skeptical" class="npc-expr" style="display:none">
+            <ellipse cx="109" cy="122" rx="13" ry="9" fill="rgba(0,0,0,0.16)" filter="url(#np-sf)"/>
+            <ellipse cx="151" cy="122" rx="13" ry="9" fill="rgba(0,0,0,0.16)" filter="url(#np-sf)"/>
+            <path d="M97,121 Q109,113 121,121 Q109,129 97,121Z" fill="#f0ebe0"/>
+            <circle cx="109" cy="121" r="5.5" fill="url(#np-Iris)"/>
+            <circle cx="109" cy="121" r="2.9" fill="#0a0602"/>
+            <ellipse cx="111.5" cy="118.5" rx="1.5" ry="1.1" fill="rgba(255,255,255,0.85)"/>
+            <path d="M97,121 Q109,113 121,121" stroke="#2a1508" stroke-width="1.7" fill="none"/>
+            <path d="M139,121 Q151,113 163,121 Q151,129 139,121Z" fill="#f0ebe0"/>
+            <circle cx="151" cy="121" r="5.5" fill="url(#np-Iris)"/>
+            <circle cx="151" cy="121" r="2.9" fill="#0a0602"/>
+            <ellipse cx="153.5" cy="118.5" rx="1.5" ry="1.1" fill="rgba(255,255,255,0.85)"/>
+            <path d="M139,121 Q151,113 163,121" stroke="#2a1508" stroke-width="1.7" fill="none"/>
+            <!-- One brow raised (skeptical) -->
+            <path d="M96,108 Q108,103 120,108" stroke="#2a1508" stroke-width="3.2" stroke-linecap="round" fill="none"/>
+            <path d="M140,111 Q152,108 162,113" stroke="#2a1508" stroke-width="3.2" stroke-linecap="round" fill="none"/>
+            <!-- Mouth slight asymmetry -->
+            <path d="M115,158 Q122,154 130,155 Q138,154 145,158 Q130,157 115,158Z" fill="#7a3820"/>
+            <path d="M115,158 Q123,164 130,163 Q137,164 145,158 Q130,162 115,158Z" fill="#8a4228"/>
+            <path d="M115,159 Q122,162 130,162 Q138,162 145,160" stroke="#3a1808" stroke-width="1.5" fill="none"/>
+          </g>
+
+          <!-- EXPRESSION — Worried -->
+          <g id="npc-expr-worried" class="npc-expr" style="display:none">
+            <ellipse cx="109" cy="123" rx="13" ry="9" fill="rgba(0,0,0,0.18)" filter="url(#np-sf)"/>
+            <ellipse cx="151" cy="123" rx="13" ry="9" fill="rgba(0,0,0,0.18)" filter="url(#np-sf)"/>
+            <path d="M97,121 Q109,113 121,121 Q109,129 97,121Z" fill="#f0ebe0"/>
+            <circle cx="109" cy="121" r="5.8" fill="url(#np-Iris)"/>
+            <circle cx="109" cy="121" r="3" fill="#0a0602"/>
+            <ellipse cx="111.5" cy="118" rx="1.6" ry="1.2" fill="rgba(255,255,255,0.80)"/>
+            <path d="M97,121 Q109,112 121,121" stroke="#2a1508" stroke-width="1.7" fill="none"/>
+            <path d="M139,121 Q151,113 163,121 Q151,129 139,121Z" fill="#f0ebe0"/>
+            <circle cx="151" cy="121" r="5.8" fill="url(#np-Iris)"/>
+            <circle cx="151" cy="121" r="3" fill="#0a0602"/>
+            <ellipse cx="153.5" cy="118" rx="1.6" ry="1.2" fill="rgba(255,255,255,0.80)"/>
+            <path d="M139,121 Q151,112 163,121" stroke="#2a1508" stroke-width="1.7" fill="none"/>
+            <!-- Furrowed brows (worried) -->
+            <path d="M96,114 Q108,107 120,112" stroke="#2a1508" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+            <path d="M140,112 Q152,107 162,114" stroke="#2a1508" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+            <path d="M125,104 Q130,100 135,104" stroke="rgba(0,0,0,0.22)" stroke-width="1.2" fill="none"/>
+            <!-- Mouth downturn (worried) -->
+            <path d="M114,158 Q121,153 125,155 Q130,154 135,155 Q139,153 146,158 Q130,156 114,158Z" fill="#7a3820"/>
+            <path d="M114,158 Q122,161 130,160 Q138,161 146,158 Q130,160 114,158Z" fill="#8a4228"/>
+            <path d="M114,160 Q122,163 130,162 Q138,163 146,160" stroke="#3a1808" stroke-width="1.5" fill="none"/>
+          </g>
+
+          <!-- EXPRESSION — Celebration -->
+          <g id="npc-expr-celebration" class="npc-expr" style="display:none">
+            <ellipse cx="109" cy="121" rx="13" ry="9" fill="rgba(0,0,0,0.13)" filter="url(#np-sf)"/>
+            <ellipse cx="151" cy="121" rx="13" ry="9" fill="rgba(0,0,0,0.13)" filter="url(#np-sf)"/>
+            <!-- Squinted joyful eyes -->
+            <path d="M97,121 Q109,115 121,121 Q109,127 97,121Z" fill="#f0ebe0"/>
+            <circle cx="109" cy="121" r="4.8" fill="url(#np-Iris)"/>
+            <circle cx="109" cy="121" r="2.6" fill="#0a0602"/>
+            <ellipse cx="111" cy="118.5" rx="1.4" ry="1.0" fill="rgba(255,255,255,0.90)"/>
+            <path d="M97,121 Q109,114 121,121" stroke="#2a1508" stroke-width="1.7" fill="none"/>
+            <path d="M98,122 Q109,127 120,122" stroke="#3a2010" stroke-width="1.4" fill="none" opacity=".70"/>
+            <path d="M139,121 Q151,115 163,121 Q151,127 139,121Z" fill="#f0ebe0"/>
+            <circle cx="151" cy="121" r="4.8" fill="url(#np-Iris)"/>
+            <circle cx="151" cy="121" r="2.6" fill="#0a0602"/>
+            <ellipse cx="153" cy="118.5" rx="1.4" ry="1.0" fill="rgba(255,255,255,0.90)"/>
+            <path d="M139,121 Q151,114 163,121" stroke="#2a1508" stroke-width="1.7" fill="none"/>
+            <path d="M140,122 Q151,127 162,122" stroke="#3a2010" stroke-width="1.4" fill="none" opacity=".70"/>
+            <path d="M96,107 Q108,101 120,105" stroke="#2a1508" stroke-width="3.2" stroke-linecap="round" fill="none"/>
+            <path d="M140,105 Q152,101 162,107" stroke="#2a1508" stroke-width="3.2" stroke-linecap="round" fill="none"/>
+            <path d="M97,128 Q100,135 97,142" stroke="rgba(50,25,8,0.28)" stroke-width="1.8" fill="none"/>
+            <path d="M163,128 Q160,135 163,142" stroke="rgba(50,25,8,0.28)" stroke-width="1.8" fill="none"/>
+            <!-- Big open smile -->
+            <path d="M111,154 Q120,166 130,168 Q140,166 149,154 Q140,163 130,164 Q120,163 111,154Z" fill="#0e0806"/>
+            <path d="M114,157 Q130,165 146,157" fill="#b84060" opacity=".50"/>
+            <line x1="114" y1="155" x2="146" y2="155" stroke="rgba(235,215,188,0.52)" stroke-width="2"/>
+            <path d="M111,154 Q121,149 125,151 Q130,149 135,151 Q139,149 149,154" stroke="#3a1808" stroke-width="0.9" fill="none"/>
+          </g>
+          <text x="10" y="315" font-family="monospace" font-size="8" fill="rgba(26,106,122,0.22)" letter-spacing="2">NATAS-CHAR-003 · NPC-ABDULLAHI</text>
+        </svg>
+        <div class="portrait-region-tag" style="background:rgba(6,14,8,0.82);color:var(--kwara2);border:1px solid var(--kwara-bd)">🟢 Kwara · Market</div>
+      </div>
+
+      <!-- NPC Full-Body View -->
+      <div class="fullbody-viewer pv-fullbody" id="fb-npc" style="display:none">
+        <svg viewBox="0 0 160 400" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="fbBG3" cx="50%" cy="85%" r="65%">
+              <stop offset="0%" stop-color="rgba(26,106,122,0.22)"/>
+              <stop offset="100%" stop-color="rgba(7,8,12,1)"/>
+            </radialGradient>
+            <linearGradient id="bubu1" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#1a6a7a"/>
+              <stop offset="100%" stop-color="#0e4450"/>
+            </linearGradient>
+          </defs>
+          <rect width="160" height="400" fill="url(#fbBG3)"/>
+          <!-- Bubu (full-length ankle dress) -->
+          <path d="M40,115 L28,388 L132,388 L120,115Z" fill="url(#bubu1)" opacity=".90"/>
+          <!-- Ankara pattern suggestion (geometric rows) -->
+          <path d="M35,145 Q80,152 125,145" stroke="rgba(201,168,76,0.18)" stroke-width="1.2" fill="none"/>
+          <path d="M32,175 Q80,182 128,175" stroke="rgba(201,168,76,0.14)" stroke-width="1" fill="none"/>
+          <path d="M30,210 Q80,217 130,210" stroke="rgba(201,168,76,0.10)" stroke-width="1" fill="none"/>
+          <!-- Market apron over front -->
+          <path d="M54,130 L50,320 L110,320 L106,130Z" fill="#1e5232" opacity=".55"/>
+          <line x1="54" y1="140" x2="106" y2="140" stroke="rgba(201,168,76,0.20)" stroke-width="0.8"/>
+          <!-- Market tray / bowl carried at waist -->
+          <ellipse cx="115" cy="240" rx="20" ry="7" fill="#7a5028" opacity=".75"/>
+          <ellipse cx="115" cy="235" rx="18" ry="5" fill="#6a4020" opacity=".55"/>
+          <!-- Sandals -->
+          <ellipse cx="65" cy="394" rx="15" ry="5" fill="#2a1808"/>
+          <ellipse cx="95" cy="394" rx="15" ry="5" fill="#2a1808"/>
+          <!-- Neck -->
+          <rect x="68" y="96" width="24" height="22" rx="7" fill="#7e5528"/>
+          <!-- Head -->
+          <ellipse cx="80" cy="74" rx="28" ry="30" fill="#7e5528"/>
+          <!-- Hijab full head wrap (teal) -->
+          <path d="M52,70 Q50,44 80,40 Q110,44 108,70 Q105,56 80,52 Q55,56 52,70Z" fill="url(#bubu1)"/>
+          <!-- Hijab side drape -->
+          <path d="M52,70 Q48,95 50,115 Q62,125 80,128 Q98,125 110,115 Q112,95 108,70" fill="url(#bubu1)" opacity=".92"/>
+          <!-- Hijab face frame (reveals face) -->
+          <ellipse cx="80" cy="74" rx="24" ry="28" fill="#7e5528"/>
+          <!-- Hijab pattern -->
+          <path d="M52,78 L56,72 L60,78 L64,72 L68,78" stroke="rgba(201,168,76,0.22)" stroke-width="0.8" fill="none"/>
+          <path d="M108,78 L104,72 L100,78 L96,72 L92,78" stroke="rgba(201,168,76,0.22)" stroke-width="0.8" fill="none"/>
+          <!-- Face minimal -->
+          <ellipse cx="71" cy="70" rx="6" ry="4.5" fill="#f0ede8"/>
+          <ellipse cx="71" cy="70" rx="4" ry="3.5" fill="#1a0d06"/>
+          <ellipse cx="89" cy="70" rx="6" ry="4.5" fill="#f0ede8"/>
+          <ellipse cx="89" cy="70" rx="4" ry="3.5" fill="#1a0d06"/>
+          <path d="M74,82 Q80,86 86,82" stroke="#3a1e08" stroke-width="1.8" fill="none"/>
+          <text x="6" y="397" font-family="monospace" font-size="6" fill="rgba(26,106,122,0.22)" letter-spacing="1.5">CHAR-003 · FULL-BODY-01 · BUBU+HIJAB</text>
+        </svg>
+      </div>
+
+      <!-- NPC Avatar View -->
+      <div class="pv-avatar" id="av-npc" style="display:none">
+        <div class="avatar-section">
+          <div class="avatar-card">
+            <div class="avatar-circle kw">
+              <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+                <rect width="80" height="80" fill="#07100f"/>
+                <ellipse cx="40" cy="60" rx="28" ry="12" fill="#1a6a7a"/>
+                <ellipse cx="40" cy="36" rx="18" ry="20" fill="#7e5528"/>
+                <path d="M22,44 Q22,64 22,80 L58,80 L58,44" fill="#1a6a7a"/>
+                <path d="M22,36 Q22,16 40,14 Q58,16 58,36 Q55,24 40,22 Q25,24 22,36Z" fill="#1a6a7a"/>
+                <ellipse cx="40" cy="36" rx="16" ry="18" fill="#7e5528"/>
+                <circle cx="40" cy="40" r="37" fill="none" stroke="rgba(46,107,62,0.40)" stroke-width="1.5"/>
+              </svg>
+            </div>
+            <div class="avatar-label">Social</div>
+          </div>
+          <div class="avatar-card">
+            <div class="avatar-circle" style="border-color:var(--gold-bd)">
+              <svg viewBox="0 0 80 80" xmlns="http://www.w3.org/2000/svg">
+                <rect width="80" height="80" fill="#050e0d"/>
+                <ellipse cx="40" cy="62" rx="30" ry="14" fill="#1a6a7a"/>
+                <ellipse cx="40" cy="34" rx="18" ry="20" fill="#7e5528"/>
+                <path d="M22,34 Q22,14 40,12 Q58,14 58,34 Q55,22 40,20 Q25,22 22,34Z" fill="#1a6a7a"/>
+                <ellipse cx="40" cy="34" rx="15" ry="17" fill="#7e5528"/>
+                <circle cx="40" cy="40" r="37" fill="none" stroke="rgba(201,168,76,0.50)" stroke-width="2"/>
+              </svg>
+            </div>
+            <div class="avatar-label">Profile</div>
+          </div>
+        </div>
+        <div style="font-size:10px;color:var(--t4);text-align:center;letter-spacing:0.06em;">NATAS-CHAR-003 · Avatar Variants · 80×80</div>
+      </div>
+
+      <!-- NPC Campaign View -->
+      <div class="campaign-viewer pv-campaign" id="cp-npc" style="display:none">
+        <svg viewBox="0 0 260 114" xmlns="http://www.w3.org/2000/svg">
+          <rect width="260" height="114" fill="#060e0c"/>
+          <rect x="0" y="0" width="5" height="114" fill="#2e6b3e"/>
+          <radialGradient id="campBG3" cx="30%" cy="50%" r="55%">
+            <stop offset="0%" stop-color="rgba(26,106,122,0.20)"/>
+            <stop offset="100%" stop-color="rgba(0,0,0,0)"/>
+          </radialGradient>
+          <rect width="260" height="114" fill="url(#campBG3)"/>
+          <rect x="0" y="0" width="260" height="2" fill="#52a06c" opacity=".45"/>
+          <rect x="0" y="112" width="260" height="2" fill="#52a06c" opacity=".45"/>
+          <!-- NPC figure -->
+          <ellipse cx="210" cy="40" rx="20" ry="22" fill="#7e5528"/>
+          <path d="M190,62 L188,114 L232,114 L230,62Z" fill="#1a6a7a"/>
+          <path d="M190,38 Q190,20 210,18 Q230,20 230,38 Q228,26 210,24 Q192,26 190,38Z" fill="#1a6a7a"/>
+          <ellipse cx="210" cy="40" rx="17" ry="19" fill="#7e5528"/>
+          <!-- Text -->
+          <text x="20" y="30" font-family="Inter,sans-serif" font-size="8" font-weight="900" fill="rgba(82,160,108,0.60)" letter-spacing="0.15em">ILORIN CENTRAL MARKET</text>
+          <text x="20" y="52" font-family="Inter,sans-serif" font-size="14" font-weight="900" fill="#f4f0ea" letter-spacing="-0.01em">MAMA FATIMA</text>
+          <text x="20" y="67" font-family="Inter,sans-serif" font-size="10" font-weight="700" fill="#52a06c">NPC · Grassroots Source · Kwara</text>
+          <text x="20" y="98" font-family="monospace" font-size="6" fill="rgba(239,68,68,0.50)" letter-spacing="0.12em">FICTIONAL SIMULATION · NPC ARCHETYPE</text>
+          <text x="20" y="108" font-family="monospace" font-size="6" fill="rgba(26,106,122,0.22)" letter-spacing="1">NATAS-CHAR-003 · CAMPAIGN-IMAGE-01</text>
+        </svg>
+      </div>
+
+      <!-- 3D View — concept state for NPC -->
+      <div class="pv-3d" id="pv3d-npc" style="display:none">
+        <div class="three-placeholder">
+          <span style="font-size:28px;opacity:0.3">◎</span>
+          <span>3D Model</span>
+          <span class="chip cd" style="margin-top:4px">Concept</span>
+          <span style="font-size:10px;color:var(--t4);letter-spacing:0;text-transform:none;margin-top:6px">NATAS-CHAR-003 · 3D pending</span>
+        </div>
+      </div>
+
+      <div class="expr-row" id="expr-npc">
+        <button class="expr-btn on" onclick="setExpr('npc','neutral',this)">Neutral</button>
+        <button class="expr-btn" onclick="setExpr('npc','enthusiastic',this)">Enthusiastic</button>
+        <button class="expr-btn" onclick="setExpr('npc','skeptical',this)">Skeptical</button>
+        <button class="expr-btn" onclick="setExpr('npc','worried',this)">Worried</button>
+        <button class="expr-btn" onclick="setExpr('npc','celebration',this)">Celebration</button>
+      </div>
+      <div class="sec" style="width:100%">Wardrobe</div>
+      <div class="wardrobe-row">
+        <button class="wd-btn on" onclick="setWd('npc',0,this,'Market Everyday (Bubu + Hijab + Apron)')">Market</button>
+        <button class="wd-btn" onclick="setWd('npc',1,this,'Celebration / Eid Al-Fitr Attire')">Eid</button>
+        <button class="wd-btn" onclick="setWd('npc',2,this,'Home Casual (Indoor kaftan)')">Casual</button>
+      </div>
+      <div class="wd-label" id="wd-label-npc">Market Everyday (Bubu + Hijab + Apron)</div>
+    </div>
+
+  </div><!-- end portrait-panel -->
+
+  <!-- ── INFO PANEL ── -->
+  <div class="info-panel">
+    <div class="info-tabs">
+      <div class="info-tab on" onclick="setInfoTab('profile',this)">Profile</div>
+      <div class="info-tab" onclick="setInfoTab('context',this)">Context Engine</div>
+      <div class="info-tab" onclick="setInfoTab('regional',this)">Regional &amp; Transport</div>
+      <div class="info-tab" onclick="setInfoTab('audio',this)">Audio</div>
+      <div class="info-tab" onclick="setInfoTab('consistency',this)">Consistency</div>
+    </div>
+
+    <!-- PROFILE TAB -->
+    <div class="info-pane on" id="pane-profile">
+      <!-- GOVERNOR PROFILE -->
+      <div class="char-view on" id="prof-gov">
+        <div class="sec">Character Master Record</div>
+        <div class="gc">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+            <div>
+              <div style="font-size:20px;font-weight:900;letter-spacing:-0.01em;color:var(--t1);margin-bottom:4px;">Alhaji Tunde Adeyemi</div>
+              <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                <span class="chip cg">HERO CHARACTER</span>
+                <span class="chip ck">Kwara</span>
+                <span class="chip cw">Prototype</span>
+              </div>
+            </div>
+          </div>
+          <table style="width:100%;border-collapse:collapse;">
+            <tr class="dr"><td class="dr-k">Character ID</td><td class="dr-v" style="font-family:monospace;font-size:12px">NATAS-CHAR-001</td></tr>
+            <tr class="dr"><td class="dr-k">Role</td><td class="dr-v">Executive Governor, Kwara State</td></tr>
+            <tr class="dr"><td class="dr-k">Age Band</td><td class="dr-v">50–55 · Distinguished Seniority</td></tr>
+            <tr class="dr"><td class="dr-k">Region</td><td class="dr-v">Yoruba/Kwara · Ilorin Emirate</td></tr>
+            <tr class="dr"><td class="dr-k">Party</td><td class="dr-v">Nigerian People's Alliance (NPA)</td></tr>
+            <tr class="dr"><td class="dr-k">Personality</td><td class="dr-v dim">Authoritative, pragmatic, visionary, capable of deception under pressure</td></tr>
+            <tr class="dr"><td class="dr-k">Skin Profile</td><td class="dr-v dim">Deep warm brown · Yoruba West African</td></tr>
+            <tr class="dr"><td class="dr-k">Hair</td><td class="dr-v dim">Short under Fila cap · Grey at temples</td></tr>
+            <tr class="dr"><td class="dr-k">Facial</td><td class="dr-v dim">Strong jaw · Grey beard · Lines of authority</td></tr>
+            <tr class="dr"><td class="dr-k">Signature</td><td class="dr-v dim">Fila cap (Yoruba cylindrical) · Agbada embroidery</td></tr>
+            <tr class="dr"><td class="dr-k">Voice</td><td class="dr-v dim">Deep baritone · Yoruba-inflected English · Pidgin when tactical</td></tr>
+          </table>
+        </div>
+        <div class="sec">Personality Profile</div>
+        <div class="gc">
+          <div class="tags">
+            <span class="tag">Authoritative</span>
+            <span class="tag">Pragmatic</span>
+            <span class="tag">Visionary</span>
+            <span class="tag">Cunning</span>
+            <span class="tag">Loyal to allies</span>
+            <span class="tag">Strategically patient</span>
+          </div>
+          <div style="margin-top:12px;font-size:13px;color:var(--t2);line-height:1.72;">
+            Adeyemi governs through relationships. He prefers consensus over confrontation, but will apply institutional pressure when cornered. His Yoruba background gives him deep cultural authority in Kwara, though his Fulani alliances keep him relevant at the federal level.
+          </div>
+        </div>
+        <div class="sec">Asset Lifecycle</div>
+        <div class="gc">
+          <div class="lifecycle">
+            <div class="lc-step"><div class="lc-dot done">✓</div><div class="lc-lbl done">Request</div></div>
+            <div class="lc-step"><div class="lc-dot done">✓</div><div class="lc-lbl done">Brief</div></div>
+            <div class="lc-step"><div class="lc-dot done">✓</div><div class="lc-lbl done">Generate</div></div>
+            <div class="lc-step"><div class="lc-dot current">●</div><div class="lc-lbl current">Prototype</div></div>
+            <div class="lc-step"><div class="lc-dot">○</div><div class="lc-lbl">Candidate</div></div>
+            <div class="lc-step"><div class="lc-dot">○</div><div class="lc-lbl">Approved</div></div>
+            <div class="lc-step"><div class="lc-dot">○</div><div class="lc-lbl">Locked</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- COS PROFILE -->
+      <div class="char-view" id="prof-cos">
+        <div class="sec">Character Master Record</div>
+        <div class="gc">
+          <div style="margin-bottom:14px;">
+            <div style="font-size:20px;font-weight:900;letter-spacing:-0.01em;color:var(--t1);margin-bottom:4px;">Barr. Chidi Okafor</div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;">
+              <span class="chip ca">SUPPORTING</span>
+              <span class="chip ce">Enugu Origin</span>
+              <span class="chip cw">Prototype</span>
+            </div>
+          </div>
+          <table style="width:100%;border-collapse:collapse;">
+            <tr class="dr"><td class="dr-k">Character ID</td><td class="dr-v" style="font-family:monospace;font-size:12px">NATAS-CHAR-002</td></tr>
+            <tr class="dr"><td class="dr-k">Role</td><td class="dr-v">Chief of Staff, Kwara Government House</td></tr>
+            <tr class="dr"><td class="dr-k">Age Band</td><td class="dr-v">42–48 · Senior Professional</td></tr>
+            <tr class="dr"><td class="dr-k">Region</td><td class="dr-v">Igbo/Enugu · Posted to Kwara</td></tr>
+            <tr class="dr"><td class="dr-k">Signature</td><td class="dr-v dim">Gold-frame spectacles · Navy suit · Gold tie</td></tr>
+            <tr class="dr"><td class="dr-k">Personality</td><td class="dr-v dim">Calculating, loyal within limits, cross-regional broker, quiet ambition</td></tr>
+            <tr class="dr"><td class="dr-k">Voice</td><td class="dr-v dim">Precise Igbo-English · Strategic understatement · Pidgin when building rapport</td></tr>
+          </table>
+        </div>
+        <div class="sec">Asset Lifecycle</div>
+        <div class="gc">
+          <div class="lifecycle">
+            <div class="lc-step"><div class="lc-dot done">✓</div><div class="lc-lbl done">Request</div></div>
+            <div class="lc-step"><div class="lc-dot done">✓</div><div class="lc-lbl done">Brief</div></div>
+            <div class="lc-step"><div class="lc-dot done">✓</div><div class="lc-lbl done">Generate</div></div>
+            <div class="lc-step"><div class="lc-dot current">●</div><div class="lc-lbl current">Prototype</div></div>
+            <div class="lc-step"><div class="lc-dot">○</div><div class="lc-lbl">Candidate</div></div>
+            <div class="lc-step"><div class="lc-dot">○</div><div class="lc-lbl">Approved</div></div>
+            <div class="lc-step"><div class="lc-dot">○</div><div class="lc-lbl">Locked</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- NPC PROFILE -->
+      <div class="char-view" id="prof-npc">
+        <div class="sec">Character Master Record</div>
+        <div class="gc">
+          <div style="margin-bottom:14px;">
+            <div style="font-size:20px;font-weight:900;letter-spacing:-0.01em;color:var(--t1);margin-bottom:4px;">Mama Fatima Abdullahi</div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;">
+              <span class="chip ct">NPC ARCHETYPE</span>
+              <span class="chip ck">Kwara · Ilorin</span>
+              <span class="chip" style="background:var(--lat-bg);color:var(--laterite);border-color:var(--lat-bd)">◌ Concept</span>
+            </div>
+          </div>
+          <table style="width:100%;border-collapse:collapse;">
+            <tr class="dr"><td class="dr-k">Character ID</td><td class="dr-v" style="font-family:monospace;font-size:12px">NATAS-CHAR-003</td></tr>
+            <tr class="dr"><td class="dr-k">Role</td><td class="dr-v">Market Trader — Ilorin Central Market</td></tr>
+            <tr class="dr"><td class="dr-k">Age Band</td><td class="dr-v">35–42 · Active Working Adult</td></tr>
+            <tr class="dr"><td class="dr-k">Region</td><td class="dr-v">Kwara · Hausa-Fulani community, Ilorin</td></tr>
+            <tr class="dr"><td class="dr-k">Signature</td><td class="dr-v dim">Teal hijab · Ankara bubu · Market apron</td></tr>
+            <tr class="dr"><td class="dr-k">Role in Game</td><td class="dr-v dim">NPC info broker, grassroots sentiment gauge, social event trigger</td></tr>
+            <tr class="dr"><td class="dr-k">Cultural</td><td class="dr-v dim">Hausa-Fulani · Muslim · Ilorin Emirate community ties</td></tr>
+          </table>
+        </div>
+        <div class="sec">Asset Lifecycle</div>
+        <div class="gc">
+          <div class="lifecycle">
+            <div class="lc-step"><div class="lc-dot done">✓</div><div class="lc-lbl done">Request</div></div>
+            <div class="lc-step"><div class="lc-dot current">●</div><div class="lc-lbl current">Brief</div></div>
+            <div class="lc-step"><div class="lc-dot">○</div><div class="lc-lbl">Generate</div></div>
+            <div class="lc-step"><div class="lc-dot">○</div><div class="lc-lbl">Prototype</div></div>
+            <div class="lc-step"><div class="lc-dot">○</div><div class="lc-lbl">Candidate</div></div>
+            <div class="lc-step"><div class="lc-dot">○</div><div class="lc-lbl">Approved</div></div>
+            <div class="lc-step"><div class="lc-dot">○</div><div class="lc-lbl">Locked</div></div>
+          </div>
+        </div>
+      </div>
+    </div><!-- end profile pane -->
+
+    <!-- CONTEXT ENGINE TAB -->
+    <div class="info-pane" id="pane-context">
+      <div class="sec">Context Engine — Asset Selection Parameters</div>
+      <div class="gc">
+        <div style="font-size:12px;color:var(--t2);line-height:1.70;margin-bottom:14px;">The Context Engine determines which character, wardrobe, environment, transport and audio assets belong in a scene. Every asset selection must satisfy all 12 parameters.</div>
+        <div class="ctx-grid" id="ctx-grid">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+      <div class="sec">Resolved Scene</div>
+      <div class="gc gold">
+        <div id="ctx-resolved" style="font-size:13px;color:var(--t2);line-height:1.75;"></div>
+      </div>
+    </div>
+
+    <!-- REGIONAL TAB -->
+    <div class="info-pane" id="pane-regional">
+      <div class="sec">Regional Identity Comparison</div>
+      <div class="region-compare">
+        <div class="rc-card kw">
+          <div class="rc-title" style="color:var(--kwara2)">● Kwara — Ilorin</div>
+          <div class="rc-row">Ilorin Emirate (Yoruba + Islamic)</div>
+          <div class="rc-row">Mosque silhouette skyline</div>
+          <div class="rc-row">Yoruba adire fabric patterns</div>
+          <div class="rc-row">Arabic-Yoruba signage</div>
+          <div class="rc-row">Savanna vegetation · deep greens</div>
+          <div class="rc-row">Keke napep primary transport</div>
+          <div class="rc-row">Laterite soil undertone (#b84520)</div>
+          <div class="rc-row">Fajr call to prayer audio</div>
+          <div class="rc-row">₦G 1,200 market average</div>
+        </div>
+        <div class="rc-card en">
+          <div class="rc-title" style="color:var(--enugu2)">● Enugu — Coal City</div>
+          <div class="rc-row">Igbo highland territory</div>
+          <div class="rc-row">Coal headframe skyline</div>
+          <div class="rc-row">Isi-agu geometric fabric</div>
+          <div class="rc-row">Igbo-language (Ilo oji ana) signage</div>
+          <div class="rc-row">Highland plateau terrain · blue sky</div>
+          <div class="rc-row">Yellow Peugeot taxis primary transport</div>
+          <div class="rc-row">Industrial blue-grey palette</div>
+          <div class="rc-row">Igbo market chatter audio</div>
+          <div class="rc-row">₦G 1,850 market average</div>
+        </div>
+      </div>
+      <div class="sec" style="margin-top:6px;">Regional Identity Rule</div>
+      <div class="gc">
+        <div style="font-size:13px;color:var(--t2);line-height:1.72;font-style:italic;">"This feels like where I am." — not merely "This says where I am." A player should be able to feel the regional shift without reading the location chip.</div>
+      </div>
+      <div class="sec">Transportation Culture</div>
+      <div class="region-compare">
+        <div class="rc-card kw">
+          <div class="rc-title" style="color:var(--kwara2)">● Kwara Transport</div>
+          <div class="rc-row">Keke napep — primary short-distance</div>
+          <div class="rc-row">Danfo minibus — inter-city routes</div>
+          <div class="rc-row">Okada — motorcycle taxi, informal</div>
+          <div class="rc-row">Bolekaja — long-bench commercial bus</div>
+          <div class="rc-row">Donkey cart — rural market routes</div>
+          <div class="rc-row">Colour: Yellow + black stripe (Keke)</div>
+          <div class="rc-row">Sound: 2-stroke engine · road dust · horn</div>
+        </div>
+        <div class="rc-card en">
+          <div class="rc-title" style="color:var(--enugu2)">● Enugu Transport</div>
+          <div class="rc-row">Yellow Peugeot 504 — iconic city taxi</div>
+          <div class="rc-row">Buses — fixed route, numbered</div>
+          <div class="rc-row">Okada — motorcycle taxi</div>
+          <div class="rc-row">Keke napep — newer addition</div>
+          <div class="rc-row">Hiace minivan — interstate travel</div>
+          <div class="rc-row">Colour: Yellow body (iconic taxi)</div>
+          <div class="rc-row">Sound: Diesel engine · highland road</div>
+        </div>
+      </div>
+      <div class="gc" style="margin-top:4px;">
+        <div style="font-size:12px;color:var(--t2);line-height:1.72;font-style:italic;">"Vehicles and movement contribute to regional identity." — Transport assets, street atmosphere, and movement culture must be distinct per region. A Kwara keke napep and an Enugu yellow Peugeot 504 are not interchangeable.</div>
+      </div>
+      <div class="sec">Signature Test</div>
+      <div class="gc">
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <div style="flex:1;min-width:140px;">
+            <div style="font-size:11px;font-weight:700;color:var(--kwara2);margin-bottom:6px;letter-spacing:0.06em;text-transform:uppercase;">Kwara Visual DNA</div>
+            <div style="font-size:12px;color:var(--t2);line-height:1.65;">Mosque dome geometry · Arabic calligraphy · Adire indigo · Emirate green · Terracotta earth · Donkey cart on dirt road · Muezzin ambient</div>
+          </div>
+          <div style="width:1px;background:var(--bd);flex-shrink:0;"></div>
+          <div style="flex:1;min-width:140px;">
+            <div style="font-size:11px;font-weight:700;color:var(--enugu2);margin-bottom:6px;letter-spacing:0.06em;text-transform:uppercase;">Enugu Visual DNA</div>
+            <div style="font-size:12px;color:var(--t2);line-height:1.65;">Coal shaft frames · Presbyterian church towers · Isi-agu gold pattern · Industrial steel blue · Plateau air clarity · Yellow cab culture · Harmattan dry harmattan</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AUDIO TAB -->
+    <div class="info-pane" id="pane-audio">
+      <div class="sec">Audio Direction — Character Voice Profile</div>
+      <div class="gc" id="audio-char-panel"><!-- populated by JS --></div>
+
+      <div class="sec">Kwara · Ilorin — Regional Audio DNA</div>
+      <div class="gc kw">
+        <div class="audio-row"><span class="audio-k">Environmental</span><span class="audio-v">Open savanna + city traffic hum + distant mosque echo chamber reverb</span></div>
+        <div class="audio-row"><span class="audio-k">Transport</span><span class="audio-v">Keke napep 2-stroke buzz · okada acceleration · danfo horn blares · road dust</span></div>
+        <div class="audio-row"><span class="audio-k">Crowd</span><span class="audio-v">Dense market Yoruba chatter · Hausa greetings · children's voices · haggling</span></div>
+        <div class="audio-row"><span class="audio-k">Market</span><span class="audio-v">Fish market dripping water · scale clatter · fabric unfurling · smoked catfish vendors</span></div>
+        <div class="audio-row"><span class="audio-k">Announcements</span><span class="audio-v">Mosque Adhan (5× daily) · mobile market PA · political campaign van megaphone</span></div>
+        <div class="audio-row"><span class="audio-k">Language</span><span class="audio-v">Yoruba · Hausa · Pidgin · Arabic (Islamic context) · Fulfulde</span></div>
+        <div class="audio-row"><span class="audio-k">Musical</span><span class="audio-v">Yoruba àpàlà percussion · Fuji undertone · Jùjú strings · Salawa Abeni-style</span></div>
+        <div class="audio-row"><span class="audio-k">Implementation</span><span class="audio-v">Web Audio API · 4-layer ambient mix · fade on scene transition · loop with variation</span></div>
+      </div>
+
+      <div class="sec">Enugu · Coal City — Regional Audio DNA</div>
+      <div class="gc en">
+        <div class="audio-row"><span class="audio-k">Environmental</span><span class="audio-v">Highland plateau wind · urban traffic · distant generator hum · coal-era reverb</span></div>
+        <div class="audio-row"><span class="audio-k">Transport</span><span class="audio-v">Peugeot 504 diesel engine · bus door slam · road hawker calls · motorbike</span></div>
+        <div class="audio-row"><span class="audio-k">Crowd</span><span class="audio-v">Igbo market density · professional chatter · church congregation (Sunday)</span></div>
+        <div class="audio-row"><span class="audio-k">Market</span><span class="audio-v">New Market: electronics hum · fabric rustling · Igbo price negotiation</span></div>
+        <div class="audio-row"><span class="audio-k">Announcements</span><span class="audio-v">Church bells (Sunday) · PA system · radio station broadcast leakage · NEPA</span></div>
+        <div class="audio-row"><span class="audio-k">Language</span><span class="audio-v">Igbo · Pidgin · Nigerian English (formal register) · Owerri dialect</span></div>
+        <div class="audio-row"><span class="audio-k">Musical</span><span class="audio-v">Highlife guitar · Igbo ogene percussion · Gospel overtones · Flavour N'abania</span></div>
+        <div class="audio-row"><span class="audio-k">Implementation</span><span class="audio-v">Web Audio API · 4-layer ambient mix · crossfade on region travel · loop</span></div>
+      </div>
+
+      <div class="gc">
+        <div style="font-size:12px;color:var(--t2);line-height:1.72;font-style:italic;">"Audio should support immersion rather than become constant noise." — Audio DNA is directional specification for sound designers. Each region maintains distinct identity through audio layer mixing independent of visual state.</div>
+        <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">
+          <span class="chip ca">✦ Spec</span>
+          <span class="chip" style="background:var(--lat-bg);color:var(--laterite);border-color:var(--lat-bd)">◌ Not yet implemented</span>
+          <span class="chip ct">Web Audio API target</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONSISTENCY LAB TAB -->
+    <div class="info-pane" id="pane-consistency">
+      <div class="sec">Character Consistency Lab</div>
+      <div class="gc">
+        <div style="font-size:12px;color:var(--t2);line-height:1.70;margin-bottom:14px;">Identity must remain consistent across all representation types. The same canonical identity drives 2D portrait, 3D model, social avatar, campaign image and gameplay sprite.</div>
+        <div class="consist-grid">
+          <div class="consist-item">
+            <div class="consist-ico">🎨</div>
+            <div class="consist-lbl">2D Portrait</div>
+            <div class="consist-status"><span class="chip cw">Prototype</span></div>
+          </div>
+          <div class="consist-item">
+            <div class="consist-ico">🧊</div>
+            <div class="consist-lbl">3D Model</div>
+            <div class="consist-status"><span class="chip" style="background:var(--lat-bg);color:var(--laterite);border:1px solid var(--lat-bd)">Concept</span></div>
+          </div>
+          <div class="consist-item">
+            <div class="consist-ico">👤</div>
+            <div class="consist-lbl">Social Avatar</div>
+            <div class="consist-status"><span class="chip cw">Prototype</span></div>
+          </div>
+          <div class="consist-item">
+            <div class="consist-ico">📸</div>
+            <div class="consist-lbl">Campaign Image</div>
+            <div class="consist-status"><span class="chip" style="background:var(--lat-bg);color:var(--laterite);border:1px solid var(--lat-bd)">Concept</span></div>
+          </div>
+          <div class="consist-item">
+            <div class="consist-ico">🎮</div>
+            <div class="consist-lbl">Gameplay Sprite</div>
+            <div class="consist-status"><span class="chip" style="background:var(--lat-bg);color:var(--laterite);border:1px solid var(--lat-bd)">Concept</span></div>
+          </div>
+          <div class="consist-item">
+            <div class="consist-ico">🗺️</div>
+            <div class="consist-lbl">Map Token</div>
+            <div class="consist-status"><span class="chip" style="background:var(--lat-bg);color:var(--laterite);border:1px solid var(--lat-bd)">Concept</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="sec">Identity Drift Check</div>
+      <div class="gc">
+        <div class="dr"><span class="dr-k">Face Structure</span><span class="dr-v"><span class="chip cp">✓ Consistent</span></span></div>
+        <div class="dr"><span class="dr-k">Skin Tone</span><span class="dr-v"><span class="chip cp">✓ Consistent</span></span></div>
+        <div class="dr"><span class="dr-k">Signature Item</span><span class="dr-v"><span class="chip cp">✓ Fila cap locked</span></span></div>
+        <div class="dr"><span class="dr-k">3D ↔ 2D Match</span><span class="dr-v"><span class="chip cw">⚠ Pending 3D</span></span></div>
+        <div class="dr"><span class="dr-k">Cultural Accuracy</span><span class="dr-v"><span class="chip ca">✦ Under review</span></span></div>
+      </div>
+      <div class="sec">Production Rule</div>
+      <div class="gc">
+        <div style="font-size:13px;color:var(--t2);line-height:1.72;">Asset priority: <strong style="color:var(--t1)">REUSE → VARIANT → DERIVATIVE → NEW</strong>. No developer or agent may invent a new version of an existing canonical identity without consulting this record first.</div>
+      </div>
+    </div>
+
+  </div><!-- end info-panel -->
+
+  <!-- ── DNA PANEL (3rd col, desktop only) ── -->
+  <div class="dna-panel">
+    <div class="sec">Asset DNA</div>
+    <div class="gc">
+      <table class="dna-table" id="dna-table"><!-- populated by JS --></table>
+    </div>
+    <div class="sec">Wardrobe DNA</div>
+    <div class="gc" id="wardrobe-dna"><!-- populated by JS --></div>
+    <div class="sec">GameForge Registry</div>
+    <div class="gc">
+      <div style="font-size:12px;color:var(--t2);line-height:1.72;margin-bottom:8px;">This character asset is registered in the GameForge Asset Registry. All future variants must trace lineage to this canonical record.</div>
+      <div class="dr"><span class="dr-k">Registry Status</span><span class="dr-v"><span class="chip cw">Registered</span></span></div>
+      <div class="dr"><span class="dr-k">Lineage Source</span><span class="dr-v dim" style="font-family:monospace;font-size:10px">CLAUDE-DESIGN-001</span></div>
+      <div class="dr"><span class="dr-k">Created</span><span class="dr-v dim">2026-10-14</span></div>
+      <div class="dr"><span class="dr-k">Version</span><span class="dr-v dim">v0.2.0-prototype</span></div>
+    </div>
+  </div>
+
+</div><!-- end lab-main -->
+
+<!-- ══ FOOTER ══ -->
+<footer class="lab-footer">
+  <span class="footer-id" id="footer-id">NATAS-CHAR-001 · GOV-ADEYEMI · Prototype · Phase 2</span>
+  <div class="footer-nav">
+    <button class="fn-btn" onclick="location.href='natashas-dayinlife.html'">← Day in the Life</button>
+    <button class="fn-btn go">Phase 3: Election Engine →</button>
+  </div>
+</footer>
+
+<script>
+'use strict';
+
+const DATA = {
+  gov: {
+    id:'NATAS-CHAR-001',
+    slug:'GOV-ADEYEMI',
+    name:'Alhaji Tunde Adeyemi',
+    state:'Prototype',
+    dna:[
+      ['Asset ID','NATAS-CHAR-001-2D-PORT-01'],
+      ['Type','2D Portrait · SVG Inline'],
+      ['Region','Kwara · South-West Nigeria'],
+      ['Location','Government House, Ilorin, Kwara'],
+      ['Context','Governance scenes · Decision events · Campaign rally · Media appearances'],
+      ['Era','Contemporary · 2026'],
+      ['Art Style','Stylised Realism · Nigerian Political'],
+      ['Scale','Portrait 260×320 · Full-body 160×400 · Avatar 80×80 · Campaign 260×114 · 3D ~2m unit height'],
+      ['Performance Tier','Mobile-first · All tiers · SVG inline'],
+      ['Dependencies','Inter 900 · Google Fonts CDN · Three.js r128 (cdnjs) · No external image assets'],
+      ['Licence / Origin','Original · Claude Code generation · Session 2026-10-14'],
+      ['Canonical Reference','NATAS-CHAR-001 · Character Master Record · GameForge Registry'],
+      ['Skin Profile','Deep warm brown · Yoruba West African'],
+      ['Colour Profile','Forest green · Gold · Warm brown'],
+      ['Version','v0.4.0-prototype'],
+      ['Source','Claude Code · Session 2026-10-14'],
+    ],
+    wardrobe:[
+      {n:'Government (Agbada + Fila)',d:'State function wear · Deep forest green Agbada · Gold embroidery at collar and hem · Cylindrical Fila cap · Gold embroidery band'},
+      {n:'Professional (Western Suit)',d:'Federal-level meetings · Dark charcoal suit · White French cuff shirt · Gold tie · NPA pin'},
+      {n:'NPA Campaign',d:'Rally and campaign events · NPA branded colours · Embroidered NPA crest · Accessible, crowd-facing'},
+      {n:'Full Traditional Yoruba',d:'Cultural and ceremonial · Full iro and buba · Elaborate Aso-oke · Senior egungun regalia markers'},
+    ],
+    ctx:{
+      WHO:'Gov. Tunde Adeyemi',
+      WHERE:'Ilorin, Kwara State',
+      WHEN:'Daytime · 07:30–18:00',
+      WHAT:'Executive governance · Political decisions',
+      WHY:'Election-period power management',
+      MOOD:'Authoritative · Measured',
+      ROLE:'Governor / Actor',
+      REGION:'Kwara · Yoruba · Emirate',
+      WEATHER:'Hot · Dry harmattan',
+      CULTURAL:'Islamic greeting culture · Yoruba protocol',
+      GAMEPLAY:'Player character · All decision nodes',
+      PERFORMANCE:'Mobile-first · Medium tier',
+    },
+    resolved:'Scene resolves to: <strong style="color:var(--t1)">Governor Adeyemi</strong> in <strong style="color:var(--kwara2)">Government Agbada</strong>, inside <strong style="color:var(--t1)">Government House, Ilorin</strong> — Kwara visual DNA active (mosque silhouette, adire pattern accents, keke napep outside gate). Morning light, formal energy, election pressure visible in his bearing.'
+  },
+  cos: {
+    id:'NATAS-CHAR-002',
+    slug:'COS-OKAFOR',
+    name:'Barr. Chidi Okafor',
+    state:'Prototype',
+    dna:[
+      ['Asset ID','NATAS-CHAR-002-2D-PORT-01'],
+      ['Type','2D Portrait · SVG Inline'],
+      ['Region','Enugu Origin · Posted to Kwara'],
+      ['Location','Government House offices, Ilorin, Kwara'],
+      ['Context','Briefing scenes · Strategy rooms · Cross-regional events · NPC dialogue triggers'],
+      ['Era','Contemporary · 2026'],
+      ['Art Style','Stylised Realism · Nigerian Political'],
+      ['Scale','Portrait 260×320 · Full-body 160×400 · Avatar 80×80 · Campaign 260×114 · 3D ~2m unit height'],
+      ['Performance Tier','Mobile-first · All tiers · SVG inline'],
+      ['Dependencies','Inter 900 · Google Fonts CDN · Three.js r128 (cdnjs) · No external image assets'],
+      ['Licence / Origin','Original · Claude Code generation · Session 2026-10-14'],
+      ['Canonical Reference','NATAS-CHAR-002 · Character Master Record · GameForge Registry'],
+      ['Signature','Gold-frame spectacles — canonical non-removable identifier'],
+      ['Skin Profile','Warm dark brown · Igbo Southeast'],
+      ['Colour Profile','Navy · Gold spectacles · White shirt'],
+      ['Version','v0.4.0-prototype'],
+    ],
+    wardrobe:[
+      {n:'Professional (Navy Suit + Gold Tie)',d:'Primary wear · Dark navy suit · Gold-frame spectacles · White shirt · Gold tie · Alligator-skin shoes'},
+      {n:'Smart Casual (Kaftan + Trousers)',d:'Internal meetings · Off-hours briefings · Relaxed authority'},
+      {n:'NPA Campaign',d:'Rally support · Branded campaign shirt · Strategist role — behind the Governor'},
+    ],
+    ctx:{
+      WHO:'Barr. Chidi Okafor',
+      WHERE:'Government House, Ilorin, Kwara',
+      WHEN:'Daytime · 07:00–22:00 (always working)',
+      WHAT:'Chief of Staff briefing / strategy',
+      WHY:'Managing Governor\'s political calendar',
+      MOOD:'Calculating · Focused',
+      ROLE:'Supporting Character · Info broker',
+      REGION:'Cross-regional · Enugu ↔ Kwara',
+      WEATHER:'Indoor · Climate-controlled',
+      CULTURAL:'Igbo professional culture · Respect hierarchy',
+      GAMEPLAY:'NPC dialogue · Consequence triggers',
+      PERFORMANCE:'Mobile-first · Medium tier',
+    },
+    resolved:'Scene resolves to: <strong style="color:var(--t1)">Barr. Okafor</strong> in <strong style="color:var(--t1)">Navy Suit</strong>, inside <strong style="color:var(--t1)">Governor\'s Office anteroom</strong>. Gold spectacles catch the morning light. He carries a manila folder — the day\'s brief. His Igbo-English cadence contrasts with the Yoruba staff around him, reinforcing his cross-regional identity.'
+  },
+  npc: {
+    id:'NATAS-CHAR-003',
+    slug:'NPC-ABDULLAHI',
+    name:'Mama Fatima Abdullahi',
+    state:'Concept',
+    dna:[
+      ['Asset ID','NATAS-CHAR-003-2D-PORT-01'],
+      ['Type','2D Portrait · SVG Inline (Concept)'],
+      ['Region','Kwara · Ilorin · Hausa-Fulani community'],
+      ['Location','Ilorin Central Market, Kwara State'],
+      ['Context','Market scenes · Grassroots capital events · Social feed sources · NPC dialogue'],
+      ['Era','Contemporary · 2026'],
+      ['Art Style','Stylised Realism · Nigerian NPC Archetype'],
+      ['Scale','Portrait 260×320 · Full-body 160×400 · Avatar 80×80 · Campaign 260×114 · 3D ~2m unit height'],
+      ['Performance Tier','Mobile-first · Low tier acceptable · NPC archetype'],
+      ['Dependencies','Inter 900 · Google Fonts CDN · Three.js r128 (cdnjs) · No external image assets'],
+      ['Licence / Origin','Original · Claude Code generation · Session 2026-10-14'],
+      ['Canonical Reference','NATAS-CHAR-003 · NPC Master Record · GameForge Registry'],
+      ['Signature','Teal hijab + market apron — NPC archetype anchor'],
+      ['Skin Profile','Warm brown · Kwara Hausa-Fulani'],
+      ['Colour Profile','Teal hijab · Ankara bubu · Market warm'],
+      ['Version','v0.2.0-concept'],
+    ],
+    wardrobe:[
+      {n:'Market Everyday (Bubu + Hijab + Apron)',d:'Daily market wear · Teal-blue hijab · Ankara bubu · Market apron over · Sensible sandals · Carrying tray'},
+      {n:'Celebration / Eid Attire',d:'Eid Al-Fitr and Maulud · White or gold hijab · Lace fabric bubu · Gold jewellery · No apron'},
+      {n:'Home Casual',d:'Indoor kaftan · Looser hijab style or headwrap · Relaxed expression'},
+    ],
+    ctx:{
+      WHO:'Mama Fatima Abdullahi · NPC Citizen',
+      WHERE:'Ilorin Central Market, Kwara',
+      WHEN:'Morning–Afternoon (market hours)',
+      WHAT:'Trading · Social interaction · Info-sharing',
+      WHY:'Grassroots sentiment · Community voice',
+      MOOD:'Energetic · Candid · Pragmatic',
+      ROLE:'NPC · Grassroots Capital source',
+      REGION:'Kwara · Hausa-Fulani · Islamic',
+      WEATHER:'Hot · Outdoor · Harmattan haze',
+      CULTURAL:'Market Hausa-Fulani · Emirate customs · Pidgin',
+      GAMEPLAY:'Grassroots Capital events · Social feed source',
+      PERFORMANCE:'Low tier · Simple polygon · NPC archetype',
+    },
+    resolved:'Scene resolves to: <strong style="color:var(--t1)">Mama Fatima</strong> at her <strong style="color:var(--kwara2)">market stall, Ilorin Central Market</strong>. Teal hijab glows against laterite market walls. She sells smoked catfish and seasonal vegetables. She is the Governor\'s grassroots intelligence network — whether she knows it or not.'
+  }
+};
+
+let cur = 'gov';
+
+function selectChar(id){
+  cur = id;
+  document.querySelectorAll('.char-tab').forEach((t,i)=>{
+    const ids=['gov','cos','npc'];
+    t.classList.toggle('on', ids[i]===id);
+    t.setAttribute('aria-selected', ids[i]===id ? 'true':'false');
+  });
+  document.querySelectorAll('.char-view').forEach(el=>{
+    el.classList.toggle('on', el.id.endsWith('-'+id));
+  });
+  updateDNA(id);
+  updateCtx(id);
+  updateAudioPanel(id);
+  const d=DATA[id];
+  document.getElementById('footer-id').textContent=`${d.id} · ${d.slug} · ${d.state} · Phase 2`;
+}
+
+function setExpr(char, expr, btn){
+  document.querySelectorAll(`#svg-${char} .${char}-expr`).forEach(el=>el.style.display='none');
+  const el=document.getElementById(`${char}-expr-${expr}`);
+  if(el) el.style.display='block';
+  document.querySelectorAll(`#expr-${char} .expr-btn`).forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+}
+
+function setWd(char, idx, btn, label){
+  document.querySelectorAll(`#cv-${char} .wd-btn`).forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  document.getElementById(`wd-label-${char}`).textContent=label;
+  updateWardrobeDNA(char, idx);
+}
+
+function setInfoTab(tab, btn){
+  document.querySelectorAll('.info-tab').forEach(t=>t.classList.remove('on'));
+  btn.classList.add('on');
+  document.querySelectorAll('.info-pane').forEach(p=>p.classList.remove('on'));
+  document.getElementById('pane-'+tab).classList.add('on');
+}
+
+function updateDNA(id){
+  const d=DATA[id];
+  const t=document.getElementById('dna-table');
+  if(!t) return;
+  t.innerHTML=d.dna.map(([k,v])=>`<tr><td>${k}</td><td>${v}</td></tr>`).join('');
+  updateWardrobeDNA(id, 0);
+}
+
+function updateWardrobeDNA(id, idx){
+  const d=DATA[id];
+  const wd=d.wardrobe[idx];
+  if(!wd) return;
+  const el=document.getElementById('wardrobe-dna');
+  if(!el) return;
+  el.innerHTML=`
+    <div style="font-size:12px;font-weight:900;color:var(--t1);margin-bottom:6px;">${wd.n}</div>
+    <div style="font-size:12px;color:var(--t2);line-height:1.70;">${wd.d}</div>`;
+}
+
+function updateCtx(id){
+  const d=DATA[id];
+  const g=document.getElementById('ctx-grid');
+  if(!g) return;
+  g.innerHTML=Object.entries(d.ctx).map(([k,v])=>`
+    <div class="ctx-item">
+      <div class="ctx-k">${k}</div>
+      <div class="ctx-v">${v}</div>
+    </div>`).join('');
+  const r=document.getElementById('ctx-resolved');
+  if(r) r.innerHTML=d.resolved;
+}
+
+function setView(char, view, btn){
+  const cv = document.getElementById('cv-'+char);
+  if(!cv) return;
+  // Hide all view containers
+  cv.querySelectorAll('.pv-portrait,.pv-fullbody,.pv-avatar,.pv-campaign').forEach(el=>{ el.style.display='none'; });
+  const pv3d = document.getElementById('pv3d-'+char);
+  const ctrl3d = document.getElementById('3dctrl-'+char);
+  const hint3d = document.getElementById('3dhint-'+char);
+  if(pv3d) pv3d.style.display='none';
+  if(ctrl3d) ctrl3d.style.display='none';
+  if(hint3d) hint3d.style.display='none';
+
+  if(view==='3d'){
+    if(pv3d){ pv3d.style.display=''; }
+    if(ctrl3d && char==='gov') ctrl3d.style.display='';
+    if(hint3d && char==='gov') hint3d.style.display='';
+    if(char==='gov') init3D('pv3d-gov');
+    else if(threeRunning) pauseAnim();
+  } else {
+    const cls = view==='portrait'?'.pv-portrait':view==='fullbody'?'.pv-fullbody':view==='avatar'?'.pv-avatar':'.pv-campaign';
+    const target = cv.querySelector(cls);
+    if(target) target.style.display='';
+    if(threeRunning && char==='gov') pauseAnim();
+  }
+  cv.querySelectorAll('.vsw-btn').forEach(b=>b.classList.remove('on'));
+  btn.classList.add('on');
+  const exprRow = document.getElementById('expr-'+char);
+  const showControls = (view==='portrait'||view==='fullbody');
+  if(exprRow) exprRow.style.display = showControls ? '' : 'none';
+}
+
+function updateAudioPanel(id){
+  const d = DATA[id];
+  const el = document.getElementById('audio-char-panel');
+  if(!el||!d) return;
+  el.innerHTML=`
+    <div class="dr"><span class="dr-k">Character</span><span class="dr-v">${d.name}</span></div>
+    <div class="dr"><span class="dr-k">Voice</span><span class="dr-v dim">${d.ctx.WHO} — ${d.ctx.REGION}</span></div>
+    <div class="dr"><span class="dr-k">Language</span><span class="dr-v dim">${id==='gov'?'Deep baritone · Yoruba-inflected English · Strategic Pidgin':id==='cos'?'Precise Igbo-English · Strategic understatement · Pidgin when building rapport':'Hausa-Yoruba mix · Market Pidgin · Arabic (prayer context)'}</span></div>
+    <div class="dr"><span class="dr-k">Tone range</span><span class="dr-v dim">${id==='gov'?'Authoritative → warm → commanding':id==='cos'?'Measured → analytical → occasional dry wit':'Candid → energetic → warm → alarmed'}</span></div>
+    <div class="dr"><span class="dr-k">Ambient region</span><span class="dr-v"><span class="chip ${id==='cos'?'ce':'ck'}">${id==='cos'?'Enugu':'Kwara'} DNA</span></span></div>`;
+}
+
+// ── THREE.JS 3D LAB ──
+let threeInitialized=false, threeRunning=false;
+let renderer3d, scene3d, camera3d, animId3d=null;
+let charGroup3d;
+let currentAnim3d='idle', currentWd3d='agbada';
+let animT=0;
+let orb={theta:0.3, phi:1.1, radius:4.4};
+let isDrag3d=false, prevM3d={x:0,y:0};
+let lastTouch3d=null;
+
+function init3D(containerId){
+  const container=document.getElementById(containerId);
+  if(!container) return;
+  if(threeInitialized){ resumeAnim(); return; }
+  if(typeof THREE==='undefined'){ container.innerHTML='<div class="three-placeholder"><span style="font-size:22px;opacity:0.4">⚠</span><span>Three.js unavailable</span></div>'; return; }
+
+  renderer3d=new THREE.WebGLRenderer({antialias:true,alpha:false});
+  renderer3d.setPixelRatio(Math.min(window.devicePixelRatio,2));
+  renderer3d.shadowMap.enabled=true;
+  renderer3d.shadowMap.type=THREE.PCFSoftShadowMap;
+  renderer3d.setClearColor(0x07080c,1);
+  renderer3d.setSize(container.clientWidth||280, container.clientHeight||300);
+  container.appendChild(renderer3d.domElement);
+
+  scene3d=new THREE.Scene();
+  scene3d.fog=new THREE.Fog(0x07080c,10,22);
+
+  camera3d=new THREE.PerspectiveCamera(42, (container.clientWidth||280)/(container.clientHeight||300), 0.1, 50);
+  updateCamera3D();
+
+  // Lights
+  scene3d.add(new THREE.AmbientLight(0x3a2a18, 0.7));
+  const key=new THREE.DirectionalLight(0xc9a84c, 1.1);
+  key.position.set(2.5,4.5,3); key.castShadow=true;
+  key.shadow.mapSize.set(512,512);
+  scene3d.add(key);
+  const fill=new THREE.DirectionalLight(0x2e6b3e, 0.45);
+  fill.position.set(-3,2,-1); scene3d.add(fill);
+  const rim=new THREE.DirectionalLight(0x1c4d96, 0.25);
+  rim.position.set(0,-1,-4); scene3d.add(rim);
+
+  // Ground
+  const gnd=new THREE.Mesh(new THREE.CircleGeometry(3.0,32), new THREE.MeshStandardMaterial({color:0x090d0b,roughness:0.95,metalness:0.05}));
+  gnd.rotation.x=-Math.PI/2; gnd.receiveShadow=true; scene3d.add(gnd);
+  const ring=new THREE.Mesh(new THREE.RingGeometry(2.0,2.2,32), new THREE.MeshStandardMaterial({color:0xc9a84c,transparent:true,opacity:0.12,side:THREE.DoubleSide}));
+  ring.rotation.x=-Math.PI/2; ring.position.y=0.005; scene3d.add(ring);
+
+  // Build Governor model
+  charGroup3d=new THREE.Group();
+  buildGovModel(charGroup3d);
+  scene3d.add(charGroup3d);
+
+  setupOrbit3D(renderer3d.domElement);
+  threeInitialized=true;
+  animate3D();
+}
+
+function buildGovModel(g){
+  const mSkin=new THREE.MeshStandardMaterial({color:0x7a5028,roughness:0.82});
+  const mGrn=new THREE.MeshStandardMaterial({color:0x1e5232,roughness:0.88});
+  const mGold=new THREE.MeshStandardMaterial({color:0xc9a84c,roughness:0.28,metalness:0.65});
+  const mBeard=new THREE.MeshStandardMaterial({color:0x858585,roughness:0.92});
+  const mEye=new THREE.MeshStandardMaterial({color:0x0e0806});
+  const mSand=new THREE.MeshStandardMaterial({color:0x2a180a,roughness:0.90});
+
+  // Head — oval shaped (not a perfect sphere)
+  const head=new THREE.Mesh(new THREE.SphereGeometry(0.22,14,10),mSkin);
+  head.position.set(0,1.94,0);
+  head.scale.set(1.06,1.14,0.92); // wider cheeks, taller crown, flatter front-to-back
+  head.castShadow=true; g.add(head); g.userData.head=head;
+  // Jaw / chin mass (lower face definition)
+  const jaw=new THREE.Mesh(new THREE.SphereGeometry(0.13,10,6,0,Math.PI*2,Math.PI*0.5,Math.PI*0.48),mSkin);
+  jaw.position.set(0,1.755,0.055); jaw.scale.set(1.0,0.75,0.88); g.add(jaw);
+  // Brow ridge (subtle forehead projection)
+  const browRidge=new THREE.Mesh(new THREE.BoxGeometry(0.30,0.025,0.055),mSkin);
+  browRidge.position.set(0,2.042,0.198); browRidge.rotation.x=-0.18; g.add(browRidge);
+
+  // Eyes — sclera + iris/pupil layered
+  const mSclera=new THREE.MeshStandardMaterial({color:0xf0ebe0,roughness:0.94});
+  const eyeScleraG=new THREE.SphereGeometry(0.036,8,6);
+  const eL=new THREE.Mesh(eyeScleraG,mSclera); eL.position.set(-0.088,1.964,0.195); g.add(eL);
+  const eR=eL.clone(); eR.position.set(0.088,1.964,0.195); g.add(eR);
+  const irisG=new THREE.SphereGeometry(0.022,7,5);
+  const iL=new THREE.Mesh(irisG,mEye); iL.position.set(-0.088,1.964,0.226); g.add(iL);
+  const iR=iL.clone(); iR.position.set(0.088,1.964,0.226); g.add(iR);
+
+  // Beard (half-sphere)
+  const beard=new THREE.Mesh(new THREE.SphereGeometry(0.15,8,4,0,Math.PI*2,0,Math.PI*0.5),mBeard);
+  beard.position.set(0,1.74,0.06); beard.rotation.x=0.35; g.add(beard);
+
+  // Neck
+  const neck=new THREE.Mesh(new THREE.CylinderGeometry(0.07,0.07,0.16,7),mSkin);
+  neck.position.set(0,1.72,0); g.add(neck);
+
+  // Fila cap
+  const cap=new THREE.Mesh(new THREE.CylinderGeometry(0.22,0.24,0.30,10),mGrn);
+  cap.position.set(0,2.21,0); cap.castShadow=true; g.add(cap); g.userData.cap=cap;
+  const capBand=new THREE.Mesh(new THREE.CylinderGeometry(0.242,0.242,0.038,10),mGold);
+  capBand.position.set(0,2.03,0); g.add(capBand); g.userData.capBand=capBand;
+  const capTop=new THREE.Mesh(new THREE.CylinderGeometry(0.22,0.22,0.018,10),mGrn);
+  capTop.position.set(0,2.37,0); g.add(capTop); g.userData.capTop=capTop;
+
+  // Agbada main body (wide robe)
+  const bodyGeo=new THREE.BoxGeometry(1.62,2.08,0.40);
+  const body=new THREE.Mesh(bodyGeo,mGrn);
+  body.position.set(0,0.84,0); body.castShadow=true; g.add(body); g.userData.agbBody=body;
+
+  // Sleeve wings
+  const slGeo=new THREE.BoxGeometry(0.38,0.98,0.07);
+  const slL=new THREE.Mesh(slGeo,mGrn); slL.position.set(-0.99,0.88,0); slL.rotation.z=-0.14; g.add(slL); g.userData.slL=slL;
+  const slR=slL.clone(); slR.position.set(0.99,0.88,0); slR.rotation.z=0.14; g.add(slR); g.userData.slR=slR;
+
+  // Gold collar ring
+  const collar=new THREE.Mesh(new THREE.TorusGeometry(0.17,0.013,5,14),mGold);
+  collar.position.set(0,1.63,0.05); collar.rotation.x=Math.PI/2; g.add(collar);
+
+  // Gold hem strip
+  const hem=new THREE.Mesh(new THREE.BoxGeometry(1.60,0.038,0.42),mGold);
+  hem.position.set(0,-0.18,0); g.add(hem);
+  const hemL=new THREE.Mesh(new THREE.BoxGeometry(0.37,0.028,0.09),mGold);
+  hemL.position.set(-0.99,0.40,0); g.add(hemL);
+  const hemR=hemL.clone(); hemR.position.set(0.99,0.40,0); g.add(hemR);
+
+  // Feet
+  const footG=new THREE.BoxGeometry(0.13,0.048,0.22);
+  const fL=new THREE.Mesh(footG,mSand); fL.position.set(-0.13,0.022,0.04); g.add(fL); g.userData.fL=fL;
+  const fR=fL.clone(); fR.position.set(0.13,0.022,0.04); g.add(fR); g.userData.fR=fR;
+
+  // Western suit (hidden by default)
+  buildSuitModel(g);
+}
+
+function buildSuitModel(g){
+  const mNav=new THREE.MeshStandardMaterial({color:0x12223a,roughness:0.82});
+  const mWht=new THREE.MeshStandardMaterial({color:0xe0dcd6,roughness:0.90});
+  const mGold=new THREE.MeshStandardMaterial({color:0xc9a84c,roughness:0.28,metalness:0.65});
+  const mShoe=new THREE.MeshStandardMaterial({color:0x0c0808,roughness:0.68});
+
+  const sg=new THREE.Group(); sg.visible=false;
+
+  const sBody=new THREE.Mesh(new THREE.BoxGeometry(0.70,1.32,0.36),mNav);
+  sBody.position.set(0,0.96,0); sg.add(sBody);
+
+  const shirtP=new THREE.Mesh(new THREE.BoxGeometry(0.19,0.52,0.02),mWht);
+  shirtP.position.set(0,1.09,0.19); sg.add(shirtP);
+
+  const tie=new THREE.Mesh(new THREE.BoxGeometry(0.048,0.48,0.018),mGold);
+  tie.position.set(0,0.99,0.21); sg.add(tie);
+
+  const aG=new THREE.BoxGeometry(0.15,1.08,0.17);
+  const aL=new THREE.Mesh(aG,mNav); aL.position.set(-0.435,0.96,0); sg.add(aL); g.userData.sAL=aL;
+  const aR=aL.clone(); aR.position.set(0.435,0.96,0); sg.add(aR); g.userData.sAR=aR;
+
+  const tG=new THREE.BoxGeometry(0.165,0.98,0.19);
+  const tL=new THREE.Mesh(tG,mNav); tL.position.set(-0.135,0.19,0); sg.add(tL); g.userData.sLL=tL;
+  const tR=tL.clone(); tR.position.set(0.135,0.19,0); sg.add(tR); g.userData.sLR=tR;
+
+  const soeG=new THREE.BoxGeometry(0.13,0.065,0.27);
+  const sL=new THREE.Mesh(soeG,mShoe); sL.position.set(-0.135,-0.27,0.04); sg.add(sL);
+  const sR=sL.clone(); sR.position.set(0.135,-0.27,0.04); sg.add(sR);
+
+  g.add(sg); g.userData.suitGrp=sg;
+}
+
+function animate3D(){
+  animId3d=requestAnimationFrame(animate3D);
+  threeRunning=true;
+  animT+=0.016;
+  if(!charGroup3d||!renderer3d){ renderer3d&&renderer3d.render(scene3d,camera3d); return; }
+  const {head,agbBody,slL,slR,fL,fR}=charGroup3d.userData;
+
+  if(currentAnim3d==='idle'){
+    charGroup3d.position.y=Math.sin(animT*1.2)*0.018;
+    charGroup3d.rotation.y+=0.0015;
+    if(head) head.rotation.x=Math.sin(animT*0.65)*0.022;
+    if(agbBody) agbBody.scale.x=1+Math.sin(animT*1.8)*0.007;
+    if(slL) slL.rotation.z=-0.14+Math.sin(animT*1.2)*0.018;
+    if(slR) slR.rotation.z=0.14-Math.sin(animT*1.2)*0.018;
+  } else if(currentAnim3d==='walk'){
+    charGroup3d.position.y=Math.abs(Math.sin(animT*3.2))*0.055;
+    charGroup3d.rotation.y+=0.006;
+    if(head){ head.rotation.z=Math.sin(animT*3.2)*0.038; head.position.z=Math.sin(animT*3.2)*0.018; }
+    if(agbBody) agbBody.rotation.z=Math.sin(animT*3.2)*0.028;
+    if(slL) slL.rotation.z=-0.14+Math.sin(animT*3.2)*0.10;
+    if(slR) slR.rotation.z=0.14-Math.sin(animT*3.2)*0.10;
+    if(fL) fL.position.y=0.022+Math.max(0,Math.sin(animT*3.2))*0.085;
+    if(fR) fR.position.y=0.022+Math.max(0,-Math.sin(animT*3.2))*0.085;
+  } else if(currentAnim3d==='speak'){
+    charGroup3d.position.y=Math.sin(animT*1.4)*0.012;
+    if(head){ head.rotation.x=Math.sin(animT*2.4)*0.082; head.rotation.y=Math.sin(animT*1.1)*0.045; }
+    if(agbBody) agbBody.rotation.x=Math.sin(animT*1.4)*0.018;
+    if(slL) slL.rotation.z=-0.14+Math.sin(animT*2.0)*0.13;
+    if(slR) slR.rotation.z=0.14-Math.sin(animT*1.3)*0.08;
+  }
+  renderer3d.render(scene3d,camera3d);
+}
+
+function resumeAnim(){ if(!animId3d) animate3D(); }
+function pauseAnim(){ if(animId3d){ cancelAnimationFrame(animId3d); animId3d=null; threeRunning=false; } }
+
+function updateCamera3D(){
+  if(!camera3d) return;
+  camera3d.position.x=orb.radius*Math.sin(orb.phi)*Math.sin(orb.theta);
+  camera3d.position.y=orb.radius*Math.cos(orb.phi)+1.2;
+  camera3d.position.z=orb.radius*Math.sin(orb.phi)*Math.cos(orb.theta);
+  camera3d.lookAt(0,1.2,0);
+}
+
+function setupOrbit3D(canvas){
+  canvas.addEventListener('mousedown',e=>{ isDrag3d=true; prevM3d={x:e.clientX,y:e.clientY}; e.preventDefault(); });
+  window.addEventListener('mouseup',()=>{ isDrag3d=false; });
+  window.addEventListener('mousemove',e=>{
+    if(!isDrag3d) return;
+    orb.theta-=(e.clientX-prevM3d.x)*0.009;
+    orb.phi=Math.max(0.14,Math.min(Math.PI-0.14,orb.phi+(e.clientY-prevM3d.y)*0.009));
+    prevM3d={x:e.clientX,y:e.clientY};
+    updateCamera3D();
+  });
+  canvas.addEventListener('wheel',e=>{ orb.radius=Math.max(1.8,Math.min(8.0,orb.radius+e.deltaY*0.007)); updateCamera3D(); e.preventDefault(); },{passive:false});
+  canvas.addEventListener('touchstart',e=>{ lastTouch3d=e.touches[0]; e.preventDefault(); },{passive:false});
+  canvas.addEventListener('touchmove',e=>{
+    if(!lastTouch3d) return;
+    const t=e.touches[0];
+    orb.theta-=(t.clientX-lastTouch3d.clientX)*0.009;
+    orb.phi=Math.max(0.14,Math.min(Math.PI-0.14,orb.phi+(t.clientY-lastTouch3d.clientY)*0.009));
+    lastTouch3d=t; updateCamera3D(); e.preventDefault();
+  },{passive:false});
+}
+
+function setAnim3D(anim, btn){
+  currentAnim3d=anim;
+  document.querySelectorAll('.anim-btn').forEach(b=>b.classList.remove('on'));
+  if(btn) btn.classList.add('on');
+}
+
+function setWd3D(wd, btn){
+  currentWd3d=wd;
+  if(!charGroup3d) return;
+  const isAgb=(wd==='agbada');
+  [charGroup3d.userData.agbBody,charGroup3d.userData.slL,charGroup3d.userData.slR,charGroup3d.userData.cap,charGroup3d.userData.capBand,charGroup3d.userData.capTop].forEach(p=>{ if(p) p.visible=isAgb; });
+  if(charGroup3d.userData.suitGrp) charGroup3d.userData.suitGrp.visible=!isAgb;
+  document.querySelectorAll('.wd3d-btn').forEach(b=>b.classList.remove('on'));
+  if(btn) btn.classList.add('on');
+}
+
+// Init
+selectChar('gov');
+</script>
+</body>
+</html>
