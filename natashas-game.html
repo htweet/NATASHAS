@@ -4,13 +4,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>NATASHAS — The Campaign</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 /* ============================================================
    NATASHAS GAME ENGINE v4.0 — World-first three-layer design
    Layer 1: World Scene  |  Layer 2: HUD  |  Layer 3: Events
    ============================================================ */
 :root {
-  --bg:#0a0c11; --ac:#10b981; --gold:#f59e0b;
+  --f:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  --bg:#07080c; --ac:#008751; --gold:#f59e0b;
   --red:#ef4444; --orange:#f97316; --blue:#3b82f6;
   --tx:#e8ecf4; --tx2:#8e97aa; --tx3:#5a6275;
 }
@@ -28,11 +32,11 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;-webkit-font-sm
 .scene-env{position:absolute;inset:0;opacity:0;transition:opacity 1.2s ease;pointer-events:none}
 .scene-env.active{opacity:1;pointer-events:auto}
 
-/* SCENE A — Government House, Ilorin Dawn */
+/* SCENE A — Government House, Ilorin Dawn (Kwara State) */
 #s-govhouse{
   background:linear-gradient(180deg,
-    #08051a 0%,#160d38 18%,#3d1230 35%,
-    #7a2808 52%,#b55420 68%,#cd6e38 80%,#e09050 100%)
+    #05030f 0%,#0e0828 15%,#2a0d20 30%,
+    #6b2004 48%,#a84a18 62%,#c96528 76%,#d97e40 88%,#e8a060 100%)
 }
 #s-govhouse .gh-stars{
   position:absolute;inset:0;height:55%;
@@ -50,20 +54,30 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;-webkit-font-sm
 }
 #s-govhouse .gh-ground{
   position:absolute;bottom:0;left:0;right:0;height:130px;
-  background:linear-gradient(180deg,#3a1204 0%,#5a1f08 40%,#7d3010 100%)
+  background:linear-gradient(180deg,#3d1404 0%,#5c2208 40%,#7e3512 100%)
 }
 #s-govhouse .gh-path{
   position:absolute;bottom:0;left:50%;transform:translateX(-50%);
-  width:90px;height:130px;
-  background:linear-gradient(180deg,#c05e28 0%,#8b3a0f 100%);
-  clip-path:polygon(28% 0%,72% 0%,100% 100%,0% 100%)
+  width:100px;height:130px;
+  background:linear-gradient(180deg,#be6228 0%,#8a3c0e 100%);
+  clip-path:polygon(26% 0%,74% 0%,100% 100%,0% 100%)
 }
 #s-govhouse .gh-building{
   position:absolute;bottom:100px;left:50%;transform:translateX(-50%);
-  width:560px;height:280px;
-  background:#07060e;
-  clip-path:polygon(8% 100%,8% 38%,13% 33%,22% 33%,22% 22%,27% 17%,33% 22%,33% 33%,44% 33%,44% 12%,46% 6%,50% 0%,54% 6%,56% 12%,56% 33%,67% 33%,67% 22%,73% 17%,78% 22%,78% 33%,87% 33%,87% 38%,92% 100%)
+  width:580px;height:290px;
+  background:linear-gradient(180deg,#0c0a1a 0%,#080612 100%);
+  clip-path:polygon(6% 100%,6% 42%,10% 38%,18% 38%,18% 26%,22% 20%,26% 24%,26% 38%,38% 38%,38% 15%,42% 8%,46% 2%,50% 0%,54% 2%,58% 8%,62% 15%,62% 38%,74% 38%,74% 24%,78% 20%,82% 26%,82% 38%,90% 38%,90% 42%,94% 100%)
 }
+#s-govhouse .gh-flag-pole{
+  position:absolute;bottom:370px;left:calc(50% - 220px);
+  width:3px;height:80px;background:linear-gradient(180deg,#c0c0c0,#808080)
+}
+#s-govhouse .gh-flag{
+  position:absolute;top:0;left:3px;width:42px;height:28px;
+  background:linear-gradient(90deg,#008751 0%,#008751 33%,#fff 33%,#fff 67%,#008751 67%,#008751 100%);
+  animation:flag-wave 2.5s ease-in-out infinite
+}
+@keyframes flag-wave{0%,100%{clip-path:polygon(0 0,100% 0,100% 100%,0 100%)}50%{clip-path:polygon(0 0,100% 8%,100% 92%,0 100%)}}
 #s-govhouse .gh-window{
   position:absolute;width:8px;height:12px;
   background:rgba(245,200,80,.25);border-radius:2px
@@ -125,31 +139,33 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;-webkit-font-sm
 }
 #s-campaign .co-banner{
   position:absolute;top:30px;left:70px;width:55px;height:95px;
-  background:linear-gradient(180deg,#f59e0b 0%,#c07800 100%);
+  background:linear-gradient(180deg,#008751 0%,#005c38 100%);
   border-radius:2px 2px 0 0
 }
 #s-campaign .co-banner::after{
   content:'NPA';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
-  color:#0a0c11;font-size:10px;font-weight:700;font-family:Georgia,serif;letter-spacing:1px
+  color:#fff;font-size:10px;font-weight:700;font-family:var(--f);letter-spacing:1px
 }
 
-/* SCENE C — Rally Grounds, Evening */
-#s-rally{background:linear-gradient(180deg,#030508 0%,#060a12 55%,#0a0e1c 100%)}
+/* SCENE C — Rally Grounds, Evening (Ilorin open ground) */
+#s-rally{background:linear-gradient(180deg,#030408 0%,#05080f 45%,#080c18 100%)}
 #s-rally .rg-ground{
   position:absolute;bottom:0;left:0;right:0;height:160px;
-  background:linear-gradient(180deg,#08080c 0%,#05050a 100%)
+  background:linear-gradient(180deg,#0c0906 0%,#090705 100%)
 }
 #s-rally .rg-spotlight{
   position:absolute;top:0;width:220px;height:440px;
-  background:linear-gradient(180deg,rgba(255,215,60,.1) 0%,transparent 100%);
+  background:linear-gradient(180deg,rgba(0,135,81,.08) 0%,transparent 100%);
   clip-path:polygon(38% 0%,62% 0%,100% 100%,0% 100%);
   pointer-events:none
 }
 .rg-sl1{left:28%}.rg-sl2{left:55%}
 #s-rally .rg-stage{
   position:absolute;bottom:120px;left:50%;transform:translateX(-50%);
-  width:340px;height:18px;background:#1a1408;border-radius:3px 3px 0 0;
-  box-shadow:0 -4px 20px rgba(255,200,50,.08)
+  width:360px;height:20px;
+  background:linear-gradient(180deg,#1a160a 0%,#100e06 100%);
+  border-radius:3px 3px 0 0;
+  box-shadow:0 -6px 24px rgba(0,135,81,.1)
 }
 #s-rally .rg-crowd{
   position:absolute;bottom:0;left:0;right:0;height:140px;
@@ -157,14 +173,14 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;-webkit-font-sm
 }
 #s-rally .rg-crowd::before{
   content:'';position:absolute;inset:0;
-  background:repeating-linear-gradient(90deg,transparent,transparent 9px,rgba(30,50,90,.35) 9px,rgba(30,50,90,.35) 18px);
+  background:repeating-linear-gradient(90deg,transparent,transparent 9px,rgba(0,50,25,.4) 9px,rgba(0,50,25,.4) 18px);
   mask-image:linear-gradient(180deg,transparent 0%,rgba(0,0,0,.9) 40%,rgba(0,0,0,.6) 100%);
   -webkit-mask-image:linear-gradient(180deg,transparent 0%,rgba(0,0,0,.9) 40%,rgba(0,0,0,.6) 100%)
 }
 #s-rally .rg-banner-text{
   position:absolute;top:80px;left:50%;transform:translateX(-50%);
-  font-family:Georgia,serif;font-size:13px;font-weight:700;
-  color:rgba(245,158,11,.5);letter-spacing:3px;white-space:nowrap
+  font-family:var(--f);font-size:13px;font-weight:700;
+  color:rgba(0,135,81,.6);letter-spacing:3px;white-space:nowrap
 }
 
 /* SCENE D — Night Crisis */
@@ -184,7 +200,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;-webkit-font-sm
   width:260px;height:160px;
   background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.18);border-radius:4px;
   display:flex;align-items:center;justify-content:center;
-  font-family:Georgia,serif;font-size:11px;color:rgba(239,68,68,.5);letter-spacing:2px
+  font-family:var(--f);font-size:11px;color:rgba(239,68,68,.5);letter-spacing:2px
 }
 #s-night .nc-pulse{
   position:absolute;top:0;left:0;right:0;height:3px;
@@ -200,46 +216,47 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;-webkit-font-sm
 }
 .char-sprite.visible{opacity:1;transform:translateX(0)}
 .char-sprite.exit{opacity:0;transform:translateX(-30px)}
-/* Adeyemi (NPA/agbada/gold) */
+/* Adeyemi (NPA Governor — agbada gold/green, dark complexion) */
 #char-adeyemi{left:18%}
 #char-adeyemi .char-body::before{
   content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);
-  width:72px;height:165px;
-  background:linear-gradient(180deg,#f59e0b 0%,#d08000 55%,#8b5500 100%);
-  clip-path:polygon(18% 0%,82% 0%,92% 18%,100% 40%,96% 100%,4% 100%,0% 40%,8% 18%);
-  border-radius:4px 4px 0 0
+  width:76px;height:170px;
+  background:linear-gradient(180deg,#f0a500 0%,#c87c00 40%,#008751 72%,#005c38 100%);
+  clip-path:polygon(14% 0%,86% 0%,94% 16%,100% 38%,96% 100%,4% 100%,0% 38%,6% 16%);
+  border-radius:6px 6px 0 0
 }
 #char-adeyemi .char-body::after{
-  content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);
-  width:42px;height:42px;background:#a0522d;border-radius:50%;
-  box-shadow:0 -4px 0 #5a2a0a
+  content:'';position:absolute;top:-4px;left:50%;transform:translateX(-50%);
+  width:46px;height:46px;background:#5c3018;border-radius:50%;
+  box-shadow:0 -6px 0 #2d1508,0 2px 12px rgba(0,0,0,.6)
 }
-/* Okafor (DRP/suit/dark blue) */
+/* Okafor (DRP/Senator agbada/maroon — rival, lighter complexion) */
 #char-okafor{right:18%}
 #char-okafor .char-body::before{
   content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);
-  width:62px;height:158px;
-  background:linear-gradient(180deg,#1e3050 0%,#0f1e38 55%,#080e1c 100%);
-  clip-path:polygon(22% 0%,78% 0%,88% 22%,90% 100%,10% 100%,12% 22%)
+  width:68px;height:162px;
+  background:linear-gradient(180deg,#7a1428 0%,#500c1c 48%,#2c0810 100%);
+  clip-path:polygon(16% 0%,84% 0%,92% 18%,96% 100%,4% 100%,8% 18%)
 }
 #char-okafor .char-body::after{
-  content:'';position:absolute;top:5px;left:50%;transform:translateX(-50%);
-  width:38px;height:38px;background:#8b6050;border-radius:50%
+  content:'';position:absolute;top:0px;left:50%;transform:translateX(-50%);
+  width:40px;height:40px;background:#9a7050;border-radius:50%;
+  box-shadow:0 -5px 0 #3c1a08
 }
-/* Fatima (community/adire/green) */
+/* Fatima (community leader — adire iro & buba, deep navy/indigo, gele headwrap) */
 #char-fatima{left:50%;transform:translateX(-50%)}
 #char-fatima.visible{transform:translateX(-50%)}
 #char-fatima .char-body::before{
   content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);
-  width:66px;height:152px;
-  background:repeating-linear-gradient(135deg,#1a4d2e 0px,#1a4d2e 10px,#0d6040 10px,#0d6040 20px);
-  clip-path:polygon(20% 0%,80% 0%,90% 22%,100% 100%,0% 100%,10% 22%);
-  border-radius:4px 4px 0 0
+  width:70px;height:158px;
+  background:repeating-linear-gradient(120deg,#1c2a5a 0px,#1c2a5a 8px,#0d1e42 8px,#0d1e42 16px,#008751 16px,#008751 18px,#0d1e42 18px,#0d1e42 26px);
+  clip-path:polygon(18% 0%,82% 0%,92% 20%,100% 100%,0% 100%,8% 20%);
+  border-radius:6px 6px 0 0
 }
 #char-fatima .char-body::after{
-  content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);
-  width:40px;height:40px;background:#8b7060;border-radius:50%;
-  box-shadow:0 -14px 0 #1a4d2e
+  content:'';position:absolute;top:-4px;left:50%;transform:translateX(-50%);
+  width:42px;height:42px;background:#6a4830;border-radius:50%;
+  box-shadow:0 -16px 0 #1c2a5a,0 -26px 0 8px rgba(28,42,90,.6)
 }
 /* Adviser silhouette */
 #char-adviser{right:30%;bottom:90px;width:60px;height:160px}
@@ -270,27 +287,27 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;-webkit-font-sm
   display:inline-flex;align-items:center;gap:5px;
   background:rgba(0,0,0,.52);border:1px solid rgba(255,255,255,.1);
   border-radius:20px;padding:4px 11px;
-  font-family:Georgia,serif;font-size:10px;color:#9ba5b7;
+  font-family:var(--f);font-size:10px;color:#9ba5b7;
   backdrop-filter:blur(4px);white-space:nowrap
 }
 .hud-chip .hv{font-weight:700;color:#e8ecf4;font-size:11px}
 .hud-chip.urg{border-color:rgba(239,68,68,.4)}.hud-chip.urg .hv{color:#ef4444}
 .hud-chip.gld{border-color:rgba(245,158,11,.3)}.hud-chip.gld .hv{color:#f59e0b}
-.hud-chip.grn{border-color:rgba(16,185,129,.3)}.hud-chip.grn .hv{color:#10b981}
+.hud-chip.grn{border-color:rgba(0,135,81,.3)}.hud-chip.grn .hv{color:#008751}
 #hud-top .sp{flex:1}
 .hud-btn{
   display:inline-flex;align-items:center;gap:5px;
   background:rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.15);
   border-radius:7px;padding:6px 13px;
-  font-family:Georgia,serif;font-size:11px;font-weight:700;
+  font-family:var(--f);font-size:11px;font-weight:700;
   color:#c8d0dc;cursor:pointer;backdrop-filter:blur(6px);
   transition:background .15s,border-color .15s,transform .1s;
   text-transform:uppercase;letter-spacing:.5px;white-space:nowrap
 }
 .hud-btn:hover{background:rgba(20,30,60,.7);border-color:rgba(255,255,255,.28);transform:translateY(-1px)}
 .hud-btn:active{transform:translateY(0)}
-.hud-btn.ac{border-color:rgba(16,185,129,.45);color:#10b981}
-.hud-btn.ac:hover{background:rgba(16,185,129,.13)}
+.hud-btn.ac{border-color:rgba(0,135,81,.45);color:#008751}
+.hud-btn.ac:hover{background:rgba(0,135,81,.13)}
 .hud-btn.gd{border-color:rgba(245,158,11,.45);color:#f59e0b}
 .hud-btn.gd:hover{background:rgba(245,158,11,.1)}
 .hud-btn.rd{border-color:rgba(239,68,68,.45);color:#ef4444}
@@ -315,19 +332,19 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;-webkit-font-sm
 #hud-meters{display:flex;flex-direction:column;gap:7px;min-width:180px}
 .hud-meter{display:flex;align-items:center;gap:8px}
 .hm-label{
-  font-family:Georgia,serif;font-size:9px;color:#5a6275;
+  font-family:var(--f);font-size:9px;color:#5a6275;
   text-transform:uppercase;letter-spacing:.5px;min-width:50px;text-align:right
 }
 .hm-track{flex:1;height:5px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden}
 .hm-fill{height:100%;border-radius:3px;transition:width .4s ease}
-.hm-val{font-family:Georgia,serif;font-size:9px;font-weight:700;color:#e8ecf4;min-width:26px;text-align:right}
+.hm-val{font-family:var(--f);font-size:9px;font-weight:700;color:#e8ecf4;min-width:26px;text-align:right}
 /* ES race center */
 #hud-es{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px}
-.es-labels{display:flex;width:100%;justify-content:space-between;font-family:Georgia,serif;font-size:9px;color:#5a6275}
+.es-labels{display:flex;width:100%;justify-content:space-between;font-family:var(--f);font-size:9px;color:#5a6275}
 .es-bar{width:100%;height:7px;background:rgba(255,255,255,.08);border-radius:4px;overflow:hidden;display:flex}
 #es-fill-npa{background:linear-gradient(90deg,#f59e0b,#d97706);transition:width .5s ease;border-radius:4px 0 0 4px}
 #es-fill-drp{background:linear-gradient(90deg,#ef4444,#dc2626);transition:width .5s ease;border-radius:0 4px 4px 0}
-.es-vals{display:flex;width:100%;justify-content:space-between;font-family:Georgia,serif;font-size:11px;font-weight:700}
+.es-vals{display:flex;width:100%;justify-content:space-between;font-family:var(--f);font-size:11px;font-weight:700}
 #es-npa-v{color:#f59e0b}#es-drp-v{color:#ef4444}
 /* Buttons right */
 #hud-btns-r{display:flex;gap:8px;align-items:center}
@@ -367,15 +384,15 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;-webkit-font-sm
 #ev-label{
   font-size:9px;letter-spacing:1.8px;font-weight:700;
   text-transform:uppercase;color:#ef4444;margin-bottom:5px;
-  font-family:Georgia,serif;animation:urgent-blink 1.5s step-end infinite
+  font-family:var(--f);animation:urgent-blink 1.5s step-end infinite
 }
 @keyframes urgent-blink{0%,100%{opacity:1}50%{opacity:.6}}
 #ev-label.calm{animation:none;color:#3b82f6}
-#ev-label.info{animation:none;color:#10b981}
+#ev-label.info{animation:none;color:#008751}
 #ev-label.warn{animation:none;color:#f59e0b}
 #ev-title{
   font-size:17px;font-weight:700;color:#e8ecf4;
-  line-height:1.25;font-family:Georgia,serif
+  line-height:1.25;font-family:var(--f)
 }
 #ev-portrait{
   width:46px;height:46px;border-radius:8px;
@@ -384,14 +401,14 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;-webkit-font-sm
 }
 #ev-body{padding:14px 20px}
 #ev-dialogue{
-  font-family:Georgia,serif;font-size:13px;color:#8a94a8;
+  font-family:var(--f);font-size:13px;color:#8a94a8;
   line-height:1.7;margin-bottom:12px;font-style:italic;
   border-left:2px solid rgba(255,255,255,.08);padding-left:12px;
   display:none
 }
 #ev-dialogue.show{display:block}
 #ev-desc{
-  font-family:Georgia,serif;font-size:13px;color:#bdc4d0;
+  font-family:var(--f);font-size:13px;color:#bdc4d0;
   line-height:1.65;margin-bottom:14px
 }
 #ev-cons{
@@ -402,14 +419,14 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;-webkit-font-sm
 .ec-row{
   display:flex;align-items:flex-start;gap:8px;padding:5px 0;
   border-bottom:1px solid rgba(255,255,255,.05);
-  font-family:Georgia,serif;font-size:11px;color:#8e97aa
+  font-family:var(--f);font-size:11px;color:#8e97aa
 }
 .ec-row:last-child{border-bottom:none}
 .ec-badge{
   font-size:8px;font-weight:700;letter-spacing:.5px;
   padding:2px 6px;border-radius:3px;white-space:nowrap;flex-shrink:0
 }
-.ec-badge.known{background:rgba(16,185,129,.15);color:#10b981}
+.ec-badge.known{background:rgba(0,135,81,.15);color:#008751}
 .ec-badge.likely{background:rgba(59,130,246,.15);color:#3b82f6}
 .ec-badge.uncertain{background:rgba(90,98,117,.15);color:#5a6275}
 #ev-choices{
@@ -421,14 +438,14 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;-webkit-font-sm
   width:100%;background:rgba(255,255,255,.04);
   border:1px solid rgba(255,255,255,.1);border-radius:8px;
   padding:11px 16px;text-align:left;
-  font-family:Georgia,serif;font-size:13px;color:#c8d0dc;
+  font-family:var(--f);font-size:13px;color:#c8d0dc;
   cursor:pointer;display:flex;align-items:center;gap:10px;
   transition:background .15s,border-color .15s,transform .1s
 }
 .ev-choice:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.22);transform:translateY(-1px)}
 .ev-choice:active{transform:translateY(0)}
-.ev-choice.pri{border-color:rgba(16,185,129,.3);background:rgba(16,185,129,.06)}
-.ev-choice.pri:hover{background:rgba(16,185,129,.12);border-color:rgba(16,185,129,.5)}
+.ev-choice.pri{border-color:rgba(0,135,81,.3);background:rgba(0,135,81,.06)}
+.ev-choice.pri:hover{background:rgba(0,135,81,.12);border-color:rgba(0,135,81,.5)}
 .ev-choice.dan{border-color:rgba(239,68,68,.25);background:rgba(239,68,68,.05)}
 .ev-choice.dan:hover{background:rgba(239,68,68,.1)}
 .ev-choice:disabled{opacity:.38;cursor:not-allowed;transform:none!important}
@@ -470,28 +487,28 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;-webkit-font-sm
 }
 .sp-content{position:relative;z-index:1;text-align:center;padding:32px 40px}
 .sp-eyebrow{
-  font-family:Georgia,serif;font-size:10px;letter-spacing:5px;
-  color:rgba(245,158,11,.7);text-transform:uppercase;margin-bottom:10px
+  font-family:var(--f);font-size:10px;letter-spacing:5px;
+  color:rgba(0,200,110,.75);text-transform:uppercase;margin-bottom:10px
 }
 .sp-title{
-  font-family:Georgia,serif;font-size:58px;font-weight:700;
-  color:#e8ecf4;letter-spacing:-1px;line-height:1;margin-bottom:8px;
+  font-family:var(--f);font-size:58px;font-weight:800;
+  color:#ffffff;letter-spacing:-2px;line-height:1;margin-bottom:8px;
   text-shadow:0 4px 40px rgba(0,0,0,.9)
 }
-.sp-title .n{color:#f59e0b}
+.sp-title .n{color:#008751;text-shadow:0 0 40px rgba(0,135,81,.5)}
 .sp-sub{
-  font-family:Georgia,serif;font-size:14px;color:#8a94a8;
+  font-family:var(--f);font-size:14px;color:#8a94a8;
   line-height:1.65;max-width:340px;margin:0 auto 6px
 }
 .sp-setting{
-  font-family:Georgia,serif;font-size:11px;color:#5a6275;
+  font-family:var(--f);font-size:11px;color:#5a6275;
   letter-spacing:.5px;margin-bottom:36px
 }
 .sp-btn{
   background:linear-gradient(135deg,#f59e0b 0%,#c07800 100%);
   border:none;border-radius:8px;padding:14px 50px;
-  font-family:Georgia,serif;font-size:14px;font-weight:700;
-  color:#0a0c11;cursor:pointer;letter-spacing:1px;text-transform:uppercase;
+  font-family:var(--f);font-size:14px;font-weight:700;
+  color:#07080c;cursor:pointer;letter-spacing:1px;text-transform:uppercase;
   transition:transform .2s,box-shadow .2s;
   box-shadow:0 8px 32px rgba(0,0,0,.55);margin-bottom:18px
 }
@@ -499,7 +516,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;-webkit-font-sm
 .sp-btn:active{transform:translateY(0)}
 .sp-note{
   font-size:10px;color:rgba(255,255,255,.22);
-  max-width:300px;line-height:1.55;font-family:Georgia,serif;margin:0 auto
+  max-width:300px;line-height:1.55;font-family:var(--f);margin:0 auto
 }
 
 /* ─ DAY TRANSITION ─ */
@@ -509,8 +526,8 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;-webkit-font-sm
   opacity:0;pointer-events:none;transition:opacity .5s
 }
 #day-tx.show{opacity:1;pointer-events:auto}
-#dt-day{font-family:Georgia,serif;font-size:44px;font-weight:700;color:rgba(245,158,11,.9)}
-#dt-sub{font-family:Georgia,serif;font-size:13px;color:#5a6275;letter-spacing:2.5px}
+#dt-day{font-family:var(--f);font-size:44px;font-weight:700;color:rgba(245,158,11,.9)}
+#dt-sub{font-family:var(--f);font-size:13px;color:#5a6275;letter-spacing:2.5px}
 
 /* ─ INTEL DRAWER ─ */
 #intel-drawer{
@@ -526,27 +543,27 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;-webkit-font-sm
   padding:20px;box-shadow:0 24px 80px rgba(0,0,0,.85)
 }
 #intel-panel h2{
-  font-family:Georgia,serif;font-size:13px;color:#f59e0b;
+  font-family:var(--f);font-size:13px;color:#f59e0b;
   letter-spacing:2.5px;text-transform:uppercase;margin-bottom:14px;
   padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,.08)
 }
 .is-title{
-  font-family:Georgia,serif;font-size:9px;color:#5a6275;
+  font-family:var(--f);font-size:9px;color:#5a6275;
   text-transform:uppercase;letter-spacing:1.2px;margin-bottom:10px;margin-top:16px
 }
 .isr{
   display:flex;align-items:center;justify-content:space-between;
   padding:6px 0;border-bottom:1px solid rgba(255,255,255,.04);
-  font-family:Georgia,serif;font-size:11px
+  font-family:var(--f);font-size:11px
 }
 .isr:last-child{border-bottom:none}
 .isr-l{color:#8e97aa}.isr-v{font-weight:700;color:#e8ecf4}
-.isr-v.g{color:#10b981}.isr-v.r{color:#ef4444}.isr-v.o{color:#f59e0b}
+.isr-v.g{color:#008751}.isr-v.r{color:#ef4444}.isr-v.o{color:#f59e0b}
 .i-meter{display:flex;align-items:center;gap:7px;padding:5px 0}
-.im-label{font-family:Georgia,serif;font-size:10px;color:#8e97aa;min-width:80px}
+.im-label{font-family:var(--f);font-size:10px;color:#8e97aa;min-width:80px}
 .im-track{flex:1;height:5px;background:rgba(255,255,255,.08);border-radius:3px;overflow:hidden}
 .im-fill{height:100%;border-radius:3px;transition:width .4s}
-.im-val{font-family:Georgia,serif;font-size:10px;font-weight:700;color:#e8ecf4;min-width:28px;text-align:right}
+.im-val{font-family:var(--f);font-size:10px;font-weight:700;color:#e8ecf4;min-width:28px;text-align:right}
 #actions-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:8px}
 .a-tile{
   background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);
@@ -557,19 +574,19 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;-webkit-font-sm
 .a-tile.dis{opacity:.38;cursor:not-allowed}
 .a-tile.dis:hover{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.08)}
 .at-ico{font-size:18px;margin-bottom:4px}
-.at-name{font-family:Georgia,serif;font-size:12px;font-weight:700;color:#c8d0dc;margin-bottom:2px}
+.at-name{font-family:var(--f);font-size:12px;font-weight:700;color:#c8d0dc;margin-bottom:2px}
 .at-meta{font-size:10px;color:#5a6275}
 .at-meta .ae{color:#ef4444}.at-meta .aw{color:#f59e0b;margin-left:4px}
 .prom-item{
   display:flex;align-items:flex-start;gap:10px;padding:7px 0;
   border-bottom:1px solid rgba(255,255,255,.05);
-  font-family:Georgia,serif
+  font-family:var(--f)
 }
 .prom-item:last-child{border-bottom:none}
 .prom-badge{padding:2px 7px;border-radius:8px;font-size:9px;font-weight:700;white-space:nowrap}
 .pb-promised{background:rgba(59,130,246,.15);color:#3b82f6}
 .pb-underway{background:rgba(245,158,11,.15);color:#f59e0b}
-.pb-delivered{background:rgba(16,185,129,.15);color:#10b981}
+.pb-delivered{background:rgba(0,135,81,.15);color:#008751}
 .pb-delayed{background:rgba(249,115,22,.15);color:#f97316}
 .pb-abandoned{background:rgba(107,114,128,.15);color:#6b7280}
 .pb-broken{background:rgba(239,68,68,.15);color:#ef4444}
@@ -577,7 +594,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;-webkit-font-sm
 .chron-item{
   display:flex;gap:10px;padding:6px 0;
   border-bottom:1px solid rgba(255,255,255,.04);
-  font-family:Georgia,serif
+  font-family:var(--f)
 }
 .chron-item:last-child{border-bottom:none}
 .ci-bar{width:3px;min-width:3px;border-radius:2px;align-self:stretch}
@@ -593,12 +610,12 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;-webkit-font-sm
 .toast{
   background:rgba(8,10,20,.92);border:1px solid rgba(255,255,255,.12);
   border-radius:8px;padding:9px 18px;
-  font-family:Georgia,serif;font-size:12px;color:#c8d0dc;
+  font-family:var(--f);font-size:12px;color:#c8d0dc;
   backdrop-filter:blur(8px);white-space:nowrap;max-width:360px;text-align:center;
   animation:t-in .3s ease,t-out .4s ease 2.6s forwards
 }
 .toast.urg{border-color:rgba(239,68,68,.4);color:#ef4444}
-.toast.ok{border-color:rgba(16,185,129,.4);color:#10b981}
+.toast.ok{border-color:rgba(0,135,81,.4);color:#008751}
 .toast.info{border-color:rgba(59,130,246,.35);color:#3b82f6}
 @keyframes t-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 @keyframes t-out{from{opacity:1}to{opacity:0;transform:translateY(-10px)}}
@@ -642,6 +659,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;-webkit-font-sm
       <div class="gh-ground"></div>
       <div class="gh-path"></div>
       <div class="gh-building"></div>
+      <div class="gh-flag-pole"><div class="gh-flag"></div></div>
       <div class="gh-window gh-w1"></div>
       <div class="gh-window gh-w2"></div>
       <div class="gh-window gh-w3"></div>
@@ -712,7 +730,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;-webkit-font-sm
         </div>
         <div class="hud-meter">
           <div class="hm-label">Actions</div>
-          <div class="hm-track"><div class="hm-fill" id="hm-actions" style="background:#10b981;width:0%"></div></div>
+          <div class="hm-track"><div class="hm-fill" id="hm-actions" style="background:#008751;width:0%"></div></div>
           <div class="hm-val" id="hv-actions">0/5</div>
         </div>
       </div>
@@ -728,7 +746,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;-webkit-font-sm
         </div>
         <div class="es-vals">
           <span id="es-npa-v">—</span>
-          <span style="font-size:9px;color:#5a6275;font-family:Georgia,serif">ELECTORAL STRENGTH</span>
+          <span style="font-size:9px;color:#5a6275;font-family:var(--f)">ELECTORAL STRENGTH</span>
           <span id="es-drp-v">—</span>
         </div>
       </div>
@@ -856,7 +874,7 @@ let G = {
   chronicle:[
     {id:'CH-001',time:'Day 180, 08:30',color:'#3b82f6',text:'Campaign rally in Ilorin East draws 3,400 attendees. Grassroots +4.'},
     {id:'CH-002',time:'Day 182, 14:15',color:'#f59e0b',text:'Opposition releases disputed voter roll — INEC opens inquiry.'},
-    {id:'CH-003',time:'Day 184, 09:00',color:'#10b981',text:'NPA coalition expanded: Kwara Progressive Alliance joins ticket.'},
+    {id:'CH-003',time:'Day 184, 09:00',color:'#008751',text:'NPA coalition expanded: Kwara Progressive Alliance joins ticket.'},
     {id:'CH-004',time:'Day 185, 16:45',color:'#ef4444',text:'Contractor kickback story breaks in state media. Credibility −6.'},
     {id:'CH-005',time:'Day 186, 11:20',color:'#3b82f6',text:'Ibrahim Musa secures endorsement from Kwara Elders Council.'}
   ],
@@ -979,7 +997,7 @@ const CAMPAIGN_ACTIONS=[
 ];
 
 const CHAOS_BANDS=[
-  {min:0,max:20,label:'Stable',color:'#10b981'},
+  {min:0,max:20,label:'Stable',color:'#008751'},
   {min:21,max:40,label:'Tense',color:'#22c55e'},
   {min:41,max:60,label:'Unstable',color:'#f59e0b'},
   {min:61,max:80,label:'Crisis',color:'#f97316'},
@@ -1098,7 +1116,7 @@ function scandalsResponse(id,choice){
     s.credibility=clamp(s.credibility+10,0,100);s.visibility=clamp(s.visibility-10,0,100);
     G.player.fairPlay=clamp(G.player.fairPlay+5,0,100);
     G.election.candidates[0].trustScore=clamp(G.election.candidates[0].trustScore+3,0,100);
-    addChronicle('🤝','#10b981','Cooperated on "'+s.title+'". Trust +3, FairPlay +5.');
+    addChronicle('🤝','#008751','Cooperated on "'+s.title+'". Trust +3, FairPlay +5.');
     pushNotif('ok','Cooperation pledge issued. Trust improves.');
   }
   saveGame();renderHUD();closeEvent();
@@ -1127,7 +1145,7 @@ function renderHUD(){
 
   const ap=G.player.actionsToday;const am=G.player.maxActionsPerDay;
   el('hm-actions').style.width=(ap/am*100)+'%';
-  el('hm-actions').style.background='#10b981';
+  el('hm-actions').style.background='#008751';
   setText('hv-actions',ap+'/'+am);
 
   computeES(G.election.candidates[0]);
@@ -1337,7 +1355,7 @@ function executeNamedAction(actionId){
 
   // Show receipt as event
   const effectDesc=effectLog.map(ef=>{
-    const col=ef.d>0&&ef.n!=='Stress'?'#10b981':'#ef4444';
+    const col=ef.d>0&&ef.n!=='Stress'?'#008751':'#ef4444';
     return `<span style="color:${col}">${ef.n}: ${ef.d>0?'+':''}${ef.d}</span>`;
   }).join(' · ');
 
@@ -1417,7 +1435,7 @@ const RANDOM_EVENTS=[
       {text:'Deploy a grassroots response team',icon:'🌾',fn:()=>{
         G.player.energy=clamp(G.player.energy-10,0,100);
         G.election.candidates[0].grassroots=clamp(G.election.candidates[0].grassroots+3,0,100);
-        addChronicle('🌾','#10b981','Grassroots response deployed on Okafor pledge.');
+        addChronicle('🌾','#008751','Grassroots response deployed on Okafor pledge.');
         pushNotif('ok','Ground response deployed. Grassroots +3.');
         closeEvent();
       }},
@@ -1460,7 +1478,7 @@ const RANDOM_EVENTS=[
       {text:'Announce a cost-of-living relief package',icon:'💊',primary:true,fn:()=>{
         G.election.candidates[0].economyScore=clamp(G.election.candidates[0].economyScore+4,0,100);
         G.player.wealth=Math.max(0,G.player.wealth-300000);
-        addChronicle('💊','#10b981','Cost-of-living relief package announced. Economy score +4.');
+        addChronicle('💊','#008751','Cost-of-living relief package announced. Economy score +4.');
         pushNotif('ok','Relief announcement deployed. Economy score +4.');
         closeEvent();
       }},
@@ -1491,7 +1509,7 @@ const RANDOM_EVENTS=[
         G.player.energy=clamp(G.player.energy-15,0,100);
         G.election.candidates[0].coalitionSupport=clamp(G.election.candidates[0].coalitionSupport+6,0,100);
         G.election.candidates[0].trustScore=clamp(G.election.candidates[0].trustScore+4,0,100);
-        addChronicle('🤝','#10b981','Elders Council meeting attended. Coalition +6, Trust +4.');
+        addChronicle('🤝','#008751','Elders Council meeting attended. Coalition +6, Trust +4.');
         pushNotif('ok','Elders Council endorsement secured. Coalition +6.');
         closeEvent();
       }},
@@ -1639,7 +1657,7 @@ function renderIntelContent(section){
   let tabHtml='<div style="display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap">';
   tabs.forEach(t=>{
     const active=section===t.k;
-    tabHtml+=`<button onclick="renderIntelContent('${t.k}')" style="padding:5px 12px;border-radius:6px;font-size:10px;font-weight:700;font-family:Georgia,serif;letter-spacing:.5px;text-transform:uppercase;cursor:pointer;border:1px solid ${active?'rgba(245,158,11,.5)':'rgba(255,255,255,.1)'};background:${active?'rgba(245,158,11,.12)':'rgba(255,255,255,.04)'};color:${active?'#f59e0b':'#8e97aa'}">${t.label}</button>`;
+    tabHtml+=`<button onclick="renderIntelContent('${t.k}')" style="padding:5px 12px;border-radius:6px;font-size:10px;font-weight:700;font-family:var(--f);letter-spacing:.5px;text-transform:uppercase;cursor:pointer;border:1px solid ${active?'rgba(245,158,11,.5)':'rgba(255,255,255,.1)'};background:${active?'rgba(245,158,11,.12)':'rgba(255,255,255,.04)'};color:${active?'#f59e0b':'#8e97aa'}">${t.label}</button>`;
   });
   tabHtml+='</div>';
 
@@ -1663,7 +1681,7 @@ function renderIntelContent(section){
 ${Object.entries(CAPITAL_LABELS).map(([k,label])=>{
   const v=clamp(safeGet(G.player.capital,k,0),0,999);
   const pct=clamp(Math.round(v/600*100),0,100);
-  const colors={financial:'#f59e0b',political:'#8b5cf6',social:'#10b981',institutional:'#3b82f6',media:'#f97316',grassroots:'#22c55e',intelligence:'#a855f7',reputation:'#ec4899'};
+  const colors={financial:'#f59e0b',political:'#8b5cf6',social:'#008751',institutional:'#3b82f6',media:'#f97316',grassroots:'#22c55e',intelligence:'#a855f7',reputation:'#ec4899'};
   const col=colors[k]||'#6b7280';
   return `<div class="i-meter">
     <div class="im-label">${label}</div>
@@ -1697,7 +1715,7 @@ ${CAMPAIGN_ACTIONS.map(a=>{
 <div class="is-title" style="margin-top:16px">ACTIVE SCANDALS</div>
 ${G.scandals.filter(s=>!s.dismissed).map(s=>`
 <div style="background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.18);border-radius:8px;padding:10px 12px;margin-bottom:8px">
-  <div style="font-family:Georgia,serif;font-size:12px;font-weight:700;color:#e8ecf4;margin-bottom:6px">${s.title}</div>
+  <div style="font-family:var(--f);font-size:12px;font-weight:700;color:#e8ecf4;margin-bottom:6px">${s.title}</div>
   <div style="font-size:10px;color:#5a6275;margin-bottom:8px">${s.investigationStatus}</div>
   <div class="i-meter"><div class="im-label">Evidence</div><div class="im-track"><div class="im-fill" style="width:${s.evidence}%;background:#f59e0b"></div></div><div class="im-val">${s.evidence}%</div></div>
   <div class="i-meter"><div class="im-label">Visibility</div><div class="im-track"><div class="im-fill" style="width:${s.visibility}%;background:#f97316"></div></div><div class="im-val">${s.visibility}%</div></div>
@@ -1705,13 +1723,13 @@ ${G.scandals.filter(s=>!s.dismissed).map(s=>`
   <div style="display:flex;gap:6px;margin-top:8px">
     <button onclick="scandalsResponse('${s.id}','Deny');closeIntel()" style="flex:1;padding:4px;border-radius:5px;font-size:9px;background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);color:#ef4444;cursor:pointer">Deny</button>
     <button onclick="scandalsResponse('${s.id}','Deflect');closeIntel()" style="flex:1;padding:4px;border-radius:5px;font-size:9px;background:rgba(249,115,22,.12);border:1px solid rgba(249,115,22,.3);color:#f97316;cursor:pointer">Deflect</button>
-    <button onclick="scandalsResponse('${s.id}','Cooperate');closeIntel()" style="flex:1;padding:4px;border-radius:5px;font-size:9px;background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.3);color:#10b981;cursor:pointer">Cooperate</button>
+    <button onclick="scandalsResponse('${s.id}','Cooperate');closeIntel()" style="flex:1;padding:4px;border-radius:5px;font-size:9px;background:rgba(0,135,81,.12);border:1px solid rgba(0,135,81,.3);color:#008751;cursor:pointer">Cooperate</button>
   </div>
-</div>`).join('')||'<div style="font-family:Georgia,serif;font-size:11px;color:#5a6275;padding:8px">No active scandals.</div>'}`;
+</div>`).join('')||'<div style="font-family:var(--f);font-size:11px;color:#5a6275;padding:8px">No active scandals.</div>'}`;
   }
   else if(section==='stats'){
     const lifeStats=[
-      {k:'health',label:'Health',color:'#10b981'},
+      {k:'health',label:'Health',color:'#008751'},
       {k:'energy',label:'Energy',color:'#3b82f6'},
       {k:'stress',label:'Stress',color:'#ef4444',invert:true},
       {k:'living',label:'Living Standard',color:'#f59e0b'},
