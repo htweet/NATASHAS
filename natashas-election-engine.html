@@ -1,0 +1,4318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Natasha's Election Engine</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   1. DESIGN TOKENS
+   ============================================================ */
+:root {
+  --bg:  #0a0c11;
+  --sf:  #111420;
+  --sf2: #181d2c;
+  --sf3: #1e2438;
+  --bd:  rgba(255,255,255,0.07);
+  --bd2: rgba(255,255,255,0.12);
+  --tx:  #e8ecf4;
+  --tx2: #8e97aa;
+  --tx3: #5a6275;
+  --ac:      #10b981;
+  --ac-dim:  rgba(16,185,129,0.12);
+  --gold:    #f59e0b;
+  --red:     #ef4444;
+  --orange:  #f97316;
+  --blue:    #3b82f6;
+  --purple:  #8b5cf6;
+  --r1: 5px;
+  --r2: 9px;
+  --r3: 13px;
+  --r4: 18px;
+  --pill: 999px;
+  --ff:   'Inter', system-ui, sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+}
+
+/* ============================================================
+   2. RESET + BODY + HTML
+   ============================================================ */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+html {
+  height: 100%;
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
+}
+body {
+  min-height: 100%;
+  height: 100vh;
+  background: var(--bg);
+  color: var(--tx);
+  font-family: var(--ff);
+  font-size: 14px;
+  line-height: 1.5;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+a { color: var(--ac); text-decoration: none; }
+a:hover { text-decoration: underline; }
+button {
+  font-family: var(--ff);
+  font-size: 13px;
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: inherit;
+  outline: none;
+}
+button:focus-visible {
+  outline: 2px solid var(--ac);
+  outline-offset: 2px;
+}
+input, select, textarea {
+  font-family: var(--ff);
+  font-size: 14px;
+  color: var(--tx);
+  background: var(--sf2);
+  border: 1px solid var(--bd);
+  border-radius: var(--r2);
+  outline: none;
+}
+input:focus, select:focus, textarea:focus {
+  border-color: var(--ac);
+}
+ul, ol { list-style: none; }
+img, svg { display: block; max-width: 100%; }
+h1,h2,h3,h4,h5,h6 {
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--tx);
+}
+p { color: var(--tx2); }
+
+/* ============================================================
+   3. SCROLLBAR STYLES
+   ============================================================ */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--sf); }
+::-webkit-scrollbar-thumb {
+  background: var(--sf3);
+  border-radius: var(--pill);
+}
+::-webkit-scrollbar-thumb:hover { background: var(--tx3); }
+* { scrollbar-width: thin; scrollbar-color: var(--sf3) var(--sf); }
+
+/* ============================================================
+   4. BUTTONS
+   ============================================================ */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: var(--ac);
+  color: #000;
+  font-weight: 600;
+  font-size: 13px;
+  border-radius: var(--r2);
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.1s;
+  white-space: nowrap;
+}
+.btn-primary:hover { opacity: 0.88; transform: translateY(-1px); }
+.btn-primary:active { transform: translateY(0); opacity: 1; }
+.btn-primary:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+}
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  background: transparent;
+  color: var(--tx2);
+  font-weight: 500;
+  font-size: 13px;
+  border-radius: var(--r2);
+  border: 1px solid var(--bd2);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  white-space: nowrap;
+}
+.btn-ghost:hover {
+  background: var(--sf2);
+  color: var(--tx);
+  border-color: var(--bd2);
+}
+.btn-ghost:active { background: var(--sf3); }
+.btn-ghost:disabled { opacity: 0.4; cursor: not-allowed; }
+.btn-sm {
+  padding: 5px 11px;
+  font-size: 12px;
+  border-radius: var(--r1);
+}
+
+/* ============================================================
+   5. #DISCLAIMER-OVERLAY AND .DISCLAIMER-BOX
+   ============================================================ */
+#disclaimer-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 24px;
+  animation: fadeIn 0.3s ease;
+}
+#disclaimer-overlay.hidden { display: none; }
+.disclaimer-box {
+  background: var(--sf);
+  border: 1px solid var(--bd2);
+  border-radius: var(--r4);
+  max-width: 520px;
+  width: 100%;
+  padding: 36px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  box-shadow: 0 32px 80px rgba(0,0,0,0.7);
+}
+.disclaimer-box h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: -0.3px;
+}
+.disclaimer-box p {
+  font-size: 14px;
+  color: var(--tx2);
+  line-height: 1.65;
+}
+.disclaimer-box .disclaimer-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 8px;
+}
+.disclaimer-box label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--tx2);
+  cursor: pointer;
+  user-select: none;
+}
+.disclaimer-box input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--ac);
+  cursor: pointer;
+  border-radius: var(--r1);
+}
+
+/* ============================================================
+   6. #APP LAYOUT + #APP-HEADER
+   ============================================================ */
+#app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+#app-header {
+  height: 54px;
+  min-height: 54px;
+  background: var(--sf);
+  border-bottom: 1px solid var(--bd);
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 12px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  flex-shrink: 0;
+}
+
+/* ============================================================
+   7. HEADER COMPONENTS
+   ============================================================ */
+.header-logo {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+.header-logo .logo-mark {
+  width: 30px;
+  height: 30px;
+  background: linear-gradient(135deg, var(--ac) 0%, var(--blue) 100%);
+  border-radius: var(--r2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  font-weight: 800;
+  color: #000;
+  letter-spacing: -0.5px;
+  flex-shrink: 0;
+}
+.header-logo .logo-text {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--tx);
+  letter-spacing: -0.3px;
+  white-space: nowrap;
+}
+.election-phase-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 4px 10px;
+  background: var(--sf2);
+  border: 1px solid var(--bd2);
+  border-radius: var(--pill);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--tx2);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.election-phase-pill .phase-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--ac);
+  animation: pulse 2s infinite;
+  flex-shrink: 0;
+}
+.election-phase-pill .phase-label {
+  color: var(--tx);
+  font-weight: 600;
+}
+.chaos-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 10px;
+  background: var(--sf2);
+  border: 1px solid var(--bd2);
+  border-radius: var(--pill);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--tx2);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.chaos-chip .chaos-label {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--orange);
+  letter-spacing: 0.5px;
+}
+.chaos-bar-mini {
+  width: 56px;
+  height: 5px;
+  background: var(--sf3);
+  border-radius: var(--pill);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.chaos-bar-mini-fill {
+  height: 100%;
+  border-radius: var(--pill);
+  background: linear-gradient(90deg, var(--gold) 0%, var(--orange) 50%, var(--red) 100%);
+  transition: width 0.4s ease;
+}
+.world-clock {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  background: var(--sf2);
+  border: 1px solid var(--bd);
+  border-radius: var(--pill);
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--tx2);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.world-clock .clock-icon {
+  font-size: 12px;
+  opacity: 0.7;
+}
+.world-clock .clock-time {
+  color: var(--tx);
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+.energy-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  background: var(--sf2);
+  border: 1px solid var(--bd2);
+  border-radius: var(--pill);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.energy-chip .energy-icon { font-size: 13px; }
+.energy-chip .energy-val {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--gold);
+  font-weight: 700;
+}
+.energy-chip .energy-max {
+  font-size: 11px;
+  color: var(--tx3);
+  font-weight: 400;
+}
+.header-spacer { flex: 1; }
+
+/* ============================================================
+   8. #APP-BODY GRID + #SIDEBAR-LEFT
+   ============================================================ */
+#app-body {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 240px 1fr 280px;
+  grid-template-rows: 1fr;
+  overflow: hidden;
+  min-height: 0;
+}
+#sidebar-left {
+  background: var(--sf);
+  border-right: 1px solid var(--bd);
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  flex-shrink: 0;
+}
+
+/* ============================================================
+   9. SIDEBAR COMPONENTS
+   ============================================================ */
+.player-card {
+  padding: 20px 16px 16px;
+  border-bottom: 1px solid var(--bd);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.player-card-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.player-avatar {
+  width: 46px;
+  height: 46px;
+  border-radius: var(--r3);
+  background: linear-gradient(135deg, var(--sf3) 0%, var(--sf2) 100%);
+  border: 2px solid var(--bd2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+}
+.player-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
+}
+.player-avatar .avatar-badge {
+  position: absolute;
+  bottom: -1px;
+  right: -1px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--ac);
+  border: 2px solid var(--sf);
+  font-size: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.player-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+.player-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--tx);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.player-title {
+  font-size: 11px;
+  color: var(--tx3);
+  font-weight: 400;
+}
+.player-party-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: var(--pill);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  background: var(--ac-dim);
+  color: var(--ac);
+  border: 1px solid rgba(16,185,129,0.25);
+  align-self: flex-start;
+}
+.life-stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.life-stat {
+  background: var(--sf2);
+  border: 1px solid var(--bd);
+  border-radius: var(--r2);
+  padding: 9px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.life-stat-label {
+  font-size: 10px;
+  color: var(--tx3);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.life-stat-val {
+  font-family: var(--mono);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--tx);
+  line-height: 1;
+}
+.life-stat-sub {
+  font-size: 10px;
+  color: var(--tx3);
+}
+.life-stat.highlight { border-color: rgba(16,185,129,0.3); }
+.life-stat.highlight .life-stat-val { color: var(--ac); }
+.capital-bar-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--bd);
+}
+.capital-bar-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.capital-bar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.capital-bar-label {
+  font-size: 11px;
+  color: var(--tx3);
+  font-weight: 500;
+}
+.capital-bar-value {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--tx2);
+}
+.capital-bar-track {
+  height: 4px;
+  background: var(--sf3);
+  border-radius: var(--pill);
+  overflow: hidden;
+}
+.capital-bar-fill {
+  height: 100%;
+  border-radius: var(--pill);
+  transition: width 0.5s ease;
+}
+.capital-bar-fill.popularity   { background: var(--ac); }
+.capital-bar-fill.credibility  { background: var(--blue); }
+.capital-bar-fill.momentum     { background: var(--purple); }
+.capital-bar-fill.money        { background: var(--gold); }
+.career-path {
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.career-path-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--tx3);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin-bottom: 4px;
+}
+.career-path-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 10px;
+  border-radius: var(--r2);
+  font-size: 12px;
+  color: var(--tx2);
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+  border: 1px solid transparent;
+}
+.career-path-item:hover {
+  background: var(--sf2);
+  color: var(--tx);
+}
+.career-path-item.active {
+  background: var(--ac-dim);
+  color: var(--ac);
+  border-color: rgba(16,185,129,0.2);
+  font-weight: 600;
+}
+.career-path-icon {
+  font-size: 14px;
+  width: 18px;
+  text-align: center;
+  flex-shrink: 0;
+}
+.career-path-name {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.career-path-badge {
+  font-size: 10px;
+  font-family: var(--mono);
+  padding: 1px 5px;
+  border-radius: var(--pill);
+  background: var(--sf3);
+  color: var(--tx3);
+  font-weight: 600;
+}
+
+/* ============================================================
+   10. #MAIN-CONTENT, #TAB-NAV, TAB PANELS
+   ============================================================ */
+#main-content {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-width: 0;
+  background: var(--bg);
+}
+#tab-nav {
+  display: flex;
+  align-items: stretch;
+  padding: 0 16px;
+  background: var(--sf);
+  border-bottom: 1px solid var(--bd);
+  gap: 2px;
+  flex-shrink: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+}
+#tab-nav::-webkit-scrollbar { display: none; }
+.tab-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 14px;
+  height: 42px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--tx3);
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.tab-btn:hover { color: var(--tx2); }
+.tab-btn.active {
+  color: var(--tx);
+  border-bottom-color: var(--ac);
+  font-weight: 600;
+}
+.tab-btn .tab-icon { font-size: 15px; }
+.tab-btn .tab-badge {
+  font-size: 10px;
+  font-family: var(--mono);
+  background: var(--red);
+  color: #fff;
+  padding: 1px 5px;
+  border-radius: var(--pill);
+  font-weight: 700;
+  min-width: 16px;
+  text-align: center;
+}
+#tab-panels {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+.tab-panel {
+  display: none;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 20px;
+  animation: fadeIn 0.18s ease;
+}
+.tab-panel.active { display: block; }
+
+/* ============================================================
+   11. CARD SHARED STYLES
+   ============================================================ */
+.card {
+  background: var(--sf);
+  border: 1px solid var(--bd);
+  border-radius: var(--r3);
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+.card:hover { border-color: var(--bd2); }
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--bd);
+  gap: 10px;
+}
+.card-header h3 {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--tx);
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.card-header h3 .card-icon { font-size: 15px; }
+.card-body { padding: 16px; }
+
+/* ============================================================
+   12. ELECTION HUB
+   ============================================================ */
+.phase-timeline {
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+  padding: 18px 0;
+  overflow-x: auto;
+}
+.phase-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 80px;
+  position: relative;
+}
+.phase-item::before {
+  content: '';
+  position: absolute;
+  top: 13px;
+  left: 50%;
+  right: -50%;
+  height: 2px;
+  background: var(--sf3);
+  z-index: 0;
+}
+.phase-item:last-child::before { display: none; }
+.phase-item.done::before { background: var(--ac); }
+.phase-node {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--sf3);
+  border: 2px solid var(--bd2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--tx3);
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+.phase-item.done .phase-node {
+  background: var(--ac);
+  border-color: var(--ac);
+  color: #000;
+}
+.phase-item.active .phase-node {
+  background: var(--sf2);
+  border-color: var(--ac);
+  color: var(--ac);
+  box-shadow: 0 0 0 4px var(--ac-dim);
+  animation: pulse 2s infinite;
+}
+.phase-name {
+  font-size: 11px;
+  color: var(--tx3);
+  font-weight: 500;
+  text-align: center;
+  white-space: nowrap;
+}
+.phase-item.active .phase-name { color: var(--ac); font-weight: 700; }
+.phase-item.done .phase-name { color: var(--tx2); }
+.electoral-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 10px;
+  padding: 16px;
+}
+.candidate-card {
+  background: var(--sf2);
+  border: 1px solid var(--bd);
+  border-radius: var(--r3);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  cursor: pointer;
+  transition: border-color 0.15s, transform 0.15s, background 0.15s;
+}
+.candidate-card:hover {
+  border-color: var(--bd2);
+  background: var(--sf3);
+  transform: translateY(-2px);
+}
+.candidate-card.self-candidate {
+  border-color: rgba(16,185,129,0.35);
+  background: rgba(16,185,129,0.04);
+}
+.candidate-card-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.candidate-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--r2);
+  background: var(--sf3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.candidate-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--tx);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.candidate-party-pill {
+  font-size: 10px;
+  padding: 2px 7px;
+  border-radius: var(--pill);
+  background: var(--sf3);
+  color: var(--tx3);
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+.strength-bar-row {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.strength-bar-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: var(--tx3);
+}
+.strength-bar-label span:last-child {
+  font-family: var(--mono);
+  font-weight: 600;
+  color: var(--tx2);
+}
+.strength-bar-track {
+  height: 4px;
+  background: var(--sf3);
+  border-radius: var(--pill);
+  overflow: hidden;
+}
+.strength-bar-fill {
+  height: 100%;
+  border-radius: var(--pill);
+  transition: width 0.5s ease;
+  background: var(--blue);
+}
+.strength-bar-fill.green  { background: var(--ac); }
+.strength-bar-fill.gold   { background: var(--gold); }
+.strength-bar-fill.red    { background: var(--red); }
+.strength-bar-fill.purple { background: var(--purple); }
+.election-countdown {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 16px;
+  background: var(--sf2);
+  border: 1px solid var(--bd);
+  border-radius: var(--r3);
+  flex-wrap: wrap;
+}
+.countdown-label {
+  font-size: 12px;
+  color: var(--tx3);
+  font-weight: 500;
+  flex-shrink: 0;
+}
+.countdown-timer {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.countdown-unit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+}
+.countdown-num {
+  font-family: var(--mono);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--tx);
+  line-height: 1;
+}
+.countdown-unit-label {
+  font-size: 9px;
+  color: var(--tx3);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.countdown-sep {
+  font-family: var(--mono);
+  font-size: 20px;
+  color: var(--tx3);
+  margin-bottom: 8px;
+}
+.audit-log {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  max-height: 220px;
+  overflow-y: auto;
+}
+.audit-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 9px 16px;
+  border-bottom: 1px solid var(--bd);
+  transition: background 0.1s;
+}
+.audit-item:last-child { border-bottom: none; }
+.audit-item:hover { background: var(--sf2); }
+.audit-time {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--tx3);
+  white-space: nowrap;
+  padding-top: 1px;
+  flex-shrink: 0;
+}
+.audit-text {
+  font-size: 12px;
+  color: var(--tx2);
+  line-height: 1.5;
+  flex: 1;
+}
+.audit-text strong { color: var(--tx); font-weight: 600; }
+
+/* ============================================================
+   13. CAMPAIGN
+   ============================================================ */
+.campaign-actions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 10px;
+}
+.action-card {
+  background: var(--sf2);
+  border: 1px solid var(--bd);
+  border-radius: var(--r3);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  cursor: pointer;
+  transition: border-color 0.15s, transform 0.15s, background 0.15s, box-shadow 0.15s;
+  position: relative;
+  overflow: hidden;
+}
+.action-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: transparent;
+  transition: background 0.15s;
+}
+.action-card:hover {
+  border-color: var(--ac);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(16,185,129,0.08);
+}
+.action-card:hover::before { background: rgba(16,185,129,0.03); }
+.action-card:active { transform: translateY(0); }
+.action-card.disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+.action-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--r2);
+  background: var(--sf3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+.action-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--tx);
+}
+.action-desc {
+  font-size: 11px;
+  color: var(--tx3);
+  line-height: 1.5;
+  flex: 1;
+}
+.action-costs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: auto;
+}
+.cost-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 7px;
+  border-radius: var(--pill);
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 700;
+  border: 1px solid transparent;
+}
+.cost-chip.energy {
+  background: rgba(245,158,11,0.12);
+  color: var(--gold);
+  border-color: rgba(245,158,11,0.2);
+}
+.cost-chip.capital {
+  background: rgba(59,130,246,0.12);
+  color: var(--blue);
+  border-color: rgba(59,130,246,0.2);
+}
+.cost-chip.money {
+  background: rgba(16,185,129,0.12);
+  color: var(--ac);
+  border-color: rgba(16,185,129,0.2);
+}
+.promise-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.promise-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 16px;
+  border-bottom: 1px solid var(--bd);
+  transition: background 0.1s;
+}
+.promise-item:last-child { border-bottom: none; }
+.promise-item:hover { background: var(--sf2); }
+.promise-text {
+  flex: 1;
+  font-size: 13px;
+  color: var(--tx);
+}
+.promise-sub {
+  font-size: 11px;
+  color: var(--tx3);
+}
+.promise-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 9px;
+  border-radius: var(--pill);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.promise-status-badge.promised {
+  background: rgba(59,130,246,0.12);
+  color: var(--blue);
+  border: 1px solid rgba(59,130,246,0.2);
+}
+.promise-status-badge.underway {
+  background: rgba(245,158,11,0.12);
+  color: var(--gold);
+  border: 1px solid rgba(245,158,11,0.2);
+}
+.promise-status-badge.delivered {
+  background: rgba(16,185,129,0.12);
+  color: var(--ac);
+  border: 1px solid rgba(16,185,129,0.2);
+}
+.promise-status-badge.delayed {
+  background: rgba(249,115,22,0.12);
+  color: var(--orange);
+  border: 1px solid rgba(249,115,22,0.2);
+}
+.promise-status-badge.abandoned {
+  background: rgba(90,98,117,0.2);
+  color: var(--tx3);
+  border: 1px solid rgba(90,98,117,0.25);
+}
+.promise-status-badge.broken {
+  background: rgba(239,68,68,0.12);
+  color: var(--red);
+  border: 1px solid rgba(239,68,68,0.2);
+}
+
+/* ============================================================
+   14. ECONOMY
+   ============================================================ */
+.econ-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 10px;
+}
+.econ-card {
+  background: var(--sf2);
+  border: 1px solid var(--bd);
+  border-radius: var(--r3);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: border-color 0.15s;
+}
+.econ-card:hover { border-color: var(--bd2); }
+.econ-label {
+  font-size: 10px;
+  color: var(--tx3);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.econ-val {
+  font-family: var(--mono);
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--tx);
+  line-height: 1;
+}
+.econ-trend {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-family: var(--mono);
+  font-weight: 600;
+}
+.econ-trend.up   { color: var(--ac); }
+.econ-trend.down { color: var(--red); }
+.econ-trend.neutral { color: var(--tx3); }
+.econ-trend::before {
+  font-size: 10px;
+}
+.econ-trend.up::before    { content: '▲'; }
+.econ-trend.down::before  { content: '▼'; }
+.econ-trend.neutral::before { content: '●'; font-size: 8px; }
+
+/* ============================================================
+   15. SIMULATION LAB
+   ============================================================ */
+.sim-formula {
+  background: var(--sf2);
+  border: 1px solid var(--bd2);
+  border-radius: var(--r3);
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.formula-display {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--tx2);
+  background: var(--bg);
+  border: 1px solid var(--bd);
+  border-radius: var(--r2);
+  padding: 12px 14px;
+  white-space: pre-wrap;
+  line-height: 1.7;
+  overflow-x: auto;
+}
+.formula-display .f-var   { color: var(--blue); }
+.formula-display .f-op    { color: var(--orange); }
+.formula-display .f-num   { color: var(--gold); }
+.formula-display .f-fn    { color: var(--purple); }
+.formula-display .f-out   { color: var(--ac); font-weight: 600; }
+.sim-slider-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.sim-slider-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.sim-slider-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.sim-slider-name {
+  font-size: 12px;
+  color: var(--tx2);
+  font-weight: 500;
+}
+.sim-slider-val {
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ac);
+}
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 5px;
+  background: var(--sf3);
+  border-radius: var(--pill);
+  outline: none;
+  cursor: pointer;
+  border: none;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--ac);
+  cursor: pointer;
+  border: 2px solid var(--sf);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+  transition: transform 0.1s;
+}
+input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.15); }
+input[type="range"]::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--ac);
+  cursor: pointer;
+  border: 2px solid var(--sf);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+}
+input[type="range"]:focus::-webkit-slider-thumb {
+  outline: 2px solid var(--ac);
+  outline-offset: 2px;
+}
+.sim-result {
+  background: var(--sf3);
+  border: 1px solid var(--bd2);
+  border-radius: var(--r3);
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.sim-result-label {
+  font-size: 12px;
+  color: var(--tx3);
+  font-weight: 500;
+}
+.sim-result-val {
+  font-family: var(--mono);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--ac);
+  flex: 1;
+}
+.sim-result-bar {
+  flex: 1;
+  max-width: 160px;
+}
+.counterfactual-banner {
+  background: rgba(139,92,246,0.08);
+  border: 1px solid rgba(139,92,246,0.2);
+  border-radius: var(--r3);
+  padding: 12px 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.counterfactual-icon {
+  font-size: 16px;
+  color: var(--purple);
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.counterfactual-text {
+  font-size: 12px;
+  color: var(--tx2);
+  line-height: 1.6;
+}
+.counterfactual-text strong { color: var(--purple); font-weight: 600; }
+
+/* ============================================================
+   16. SOCIAL FEED
+   ============================================================ */
+.feed-item {
+  background: var(--sf);
+  border: 1px solid var(--bd);
+  border-radius: var(--r3);
+  overflow: hidden;
+  transition: border-color 0.15s;
+  margin-bottom: 10px;
+}
+.feed-item:hover { border-color: var(--bd2); }
+.feed-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px 10px;
+}
+.feed-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--sf3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+.feed-meta {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.feed-author {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--tx);
+}
+.feed-handle {
+  font-size: 11px;
+  color: var(--tx3);
+}
+.feed-time {
+  font-size: 11px;
+  color: var(--tx3);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.severity-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: var(--pill);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  flex-shrink: 0;
+  align-self: flex-start;
+}
+.severity-badge.critical {
+  background: rgba(239,68,68,0.14);
+  color: var(--red);
+  border: 1px solid rgba(239,68,68,0.25);
+}
+.severity-badge.warning {
+  background: rgba(249,115,22,0.14);
+  color: var(--orange);
+  border: 1px solid rgba(249,115,22,0.25);
+}
+.severity-badge.info {
+  background: rgba(59,130,246,0.12);
+  color: var(--blue);
+  border: 1px solid rgba(59,130,246,0.2);
+}
+.severity-badge.neutral {
+  background: rgba(90,98,117,0.18);
+  color: var(--tx3);
+  border: 1px solid rgba(90,98,117,0.25);
+}
+.feed-body {
+  padding: 0 14px 10px;
+}
+.feed-text {
+  font-size: 13px;
+  color: var(--tx2);
+  line-height: 1.6;
+}
+.feed-text .mention { color: var(--blue); font-weight: 500; }
+.feed-text .hashtag { color: var(--purple); font-weight: 500; }
+.feed-text .keyword { color: var(--ac); font-weight: 500; }
+.feed-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 14px 10px;
+  border-top: 1px solid var(--bd);
+}
+.feed-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  border-radius: var(--r2);
+  font-size: 11px;
+  color: var(--tx3);
+  background: transparent;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-weight: 500;
+}
+.feed-action-btn:hover {
+  background: var(--sf2);
+  color: var(--tx2);
+  border-color: var(--bd);
+}
+.feed-action-btn.active {
+  color: var(--ac);
+  background: var(--ac-dim);
+  border-color: rgba(16,185,129,0.2);
+}
+.feed-action-btn .action-count {
+  font-family: var(--mono);
+  font-size: 10px;
+}
+
+/* ============================================================
+   17. RELATIONSHIPS
+   ============================================================ */
+#rel-graph-container {
+  width: 100%;
+  background: var(--sf2);
+  border: 1px solid var(--bd);
+  border-radius: var(--r3);
+  overflow: hidden;
+  position: relative;
+  min-height: 320px;
+  display: flex;
+  flex-direction: column;
+}
+#rel-svg {
+  flex: 1;
+  width: 100%;
+  display: block;
+  cursor: grab;
+}
+#rel-svg:active { cursor: grabbing; }
+#rel-svg .node-circle {
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+#rel-svg .node-circle:hover { opacity: 0.85; }
+#rel-svg .edge-line {
+  stroke-opacity: 0.4;
+  transition: stroke-opacity 0.15s;
+}
+#rel-svg .edge-line:hover { stroke-opacity: 0.9; }
+.rel-legend {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-top: 1px solid var(--bd);
+  flex-wrap: wrap;
+}
+.rel-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--tx3);
+}
+.rel-legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.rel-legend-line {
+  width: 20px;
+  height: 2px;
+  border-radius: var(--pill);
+  flex-shrink: 0;
+}
+
+/* ============================================================
+   18. LEADERBOARD
+   ============================================================ */
+.lb-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.lb-table th {
+  text-align: left;
+  padding: 10px 14px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--tx3);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid var(--bd2);
+  white-space: nowrap;
+  background: var(--sf2);
+}
+.lb-table td {
+  padding: 11px 14px;
+  border-bottom: 1px solid var(--bd);
+  color: var(--tx2);
+  vertical-align: middle;
+}
+.lb-table tr:last-child td { border-bottom: none; }
+.lb-table tr:hover td { background: var(--sf2); }
+.lb-table tr.self td {
+  background: rgba(16,185,129,0.05);
+  color: var(--tx);
+}
+.lb-table tr.self td:first-child {
+  border-left: 2px solid var(--ac);
+}
+.lb-rank {
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--tx3);
+}
+.lb-rank.top-1 { color: var(--gold); }
+.lb-rank.top-2 { color: var(--tx); }
+.lb-rank.top-3 { color: var(--orange); }
+.lb-name-cell {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.lb-mini-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--r1);
+  background: var(--sf3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+.lb-name { font-weight: 600; color: var(--tx); }
+.lb-val {
+  font-family: var(--mono);
+  font-weight: 600;
+  color: var(--tx2);
+  font-size: 12px;
+}
+
+/* ============================================================
+   19. CHRONICLE
+   ============================================================ */
+.chronicle-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 6px 0;
+}
+.chronicle-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 12px 16px;
+  position: relative;
+}
+.chronicle-item::before {
+  content: '';
+  position: absolute;
+  left: 28px;
+  top: 36px;
+  bottom: -8px;
+  width: 1px;
+  background: var(--bd2);
+}
+.chronicle-item:last-child::before { display: none; }
+.chronicle-dot-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  flex-shrink: 0;
+  padding-top: 2px;
+}
+.chronicle-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--sf3);
+  border: 2px solid var(--bd2);
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+}
+.chronicle-dot.milestone {
+  background: var(--gold);
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(245,158,11,0.15);
+}
+.chronicle-dot.critical {
+  background: var(--red);
+  border-color: var(--red);
+  box-shadow: 0 0 0 3px rgba(239,68,68,0.15);
+}
+.chronicle-dot.success {
+  background: var(--ac);
+  border-color: var(--ac);
+  box-shadow: 0 0 0 3px var(--ac-dim);
+}
+.chronicle-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+.chronicle-time {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--tx3);
+  font-weight: 500;
+}
+.chronicle-text {
+  font-size: 13px;
+  color: var(--tx2);
+  line-height: 1.55;
+}
+.chronicle-text strong { color: var(--tx); font-weight: 600; }
+.chronicle-tags {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+  margin-top: 2px;
+}
+.chronicle-tag {
+  font-size: 10px;
+  padding: 1px 7px;
+  border-radius: var(--pill);
+  background: var(--sf2);
+  color: var(--tx3);
+  border: 1px solid var(--bd);
+  font-weight: 500;
+}
+
+/* ============================================================
+   20. RIGHT PANEL
+   ============================================================ */
+#panel-right {
+  background: var(--sf);
+  border-left: 1px solid var(--bd);
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  flex-shrink: 0;
+}
+.panel-section {
+  padding: 14px 14px 10px;
+  border-bottom: 1px solid var(--bd);
+}
+.panel-section:last-child { border-bottom: none; }
+.panel-section-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--tx3);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin-bottom: 10px;
+}
+.notif-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--bd);
+  cursor: pointer;
+  transition: background 0.1s;
+  border-radius: var(--r1);
+}
+.notif-item:last-child { border-bottom: none; }
+.notif-item:hover { background: var(--sf2); padding-left: 6px; padding-right: 6px; }
+.notif-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-top: 5px;
+}
+.notif-dot.red    { background: var(--red); box-shadow: 0 0 0 2px rgba(239,68,68,0.2); }
+.notif-dot.orange { background: var(--orange); box-shadow: 0 0 0 2px rgba(249,115,22,0.2); }
+.notif-dot.yellow { background: var(--gold); box-shadow: 0 0 0 2px rgba(245,158,11,0.2); }
+.notif-dot.blue   { background: var(--blue); box-shadow: 0 0 0 2px rgba(59,130,246,0.2); }
+.notif-dot.gray   { background: var(--tx3); }
+.notif-text {
+  font-size: 12px;
+  color: var(--tx2);
+  line-height: 1.5;
+  flex: 1;
+}
+.notif-text strong { color: var(--tx); font-weight: 600; }
+.notif-time {
+  font-size: 10px;
+  color: var(--tx3);
+  white-space: nowrap;
+  flex-shrink: 0;
+  font-family: var(--mono);
+}
+.scandal-card {
+  background: rgba(239,68,68,0.06);
+  border: 1px solid rgba(239,68,68,0.2);
+  border-radius: var(--r3);
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.scandal-card:last-child { margin-bottom: 0; }
+.scandal-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--red);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.scandal-desc {
+  font-size: 12px;
+  color: var(--tx3);
+  line-height: 1.5;
+}
+.scandal-heat {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.scandal-heat-label {
+  font-size: 10px;
+  color: var(--tx3);
+  font-weight: 500;
+  white-space: nowrap;
+}
+.scandal-heat-bar {
+  flex: 1;
+  height: 4px;
+  background: var(--sf3);
+  border-radius: var(--pill);
+  overflow: hidden;
+}
+.scandal-heat-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--orange) 0%, var(--red) 100%);
+  border-radius: var(--pill);
+  transition: width 0.5s ease;
+}
+.adviser-card {
+  background: var(--sf2);
+  border: 1px solid var(--bd);
+  border-radius: var(--r3);
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+.adviser-card:last-child { margin-bottom: 0; }
+.adviser-card:hover {
+  border-color: var(--bd2);
+  background: var(--sf3);
+}
+.adviser-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--r2);
+  background: var(--sf3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.adviser-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.adviser-name {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--tx);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.adviser-role {
+  font-size: 10px;
+  color: var(--tx3);
+}
+.adviser-loyalty {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.adviser-loyalty-bar {
+  width: 40px;
+  height: 4px;
+  background: var(--sf3);
+  border-radius: var(--pill);
+  overflow: hidden;
+}
+.adviser-loyalty-fill {
+  height: 100%;
+  background: var(--ac);
+  border-radius: var(--pill);
+  transition: width 0.4s ease;
+}
+.adviser-loyalty-val {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--tx3);
+  white-space: nowrap;
+}
+.chaos-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.chaos-big-bar-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.chaos-big-bar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.chaos-big-bar-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--tx2);
+}
+.chaos-big-bar-val {
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--orange);
+}
+.chaos-big-bar {
+  height: 8px;
+  background: var(--sf3);
+  border-radius: var(--pill);
+  overflow: hidden;
+}
+.chaos-big-bar-fill {
+  height: 100%;
+  border-radius: var(--pill);
+  background: linear-gradient(90deg, var(--gold) 0%, var(--orange) 60%, var(--red) 100%);
+  transition: width 0.5s ease;
+}
+.emergency-banner {
+  border-radius: var(--r3);
+  padding: 10px 13px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+.emergency-banner .eb-icon { font-size: 16px; flex-shrink: 0; }
+.emergency-banner .eb-label { flex: 1; }
+.emergency-banner.NORMAL {
+  background: rgba(16,185,129,0.08);
+  border: 1px solid rgba(16,185,129,0.2);
+  color: var(--ac);
+}
+.emergency-banner.ELEVATED {
+  background: rgba(59,130,246,0.08);
+  border: 1px solid rgba(59,130,246,0.2);
+  color: var(--blue);
+}
+.emergency-banner.HIGH_ALERT {
+  background: rgba(245,158,11,0.1);
+  border: 1px solid rgba(245,158,11,0.25);
+  color: var(--gold);
+}
+.emergency-banner.NATIONAL_EMERGENCY {
+  background: rgba(249,115,22,0.1);
+  border: 1px solid rgba(249,115,22,0.3);
+  color: var(--orange);
+}
+.emergency-banner.CRITICAL {
+  background: rgba(239,68,68,0.1);
+  border: 1px solid rgba(239,68,68,0.3);
+  color: var(--red);
+  animation: pulse 1.5s infinite;
+}
+.emergency-banner.NATIONAL_CRISIS {
+  background: rgba(239,68,68,0.18);
+  border: 2px solid var(--red);
+  color: var(--red);
+  animation: pulse 1s infinite;
+}
+
+/* ============================================================
+   21. MODALS
+   ============================================================ */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 500;
+  padding: 24px;
+  animation: fadeIn 0.2s ease;
+}
+.modal-overlay.hidden { display: none; }
+.modal-box {
+  background: var(--sf);
+  border: 1px solid var(--bd2);
+  border-radius: var(--r4);
+  max-width: 540px;
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 24px 72px rgba(0,0,0,0.6);
+}
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--bd);
+  gap: 12px;
+  flex-shrink: 0;
+}
+.modal-header h2 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--tx);
+}
+.modal-close {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--r1);
+  background: var(--sf2);
+  border: 1px solid var(--bd);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: var(--tx3);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  flex-shrink: 0;
+  line-height: 1;
+}
+.modal-close:hover { background: var(--sf3); color: var(--tx); }
+.modal-body {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  flex: 1;
+}
+.modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 14px 20px;
+  border-top: 1px solid var(--bd);
+  flex-shrink: 0;
+}
+.consequence-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px;
+  background: var(--sf2);
+  border: 1px solid var(--bd);
+  border-radius: var(--r2);
+}
+.consequence-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+.consequence-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.consequence-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--tx);
+}
+.consequence-desc {
+  font-size: 12px;
+  color: var(--tx3);
+  line-height: 1.55;
+}
+.consequence-conf {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: var(--pill);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  align-self: flex-start;
+}
+.consequence-conf.known {
+  background: rgba(16,185,129,0.12);
+  color: var(--ac);
+  border: 1px solid rgba(16,185,129,0.2);
+}
+.consequence-conf.likely {
+  background: rgba(59,130,246,0.12);
+  color: var(--blue);
+  border: 1px solid rgba(59,130,246,0.2);
+}
+.consequence-conf.uncertain {
+  background: rgba(90,98,117,0.18);
+  color: var(--tx3);
+  border: 1px solid rgba(90,98,117,0.25);
+}
+.receipt-effects {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px;
+  background: var(--sf2);
+  border-radius: var(--r2);
+  border: 1px solid var(--bd);
+}
+.receipt-effects-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--tx3);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+.effect-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 5px 0;
+  border-bottom: 1px solid var(--bd);
+}
+.effect-row:last-child { border-bottom: none; }
+.effect-name {
+  font-size: 12px;
+  color: var(--tx2);
+}
+.effect-val {
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 700;
+}
+.effect-val.positive { color: var(--ac); }
+.effect-val.negative { color: var(--red); }
+.effect-val.neutral  { color: var(--tx3); }
+.why-factor {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px;
+  background: var(--sf2);
+  border: 1px solid var(--bd);
+  border-radius: var(--r2);
+}
+.why-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.why-text {
+  font-size: 12px;
+  color: var(--tx2);
+  flex: 1;
+  line-height: 1.5;
+}
+.why-weight {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--tx3);
+  white-space: nowrap;
+}
+
+/* ============================================================
+   22. TICKER BAR
+   ============================================================ */
+#ticker-bar {
+  height: 32px;
+  min-height: 32px;
+  background: var(--sf2);
+  border-top: 1px solid var(--bd);
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  position: relative;
+  flex-shrink: 0;
+  z-index: 50;
+}
+.ticker-label {
+  padding: 0 12px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  color: var(--ac);
+  text-transform: uppercase;
+  background: var(--sf);
+  border-right: 1px solid var(--bd2);
+  height: 100%;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.ticker-track {
+  flex: 1;
+  overflow: hidden;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  mask-image: linear-gradient(90deg, transparent 0%, black 40px, black calc(100% - 40px), transparent 100%);
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, black 40px, black calc(100% - 40px), transparent 100%);
+}
+.ticker-inner {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  white-space: nowrap;
+  animation: tickerScroll 40s linear infinite;
+}
+.ticker-inner:hover { animation-play-state: paused; }
+@keyframes tickerScroll {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.ticker-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 20px;
+  font-size: 12px;
+  color: var(--tx2);
+  border-right: 1px solid var(--bd);
+}
+.ticker-item .ticker-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.ticker-item.critical .ticker-dot { background: var(--red); }
+.ticker-item.warning  .ticker-dot { background: var(--orange); }
+.ticker-item.info     .ticker-dot { background: var(--blue); }
+.ticker-item.neutral  .ticker-dot { background: var(--tx3); }
+
+/* ============================================================
+   23. ANIMATIONS
+   ============================================================ */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.5; }
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes flashGreen {
+  0%   { background: var(--ac-dim); border-color: var(--ac); }
+  50%  { background: rgba(16,185,129,0.22); border-color: var(--ac); }
+  100% { background: transparent; border-color: var(--bd); }
+}
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(16px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%       { transform: translateX(-4px); }
+  40%       { transform: translateX(4px); }
+  60%       { transform: translateX(-3px); }
+  80%       { transform: translateX(3px); }
+}
+
+/* ============================================================
+   24. RESPONSIVE
+   ============================================================ */
+@media (max-width: 900px) {
+  #app-body {
+    grid-template-columns: 200px 1fr;
+    grid-template-rows: 1fr auto;
+  }
+  #panel-right {
+    display: none;
+  }
+  .electoral-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  }
+  .sim-slider-grid { grid-template-columns: 1fr; }
+  .life-stats-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 640px) {
+  #app-body {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+  }
+  #sidebar-left {
+    display: none;
+  }
+  .header-logo .logo-text { display: none; }
+  .election-phase-pill .phase-label { display: none; }
+  .world-clock { display: none; }
+  .chaos-chip .chaos-label { display: none; }
+  #tab-nav { padding: 0 8px; gap: 0; }
+  .tab-btn { padding: 0 10px; font-size: 12px; }
+  .tab-btn .tab-icon { font-size: 16px; }
+  .electoral-grid { grid-template-columns: 1fr 1fr; }
+  .campaign-actions-grid { grid-template-columns: 1fr 1fr; }
+  .econ-grid { grid-template-columns: 1fr 1fr; }
+  .modal-box { max-width: 100%; border-radius: var(--r3); }
+  .tab-panel { padding: 12px; }
+  .disclaimer-box { padding: 24px 20px; }
+}
+</style>
+</head>
+<body>
+
+<!-- DISCLAIMER MODAL (§214) -->
+<div id="disclaimer-overlay">
+  <div class="disclaimer-box">
+    <h1>NATASHAS</h1>
+    <p class="sub">Naija Table Shakers — Election Engine v3.0</p>
+    <p>This is a <strong>fictional political simulation</strong>. All characters, parties, events, elections, economic data and narratives presented are entirely invented for gameplay purposes.</p>
+    <p>NATASHAS does <strong>not</strong> represent, simulate, endorse, predict or comment on any real Nigerian politician, party, government, election, state administration or public official.</p>
+    <div class="disclaimer-legal">SIMULATED FICTION — NOT REAL POLITICAL INFORMATION. For entertainment and game-design prototyping purposes only. Any resemblance to real persons, living or dead, or actual events is coincidental.</div>
+    <div class="disclaimer-actions">
+      <button class="btn-ghost" onclick="window.location.href='natashas-character-lab.html'">← Character Lab</button>
+      <button class="btn-primary" onclick="acknowledgeDisclaimer()">I Understand — Enter Simulation</button>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app">
+
+  <!-- HEADER -->
+  <header id="app-header">
+    <div class="header-logo">NATA<span>SHAS</span> <span style="font-size:0.72rem;font-weight:500;color:var(--tx2)">Election Engine</span></div>
+    <div class="header-sep"></div>
+    <div class="election-phase-pill">
+      <div class="phase-dot"></div>
+      <span id="hdr-phase-text">Phase 6 — Active Campaign</span>
+    </div>
+    <div class="header-spacer"></div>
+    <div class="chaos-chip">
+      <span style="color:var(--tx3);font-size:0.7rem">Chaos</span>
+      <div class="chaos-bar-mini"><div class="chaos-bar-fill" id="hdr-chaos-fill"></div></div>
+      <span id="hdr-chaos-val" style="font-family:var(--mono)"></span>
+    </div>
+    <div class="world-clock" id="hdr-clock"></div>
+    <div class="energy-chip">
+      <span style="color:var(--tx3)">⚡</span>
+      <div class="energy-bar-mini"><div class="energy-fill" id="hdr-energy-fill"></div></div>
+      <span id="hdr-energy-val" style="font-family:var(--mono);color:var(--ac)"></span>
+    </div>
+    <button class="header-save-btn" onclick="saveGame()" title="Save progress">💾 Save</button>
+  </header>
+
+  <!-- APP BODY -->
+  <div id="app-body">
+
+    <!-- LEFT SIDEBAR -->
+    <aside id="sidebar-left">
+      <div class="sidebar-section-label">Player</div>
+
+      <div class="player-card">
+        <div class="player-avatar">👤</div>
+        <div class="player-name" id="sb-name"></div>
+        <div class="player-role" id="sb-role"></div>
+        <div class="player-party-state">
+          <span class="mini-badge" id="sb-party"></span>
+          <span class="mini-badge" id="sb-state"></span>
+        </div>
+
+        <div class="sidebar-section-label">Life Stats</div>
+        <div class="life-stats-grid" id="sb-life-stats"></div>
+
+        <div class="sidebar-section-label" style="margin-top:4px">Political Capital</div>
+        <div class="capital-bars" id="sb-capital-bars"></div>
+      </div>
+
+      <div class="sidebar-section-label">Career Path</div>
+      <div class="career-path">
+        <div class="career-steps" id="sb-career"></div>
+      </div>
+
+      <div class="sidebar-section-label">Session</div>
+      <div style="font-size:0.72rem;color:var(--tx3);line-height:1.6">
+        <div>Actions today: <span id="sb-actions-today" style="color:var(--tx);font-family:var(--mono)"></span></div>
+        <div>Influence: <span id="sb-influence" style="color:var(--gold);font-family:var(--mono)"></span></div>
+        <div>Fair Play: <span id="sb-fairplay" style="color:var(--ac);font-family:var(--mono)"></span></div>
+        <div>Legacy: <span id="sb-legacy" style="color:var(--purple);font-family:var(--mono)"></span></div>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main id="main-content">
+      <nav id="tab-nav">
+        <button class="tab-btn active" data-tab="election" onclick="switchTab('election',this)">Election Hub</button>
+        <button class="tab-btn" data-tab="campaign" onclick="switchTab('campaign',this)">Campaign Centre</button>
+        <button class="tab-btn" data-tab="economy" onclick="switchTab('economy',this)">Economy</button>
+        <button class="tab-btn" data-tab="simlab" onclick="switchTab('simlab',this)">Simulation Lab</button>
+        <button class="tab-btn" data-tab="feed" onclick="switchTab('feed',this)">Social Feed <span class="tab-badge" id="badge-feed">3</span></button>
+        <button class="tab-btn" data-tab="relationships" onclick="switchTab('relationships',this)">Relationships</button>
+        <button class="tab-btn" data-tab="leaderboard" onclick="switchTab('leaderboard',this)">Leaderboard</button>
+        <button class="tab-btn" data-tab="chronicle" onclick="switchTab('chronicle',this)">Chronicle</button>
+      </nav>
+
+      <div id="tab-panels">
+
+        <!-- TAB: ELECTION HUB -->
+        <div class="tab-panel active" id="tab-election">
+          <div class="card">
+            <div class="card-header">
+              <div><div class="card-title">Election Phase Timeline</div><div class="card-sub">Kwara State Governorship · 13 Phases</div></div>
+              <button class="btn-sm" onclick="advancePhase()" id="btn-advance-phase">Advance Phase ▶</button>
+            </div>
+            <div class="phase-timeline" id="election-phase-timeline"></div>
+            <div id="election-phase-detail" style="background:var(--sf2);border:1px solid var(--bd);border-radius:var(--r2);padding:12px;font-size:0.82rem;color:var(--tx2);line-height:1.6"></div>
+          </div>
+
+          <div class="election-countdown">
+            <div>
+              <div class="countdown-num" id="countdown-days"></div>
+              <div class="countdown-label">days to Election Day</div>
+            </div>
+            <div class="header-sep"></div>
+            <div style="flex:1">
+              <div style="font-size:0.82rem;font-weight:600;margin-bottom:4px" id="countdown-phase-label"></div>
+              <div style="font-size:0.75rem;color:var(--tx2)" id="countdown-phase-desc"></div>
+            </div>
+            <div style="text-align:right">
+              <div style="font-size:0.72rem;color:var(--tx3)">Election ID</div>
+              <div style="font-size:0.78rem;font-family:var(--mono);color:var(--tx2)">ELEC-KWR-GOV-001</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div><div class="card-title">Electoral Strength</div><div class="card-sub">Computed from 10-factor formula (§34)</div></div>
+              <button class="btn-sm" onclick="recalcStrength()">Recalculate</button>
+            </div>
+            <div class="electoral-grid" id="election-candidate-grid"></div>
+            <div id="election-verdict" style="margin-top:4px;padding:10px 14px;border-radius:var(--r2);font-size:0.82rem;font-weight:600;text-align:center"></div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div><div class="card-title">Election Integrity Audit</div><div class="card-sub">Compliance and validation log (§35)</div></div>
+              <button class="btn-sm" onclick="addIntegrityCheck()">+ Add Check</button>
+            </div>
+            <div class="audit-log" id="election-integrity-log"></div>
+          </div>
+        </div>
+
+        <!-- TAB: CAMPAIGN CENTRE -->
+        <div class="tab-panel" id="tab-campaign">
+          <div class="card">
+            <div class="card-header">
+              <div><div class="card-title">Campaign Actions</div><div class="card-sub">Select an action · <span id="campaign-actions-remaining"></span> actions remaining today</div></div>
+            </div>
+            <div class="campaign-actions-grid" id="campaign-actions"></div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div><div class="card-title">Political Debt &amp; Promises</div><div class="card-sub">Commitment tracker — 6 statuses (§37)</div></div>
+              <button class="btn-sm" onclick="addPromise()">+ Add Promise</button>
+            </div>
+            <div class="promise-list" id="campaign-promises"></div>
+          </div>
+        </div>
+
+        <!-- TAB: ECONOMY -->
+        <div class="tab-panel" id="tab-economy">
+          <div class="card">
+            <div class="card-header">
+              <div><div class="card-title">Kwara State Economic Indicators</div><div class="card-sub">11 live indicators · updates every 30s (§40)</div></div>
+              <button class="btn-sm" onclick="forceEconTick()">Force Tick</button>
+            </div>
+            <div class="econ-grid" id="econ-cards"></div>
+          </div>
+
+          <div class="card" style="margin-top:14px">
+            <div class="card-header"><div class="card-title">Economic Narrative</div></div>
+            <p id="econ-narrative" style="font-size:0.82rem;color:var(--tx2);line-height:1.7"></p>
+          </div>
+        </div>
+
+        <!-- TAB: SIMULATION LAB -->
+        <div class="tab-panel" id="tab-simlab">
+          <div class="counterfactual-banner">⚠ SIMULATED COUNTERFACTUAL — DOES NOT CHANGE THE LIVE WORLD</div>
+
+          <div class="card">
+            <div class="card-header">
+              <div><div class="card-title">Electoral Strength Formula (§34)</div><div class="card-sub">Adjust factors · live computation</div></div>
+              <button class="btn-sm" onclick="resetSimSliders()">Reset</button>
+            </div>
+            <div class="sim-formula">
+              <div class="formula-display" id="sim-formula-display"></div>
+              <div class="sim-slider-grid" id="simlab-sliders"></div>
+              <div class="sim-result">
+                <div class="sim-label">Simulated Electoral Strength</div>
+                <div class="sim-result-score" id="simlab-score">—</div>
+                <div class="sim-result-label" id="sim-result-label"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div><div class="card-title">Counterfactual Scenario Lab</div><div class="card-sub">Compare alternate campaign decisions</div></div>
+            </div>
+            <div id="counterfactual-panel">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+                <div>
+                  <div style="font-size:0.75rem;font-weight:700;color:var(--tx2);margin-bottom:10px">Scenario A — Current Path</div>
+                  <div id="cf-scenario-a" style="background:var(--sf2);border:1px solid var(--bd);border-radius:var(--r2);padding:12px;font-size:0.8rem;color:var(--tx2);line-height:1.6"></div>
+                </div>
+                <div>
+                  <div style="font-size:0.75rem;font-weight:700;color:var(--gold);margin-bottom:10px">Scenario B — Alternate Path <span class="sim-label" style="font-size:0.6rem">SIMULATED</span></div>
+                  <div id="cf-scenario-b" style="background:rgba(245,158,11,0.05);border:1px solid rgba(245,158,11,0.2);border-radius:var(--r2);padding:12px;font-size:0.8rem;color:var(--tx2);line-height:1.6"></div>
+                </div>
+              </div>
+              <div style="margin-top:12px;display:flex;gap:8px;justify-content:center">
+                <button class="btn-ghost" onclick="runCounterfactual('media')">High Media Spend</button>
+                <button class="btn-ghost" onclick="runCounterfactual('grassroots')">Grassroots Focus</button>
+                <button class="btn-ghost" onclick="runCounterfactual('coalition')">Coalition Expansion</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB: SOCIAL FEED -->
+        <div class="tab-panel" id="tab-feed">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+            <div style="font-size:0.82rem;color:var(--tx2)">Live intelligence feed — sorted by severity</div>
+            <button class="btn-sm" onclick="generateFeedEvent()">+ Simulate Event</button>
+          </div>
+          <div id="social-feed-list"></div>
+        </div>
+
+        <!-- TAB: RELATIONSHIPS -->
+        <div class="tab-panel" id="tab-relationships">
+          <div class="card" style="padding:0">
+            <div class="card-header" style="padding:14px 16px 10px">
+              <div><div class="card-title">Political Relationship Graph</div><div class="card-sub">Kwara State network · click nodes for details</div></div>
+              <button class="btn-sm" onclick="drawRelGraph()">Refresh Graph</button>
+            </div>
+            <div id="rel-graph">
+              <svg id="rel-svg" viewBox="0 0 700 340"></svg>
+            </div>
+            <div class="rel-legend">
+              <div class="rel-legend-item"><div class="legend-line" style="background:var(--ac)"></div> Ally</div>
+              <div class="rel-legend-item"><div class="legend-line" style="background:var(--red)"></div> Rival</div>
+              <div class="rel-legend-item"><div class="legend-line" style="background:var(--blue)"></div> Partner</div>
+              <div class="rel-legend-item"><div class="legend-line" style="background:var(--tx3)"></div> Neutral</div>
+              <div class="rel-legend-item"><div class="legend-line" style="background:var(--orange)"></div> Volatile</div>
+            </div>
+          </div>
+
+          <div class="card" style="margin-top:14px">
+            <div class="card-header"><div class="card-title">Relationship Detail</div></div>
+            <div id="rel-detail" style="font-size:0.82rem;color:var(--tx2);line-height:1.6">Select a node on the graph to view relationship details.</div>
+          </div>
+        </div>
+
+        <!-- TAB: LEADERBOARD -->
+        <div class="tab-panel" id="tab-leaderboard">
+          <div class="card">
+            <div class="card-header">
+              <div><div class="card-title">State Performance Leaderboard</div><div class="card-sub">10 representative states · your state highlighted (§63)</div></div>
+              <select id="lb-sort" onchange="sortLeaderboard(this.value)" style="background:var(--sf3);border:1px solid var(--bd2);color:var(--tx2);border-radius:var(--r1);padding:4px 8px;font-size:0.78rem">
+                <option value="score">By Player Score</option>
+                <option value="economy">By Economy</option>
+                <option value="stability">By Stability</option>
+                <option value="development">By Development</option>
+              </select>
+            </div>
+            <table class="lb-table" id="lb-table">
+              <thead>
+                <tr>
+                  <th>#</th><th>State</th><th>Economy</th><th>Stability</th><th>Development</th><th>Score</th><th>Trend</th>
+                </tr>
+              </thead>
+              <tbody id="leaderboard-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- TAB: CHRONICLE -->
+        <div class="tab-panel" id="tab-chronicle">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+            <div style="font-size:0.82rem;color:var(--tx2)">Append-only event log — all game actions and consequences</div>
+            <button class="btn-sm" onclick="clearChronicle()">Export Log</button>
+          </div>
+          <div class="chronicle-list" id="chronicle-list"></div>
+        </div>
+
+      </div><!-- /tab-panels -->
+    </main>
+
+    <!-- RIGHT PANEL -->
+    <aside id="panel-right">
+
+      <div id="emergency-banner-top" class="emergency-banner NORMAL">● NATIONAL STATUS: NORMAL</div>
+
+      <!-- Chaos Engine -->
+      <div class="panel-section">
+        <div class="panel-section-hdr">
+          <span class="panel-section-title">Chaos Engine (§44)</span>
+          <span id="chaos-level-badge" style="font-size:0.7rem;color:var(--tx2)"></span>
+        </div>
+        <div class="chaos-panel">
+          <div class="chaos-level-label" id="chaos-big-label"></div>
+          <div class="chaos-big-bar"><div class="chaos-big-fill" id="chaos-big-fill"></div></div>
+          <div class="chaos-ticks"><span>0 Stable</span><span>20</span><span>40</span><span>60</span><span>80</span><span>100 Crisis</span></div>
+          <div style="font-size:0.72rem;color:var(--tx3);margin-top:8px" id="chaos-big-desc"></div>
+        </div>
+      </div>
+
+      <!-- Notifications -->
+      <div class="panel-section" style="flex:1;overflow:hidden;display:flex;flex-direction:column">
+        <div class="panel-section-hdr">
+          <span class="panel-section-title">Notification Intelligence (§27)</span>
+          <button class="btn-sm" onclick="dismissAllNotifs()" style="font-size:0.65rem;padding:2px 8px">Clear All</button>
+        </div>
+        <div class="panel-section-body" style="flex:1;max-height:none" id="notifications-list"></div>
+      </div>
+
+      <!-- Scandals -->
+      <div class="panel-section">
+        <div class="panel-section-hdr">
+          <span class="panel-section-title">Scandal Monitor (§43)</span>
+        </div>
+        <div class="panel-section-body" id="scandals-list"></div>
+      </div>
+
+      <!-- AI Adviser -->
+      <div class="panel-section">
+        <div class="panel-section-hdr">
+          <span class="panel-section-title">AI Adviser</span>
+        </div>
+        <div class="panel-section-body">
+          <div class="adviser-card">
+            <div class="adviser-msg" id="adviser-message"></div>
+            <div class="adviser-sig">— Yusuf, Senior Strategist</div>
+          </div>
+        </div>
+      </div>
+
+    </aside>
+  </div><!-- /app-body -->
+
+  <!-- TICKER BAR -->
+  <div id="ticker-bar" id="ticker-bar-inner"></div>
+
+</div><!-- /app -->
+
+<!-- MODAL: CONSEQUENCE PREVIEW (§20) -->
+<div class="modal-overlay hidden" id="modal-consequence">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title">Consequence Preview</div>
+        <div style="font-size:0.75rem;color:var(--tx2);margin-top:2px" id="modal-con-action-name"></div>
+      </div>
+      <button class="modal-close" onclick="closeModal('modal-consequence')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="font-size:0.78rem;color:var(--tx3);margin-bottom:12px">Predicted outcomes before you commit this action:</div>
+      <div id="modal-con-consequences"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-ghost" onclick="closeModal('modal-consequence')">Cancel</button>
+      <button class="btn-primary" id="btn-con-confirm" onclick="">Execute Action</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: ACTION RECEIPT (§21) -->
+<div class="modal-overlay hidden" id="modal-receipt">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-title">Action Receipt</div>
+      <button class="modal-close" onclick="closeModal('modal-receipt')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="receipt-header">
+        <div class="receipt-action-name" id="modal-receipt-action-name"></div>
+        <div class="receipt-time" id="receipt-time"></div>
+      </div>
+      <div class="receipt-effects" id="modal-receipt-body"></div>
+      <div style="font-size:0.75rem;color:var(--tx2);border-top:1px solid var(--bd);padding-top:10px" id="receipt-summary"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-ghost" onclick="showWhyModal()" id="btn-why">Why Did This Happen?</button>
+      <button class="btn-primary" onclick="closeModal('modal-receipt')">Acknowledge</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: WHY DID THIS HAPPEN? (§22) -->
+<div class="modal-overlay hidden" id="modal-why">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-title">Why Did This Happen?</div>
+      <button class="modal-close" onclick="closeModal('modal-why')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="font-size:0.8rem;color:var(--tx2);margin-bottom:14px" id="why-summary"></div>
+      <div class="why-factors" id="why-factors"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-primary" onclick="closeModal('modal-why')">Understood</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: EMERGENCY ALERT (§47) -->
+<div class="modal-overlay hidden" id="modal-emergency">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-title" id="emergency-modal-title" style="color:var(--red)">⚠ National Emergency</div>
+      <button class="modal-close" onclick="closeModal('modal-emergency')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="font-size:0.85rem;color:var(--tx2);line-height:1.6" id="emergency-modal-body"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-ghost" onclick="closeModal('modal-emergency')">Dismiss</button>
+      <button class="btn-primary" onclick="respondEmergency()">Respond</button>
+    </div>
+  </div>
+</div>
+
+</body>
+
+<script>
+/* ============================================================
+   NATASHAS ELECTION ENGINE v3.0 — MAIN GAME SCRIPT
+   ============================================================ */
+
+// ── GAME STATE ──────────────────────────────────────────────
+let G = {
+  meta: { version: '3.0.0', firstVisit: true, lastSaved: null },
+  world: {
+    chaosIndex: 32, chaosLevel: 'Tense',
+    emergencyState: 'NORMAL',
+    gameDay: 187, gameYear: 1, clockHour: 9, clockMinute: 47,
+    daysToElection: 28, currentElectionPhase: 6
+  },
+  player: {
+    name: 'Ibrahim Musa Al-Amin', role: 'Campaign Manager',
+    party: 'NPA', state: 'Kwara',
+    health: 74, energy: 83, wealth: 2800000, stress: 43, living: 61, security: 37,
+    capital: { financial: 420, political: 380, social: 510, institutional: 340, media: 290, grassroots: 510, intelligence: 220, reputation: 72 },
+    careerStage: 2, influence: 48, network: 71, loyalty: 59, legacyScore: 0, fairPlay: 87,
+    actionsToday: 0, maxActionsPerDay: 5
+  },
+  election: {
+    daysToElection: 28, currentPhase: 6,
+    candidates: [
+      { id: 'c1', name: 'Gov. Tunde Adeyemi', party: 'NPA', incumbentBonus: 8,
+        grassroots: 62, popularity: 58, partyStrength: 71, coalitionSupport: 54,
+        mediaScore: 67, economyScore: 48, trustScore: 63, stateConditions: 58, campaignQuality: 71, random: 5, electoralStrength: 0 },
+      { id: 'c2', name: 'Barr. Chidi Okafor', party: 'DRP', incumbentBonus: 0,
+        grassroots: 54, popularity: 47, partyStrength: 53, coalitionSupport: 61,
+        mediaScore: 74, economyScore: 48, trustScore: 58, stateConditions: 58, campaignQuality: 63, random: 3, electoralStrength: 0 }
+    ],
+    integrityLog: [
+      { status: 'ok', text: 'INEC registration validated', time: 'Day 160' },
+      { status: 'ok', text: 'Candidate affidavits filed', time: 'Day 165' },
+      { status: 'ok', text: 'Campaign finance disclosure submitted', time: 'Day 170' },
+      { status: 'warn', text: 'Opposition alleges voter list irregularities — investigation pending', time: 'Day 182' },
+      { status: 'ok', text: 'All accredited observers registered', time: 'Day 185' }
+    ]
+  },
+  economy: {
+    inflation: 24.7, commodityAvailability: 62, transportCosts: 78, foodPrices: 81,
+    employment: 54, businessConfidence: 43, consumerDemand: 57, govRevenue: 67,
+    stateRevenue: 61, investment: 38, infraOutput: 44,
+    trends: { inflation: 0.2, commodityAvailability: -0.1, transportCosts: 0.1, foodPrices: 0.3,
+      employment: 0, businessConfidence: -0.1, consumerDemand: -0.1, govRevenue: 0,
+      stateRevenue: -0.1, investment: -0.1, infraOutput: 0.1 }
+  },
+  scandals: [
+    { id: 'SC-001', title: 'Contractor Kickback Allegation',
+      evidence: 42, visibility: 68, credibility: 55,
+      investigationStatus: 'Active Media Investigation', source: 'Opposition Leak', dismissed: false }
+  ],
+  promises: [
+    { id: 'PR-001', text: 'Rebuild Ilorin-Jebba highway within 18 months', status: 'underway', day: 45, region: 'Kwara North' },
+    { id: 'PR-002', text: 'Recruit 500 additional healthcare workers by Year 2', status: 'promised', day: 92, region: 'All LGAs' },
+    { id: 'PR-003', text: 'Reduce electricity tariff by 15% through state subsidy', status: 'delivered', day: 130, region: 'Kwara' },
+    { id: 'PR-004', text: 'Build 12 new primary schools in rural wards', status: 'delayed', day: 60, region: 'Rural LGAs' },
+    { id: 'PR-005', text: 'Establish Kwara Agro-Processing Hub Phase 1', status: 'abandoned', day: 75, region: 'Kwara Central' },
+    { id: 'PR-006', text: 'Quarterly youth employment summits', status: 'broken', day: 30, region: 'All LGAs' }
+  ],
+  notifications: [
+    { id: 'N1', priority: 'red', text: 'Credibility crisis: Kickback story now at 48K social posts. Immediate response required.', time: '09:15', read: false },
+    { id: 'N2', priority: 'orange', text: "Okafor's welfare pledge gaining traction — 12% polling shift in Offa LGA.", time: '08:40', read: false },
+    { id: 'N3', priority: 'yellow', text: 'Campaign fund allocation review overdue by 3 days.', time: '08:00', read: false },
+    { id: 'N4', priority: 'blue', text: 'Ilorin-Jebba highway progress report available.', time: '07:30', read: true },
+    { id: 'N5', priority: 'gray', text: 'Routine: 14 new NPA ward registrations confirmed.', time: '06:45', read: true }
+  ],
+  chronicle: [
+    { id: 'CH-001', time: 'Day 180, 08:30', color: '#3b82f6', text: 'Campaign rally in Ilorin East draws 3,400 attendees. Grassroots +4.' },
+    { id: 'CH-002', time: 'Day 182, 14:15', color: '#f59e0b', text: 'Opposition releases disputed voter roll — INEC opens inquiry.' },
+    { id: 'CH-003', time: 'Day 184, 09:00', color: '#10b981', text: 'NPA coalition expanded: Kwara Progressive Alliance joins ticket.' },
+    { id: 'CH-004', time: 'Day 185, 16:45', color: '#ef4444', text: 'Contractor kickback story breaks in state media. Credibility −6.' },
+    { id: 'CH-005', time: 'Day 186, 11:20', color: '#3b82f6', text: 'Campaign manager Ibrahim Musa secures endorsement from Kwara Elders Council.' }
+  ],
+  socialFeed: [
+    { id: 'SF-001', author: 'NTA Ilorin', emoji: '📺', time: '2h ago', severity: 'warning',
+      text: "BREAKING: Barr. Okafor announces expanded welfare pledge at Offa rally — 10,000 new beneficiaries. Campaign teams scrambling to respond.",
+      actions: ['Monitor', 'Counter Message', 'Request Briefing'] },
+    { id: 'SF-002', author: 'Kwara Daily', emoji: '📰', time: '4h ago', severity: 'info',
+      text: 'State govt reports 12% improvement on Ilorin-Jebba road construction. Opens new campaign opportunity for incumbent.',
+      actions: ['Amplify', 'Ignore'] },
+    { id: 'SF-003', author: 'Social Intel', emoji: '🔍', time: '6h ago', severity: 'critical',
+      text: 'Trending: #KwaraKickback now at 48,000 posts. Opposition amplifying contractor allegation. Credibility risk elevated.',
+      actions: ['Issue Statement', 'Suppress', 'Why?'] }
+  ],
+  leaderboard: [
+    { state: 'Lagos', economy: 78, stability: 65, development: 81, playerScore: 0, trend: 'up', isPlayer: false },
+    { state: 'Rivers', economy: 72, stability: 59, development: 74, playerScore: 0, trend: 'up', isPlayer: false },
+    { state: 'Abuja FCT', economy: 71, stability: 74, development: 77, playerScore: 0, trend: 'neutral', isPlayer: false },
+    { state: 'Kano', economy: 63, stability: 68, development: 61, playerScore: 0, trend: 'down', isPlayer: false },
+    { state: 'Enugu', economy: 60, stability: 71, development: 65, playerScore: 0, trend: 'up', isPlayer: false },
+    { state: 'Oyo', economy: 58, stability: 63, development: 59, playerScore: 0, trend: 'neutral', isPlayer: false },
+    { state: 'Delta', economy: 67, stability: 54, development: 63, playerScore: 0, trend: 'down', isPlayer: false },
+    { state: 'Kwara', economy: 54, stability: 61, development: 58, playerScore: 48, trend: 'up', isPlayer: true },
+    { state: 'Plateau', economy: 49, stability: 57, development: 52, playerScore: 0, trend: 'neutral', isPlayer: false },
+    { state: 'Taraba', economy: 41, stability: 48, development: 44, playerScore: 0, trend: 'down', isPlayer: false }
+  ],
+  simLab: { grassroots: 62, popularity: 58, partyStrength: 71, coalitionSupport: 54, mediaScore: 67, economyScore: 48, trustScore: 63, stateConditions: 58, campaignQuality: 71, random: 5 },
+  lastAction: null,
+  pendingAction: null
+};
+
+// ── CONSTANTS ────────────────────────────────────────────────
+const ELECTION_PHASES = [
+  { num: 1, name: 'Pre-Declaration', desc: 'Aspirants test public sentiment and secure internal party support.' },
+  { num: 2, name: 'Candidate Declaration', desc: 'Official declaration of candidacy before party and public.' },
+  { num: 3, name: 'INEC Registration', desc: 'Submission of forms and documentation to electoral commission.' },
+  { num: 4, name: 'Party Primary', desc: 'Internal party election to select official candidate.' },
+  { num: 5, name: 'Nomination & Filing', desc: 'INEC accepts nomination papers; candidates officially cleared.' },
+  { num: 6, name: 'Active Campaign', desc: 'Full campaign operations: rallies, media, coalitions and messaging.' },
+  { num: 7, name: 'Coalition Building', desc: 'Cross-party negotiations, endorsements and alliance finalisation.' },
+  { num: 8, name: 'Final Campaign Push', desc: 'Last-mile voter mobilisation, ground operations and media blitz.' },
+  { num: 9, name: 'Campaign Silence', desc: 'Mandatory 24-hour pre-election pause on public campaigning.' },
+  { num: 10, name: 'Voting Day', desc: 'Polls open. Ground agents monitor accreditation and voting.' },
+  { num: 11, name: 'Collation', desc: 'Results collected from polling units to wards to LGAs to state.' },
+  { num: 12, name: 'Declaration', desc: 'INEC declares winner. Legal timeline for petitions begins.' },
+  { num: 13, name: 'Transition', desc: 'Handover or new mandate begins. Promises enter delivery tracking.' }
+];
+
+const CAMPAIGN_ACTIONS = [
+  { id: 'rally', icon: '🎤', name: 'Campaign Rally', desc: 'Mass rally in a swing LGA. High visibility, high energy cost.',
+    energyCost: 20, capitalCost: { grassroots: 15, financial: 30 }, wealthCost: 500000,
+    effects: { 'Grassroots': 5, 'Popularity': 3, 'Stress': 8 },
+    consequences: [
+      { conf: 'known', text: 'Energy −20. Campaign fund −₦500,000.' },
+      { conf: 'known', text: 'Grassroots capital +5.' },
+      { conf: 'likely', text: 'Attendance 2,000–4,000; media coverage likely.' },
+      { conf: 'uncertain', text: 'Opposition may disrupt or counter-rally.' }
+    ]
+  },
+  { id: 'speech', icon: '📣', name: 'Policy Speech', desc: 'Formal address on governance, economic policy or security.',
+    energyCost: 12, capitalCost: { media: 10, institutional: 8 }, wealthCost: 0,
+    effects: { 'Media Score': 4, 'Trust': 3, 'Stress': 5 },
+    consequences: [
+      { conf: 'known', text: 'Energy −12. Institutional capital consumed.' },
+      { conf: 'likely', text: 'Media coverage and editorial discussion follow.' },
+      { conf: 'uncertain', text: 'Gaffe risk: one careless line can dominate the story.' }
+    ]
+  },
+  { id: 'debate', icon: '🏛️', name: 'Televised Debate', desc: 'High-stakes live debate against opposition candidate.',
+    energyCost: 25, capitalCost: { media: 20 }, wealthCost: 0,
+    effects: { 'Media Score': 8, 'Popularity': 6, 'Trust': 5 },
+    consequences: [
+      { conf: 'known', text: 'Energy −25. High media capital spend.' },
+      { conf: 'likely', text: 'Win: +6 Popularity, +5 Trust. Loss: −6 Popularity.' },
+      { conf: 'uncertain', text: 'Audience Q&A may surface unexpected topics.' }
+    ]
+  },
+  { id: 'travel', icon: '🚗', name: 'State Tour', desc: 'Multi-LGA road tour to build visibility and ground presence.',
+    energyCost: 30, capitalCost: { grassroots: 20, financial: 25 }, wealthCost: 800000,
+    effects: { 'Grassroots': 8, 'Social Capital': 4, 'Stress': 10 },
+    consequences: [
+      { conf: 'known', text: 'Energy −30. ₦800,000 logistics cost.' },
+      { conf: 'likely', text: 'Grassroots +8 across visited LGAs.' },
+      { conf: 'uncertain', text: 'Road conditions and security risks apply.' }
+    ]
+  },
+  { id: 'coalition', icon: '🤝', name: 'Coalition Meeting', desc: 'Negotiate with minor parties and community leaders.',
+    energyCost: 15, capitalCost: { political: 20, social: 15 }, wealthCost: 0,
+    effects: { 'Coalition Support': 6, 'Political Capital': 3, 'Stress': 6 },
+    consequences: [
+      { conf: 'known', text: 'Energy −15. Political and social capital spent.' },
+      { conf: 'likely', text: 'Coalition support +6 if talks succeed.' },
+      { conf: 'uncertain', text: 'Partners may demand concessions affecting promises.' }
+    ]
+  },
+  { id: 'staff', icon: '👥', name: 'Staff Management', desc: 'Review field operations, motivate team, address attrition.',
+    energyCost: 8, capitalCost: { financial: 10 }, wealthCost: 200000,
+    effects: { 'Campaign Quality': 4, 'Stress': 3 },
+    consequences: [
+      { conf: 'known', text: 'Energy −8. ₦200,000 staff welfare cost.' },
+      { conf: 'known', text: 'Campaign quality improves.' },
+      { conf: 'uncertain', text: 'May surface internal disputes or loyalty issues.' }
+    ]
+  },
+  { id: 'budget', icon: '💰', name: 'Budget Review', desc: 'Audit campaign expenditure and rebalance fund allocation.',
+    energyCost: 5, capitalCost: { institutional: 5 }, wealthCost: 0,
+    effects: { 'Financial Capital': 15, 'Stress': 2 },
+    consequences: [
+      { conf: 'known', text: 'Energy −5. Minor institutional capital cost.' },
+      { conf: 'known', text: 'Financial capital recovered +15.' },
+      { conf: 'uncertain', text: 'Audit may reveal undisclosed expenses.' }
+    ]
+  },
+  { id: 'messaging', icon: '📢', name: 'Public Messaging', desc: 'Craft and release strategic communications package.',
+    energyCost: 10, capitalCost: { media: 12 }, wealthCost: 300000,
+    effects: { 'Media Score': 5, 'Popularity': 2, 'Stress': 4 },
+    consequences: [
+      { conf: 'known', text: 'Energy −10. ₦300,000 production cost.' },
+      { conf: 'likely', text: 'Media score +5. Positive framing in state media.' },
+      { conf: 'uncertain', text: 'Opposition will attempt to rebut or reframe.' }
+    ]
+  },
+  { id: 'media', icon: '📺', name: 'Media Appearance', desc: 'Interview, press conference or broadcast appearance.',
+    energyCost: 12, capitalCost: { media: 8 }, wealthCost: 0,
+    effects: { 'Media Score': 6, 'Popularity': 2, 'Trust': 1 },
+    consequences: [
+      { conf: 'known', text: 'Energy −12.' },
+      { conf: 'likely', text: 'Media score +6. Story control for 24–48 hours.' },
+      { conf: 'uncertain', text: 'Hostile journalist may pivot to scandal topics.' }
+    ]
+  },
+  { id: 'grassroots', icon: '🌾', name: 'Grassroots Mobilisation', desc: 'Door-to-door canvassing, ward meetings and community events.',
+    energyCost: 22, capitalCost: { grassroots: 10 }, wealthCost: 150000,
+    effects: { 'Grassroots': 9, 'Trust': 3, 'Stress': 8 },
+    consequences: [
+      { conf: 'known', text: 'Energy −22. ₦150,000 operational cost.' },
+      { conf: 'known', text: 'Grassroots capital +9.' },
+      { conf: 'likely', text: 'Trust score improves +3.' }
+    ]
+  },
+  { id: 'digital', icon: '💻', name: 'Digital Campaign', desc: 'Social media blitz, influencer engagement and online ads.',
+    energyCost: 8, capitalCost: { media: 15, financial: 10 }, wealthCost: 400000,
+    effects: { 'Media Score': 7, 'Popularity': 3, 'Stress': 3 },
+    consequences: [
+      { conf: 'known', text: 'Energy −8. ₦400,000 digital spend.' },
+      { conf: 'likely', text: 'Media score +7. Online narrative improved.' },
+      { conf: 'uncertain', text: 'Opposing digital teams will counter within hours.' }
+    ]
+  }
+];
+
+const CAPITAL_LABELS = {
+  financial: 'Financial', political: 'Political', social: 'Social',
+  institutional: 'Institutional', media: 'Media', grassroots: 'Grassroots',
+  intelligence: 'Intelligence', reputation: 'Reputation'
+};
+
+const CAPITAL_COLORS = {
+  financial: '#f59e0b', political: '#8b5cf6', social: '#10b981',
+  institutional: '#3b82f6', media: '#f97316', grassroots: '#22c55e',
+  intelligence: '#a855f7', reputation: '#ec4899'
+};
+
+const LIFE_STATS = [
+  { key: 'health', label: 'Health', color: '#10b981' },
+  { key: 'energy', label: 'Energy', color: '#3b82f6' },
+  { key: 'stress', label: 'Stress', invert: true, color: '#ef4444' },
+  { key: 'living', label: 'Living Std', color: '#f59e0b' }
+];
+
+const ECON_DEFS = [
+  { key: 'inflation', label: 'Inflation Rate', unit: '%', higherIsBad: true },
+  { key: 'commodityAvailability', label: 'Commodity Supply', unit: '%', higherIsBad: false },
+  { key: 'transportCosts', label: 'Transport Costs', unit: '%', higherIsBad: true },
+  { key: 'foodPrices', label: 'Food Price Index', unit: '', higherIsBad: true },
+  { key: 'employment', label: 'Employment Rate', unit: '%', higherIsBad: false },
+  { key: 'businessConfidence', label: 'Business Confidence', unit: '', higherIsBad: false },
+  { key: 'consumerDemand', label: 'Consumer Demand', unit: '', higherIsBad: false },
+  { key: 'govRevenue', label: 'Fed Revenue Flow', unit: '%', higherIsBad: false },
+  { key: 'stateRevenue', label: 'State Revenue', unit: '%', higherIsBad: false },
+  { key: 'investment', label: 'Private Investment', unit: '%', higherIsBad: false },
+  { key: 'infraOutput', label: 'Infra Output', unit: '%', higherIsBad: false }
+];
+
+const CHAOS_BANDS = [
+  { min: 0, max: 20, label: 'Stable', color: '#10b981' },
+  { min: 21, max: 40, label: 'Tense', color: '#22c55e' },
+  { min: 41, max: 60, label: 'Unstable', color: '#f59e0b' },
+  { min: 61, max: 80, label: 'Crisis', color: '#f97316' },
+  { min: 81, max: 100, label: 'National Chaos', color: '#ef4444' }
+];
+
+const CAREER_STAGES = ['Aide', 'Advisor', 'Manager', 'Strategist', 'Legend'];
+
+const REL_NODES = [
+  { id: 'n1', label: 'Gov. Adeyemi', x: 200, y: 170, color: '#f59e0b', size: 22 },
+  { id: 'n2', label: 'Barr. Okafor', x: 500, y: 170, color: '#ef4444', size: 20 },
+  { id: 'n3', label: 'Mama Fatima', x: 350, y: 80, color: '#10b981', size: 16 },
+  { id: 'n4', label: 'Player (Ibrahim)', x: 350, y: 260, color: '#3b82f6', size: 18 },
+  { id: 'n5', label: 'NPA Chair', x: 120, y: 80, color: '#8b5cf6', size: 14 },
+  { id: 'n6', label: 'Kwara Elders', x: 120, y: 270, color: '#a855f7', size: 14 },
+  { id: 'n7', label: 'DRP Secretary', x: 580, y: 80, color: '#ef4444', size: 14 },
+  { id: 'n8', label: 'INEC Official', x: 580, y: 270, color: '#6b7280', size: 14 }
+];
+
+const REL_EDGES = [
+  { from: 'n4', to: 'n1', type: 'ally', color: '#10b981', label: 'Employed by' },
+  { from: 'n4', to: 'n2', type: 'rival', color: '#ef4444', label: 'Opposing' },
+  { from: 'n4', to: 'n3', type: 'partner', color: '#3b82f6', label: 'Community link' },
+  { from: 'n4', to: 'n5', type: 'ally', color: '#10b981', label: 'Party member' },
+  { from: 'n4', to: 'n6', type: 'partner', color: '#3b82f6', label: 'Endorsement' },
+  { from: 'n1', to: 'n2', type: 'rival', color: '#ef4444', label: 'Rival candidate' },
+  { from: 'n1', to: 'n5', type: 'ally', color: '#10b981', label: 'Party affiliation' },
+  { from: 'n2', to: 'n7', type: 'ally', color: '#10b981', label: 'Party member' },
+  { from: 'n8', to: 'n1', type: 'neutral', color: '#6b7280', label: 'Oversees' },
+  { from: 'n8', to: 'n2', type: 'neutral', color: '#6b7280', label: 'Oversees' },
+  { from: 'n1', to: 'n6', type: 'volatile', color: '#f97316', label: 'Strained' },
+  { from: 'n3', to: 'n6', type: 'ally', color: '#10b981', label: 'Community ties' }
+];
+
+const ADVISER_MESSAGES = [
+  'With 28 days left, your grassroots numbers are solid but media score lags behind Okafor. One strong media appearance could shift that.',
+  'The kickback story is your most urgent threat. A pre-emptive press conference with documented accounts would reduce its oxygen.',
+  "Okafor's welfare pledge is resonating in southern LGAs. A counter-offer on a visible, deliverable promise would blunt his momentum.",
+  'Your coalition support is 7 points below Adeyemi. Attending the Elders Council next meeting could unlock the swing endorsement.',
+  'Economy numbers are moving against you — inflation up 0.5 points this week. Connecting the infrastructure tour to cost-of-living is smart messaging.',
+  'Energy levels are critical. A budget review today costs only 5 energy but recovers 15 financial capital — efficient if you have no rallies planned.'
+];
+
+// ── UTILITY FUNCTIONS ────────────────────────────────────────
+function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+
+function formatNum(n) {
+  if (n == null || isNaN(n)) return '0';
+  if (Math.abs(n) >= 1000000) return '₦' + (n / 1000000).toFixed(1) + 'M';
+  if (Math.abs(n) >= 1000) return '₦' + (n / 1000).toFixed(0) + 'K';
+  return String(n);
+}
+
+function formatTime() {
+  return String(G.world.clockHour).padStart(2, '0') + ':' + String(G.world.clockMinute).padStart(2, '0');
+}
+
+function getChaosband() {
+  return CHAOS_BANDS.find(b => G.world.chaosIndex >= b.min && G.world.chaosIndex <= b.max) || CHAOS_BANDS[1];
+}
+
+function safeGet(obj, key, fallback) {
+  const v = obj && obj[key];
+  return (v == null || isNaN(v) && typeof v === 'number') ? fallback : v;
+}
+
+function deepMerge(target, source) {
+  if (typeof source !== 'object' || source === null) return target;
+  const out = Object.assign({}, target);
+  for (const key of Object.keys(source)) {
+    if (source[key] !== null && typeof source[key] === 'object' && !Array.isArray(source[key])) {
+      out[key] = deepMerge(target[key] || {}, source[key]);
+    } else {
+      out[key] = source[key];
+    }
+  }
+  return out;
+}
+
+function el(id) { return document.getElementById(id); }
+
+function setInnerHTML(id, html) {
+  const e = el(id);
+  if (e) e.innerHTML = html;
+}
+
+function setText(id, text) {
+  const e = el(id);
+  if (e) e.textContent = text != null ? String(text) : '';
+}
+
+function setStyle(id, prop, val) {
+  const e = el(id);
+  if (e) e.style[prop] = val;
+}
+
+function barHTML(val, color, maxVal) {
+  const pct = clamp(Math.round((val / (maxVal || 100)) * 100), 0, 100);
+  return `<div style="background:var(--bg3);border-radius:4px;height:6px;overflow:hidden">
+    <div style="width:${pct}%;height:100%;background:${color};border-radius:4px;transition:width 0.4s"></div>
+  </div>`;
+}
+
+// ── SAVE / LOAD ──────────────────────────────────────────────
+function saveGame() {
+  try {
+    G.meta.lastSaved = new Date().toISOString();
+    localStorage.setItem('natashas_v3', JSON.stringify(G));
+    const btn = el('btn-save');
+    if (btn) {
+      btn.style.background = 'var(--green)';
+      setTimeout(() => { if (btn) btn.style.background = ''; }, 800);
+    }
+  } catch(e) { console.warn('Save failed', e); }
+}
+
+function loadGame() {
+  try {
+    const s = localStorage.getItem('natashas_v3');
+    if (s) {
+      const d = JSON.parse(s);
+      G = deepMerge(G, d);
+    }
+  } catch(e) { console.warn('Load failed', e); }
+}
+
+// ── CHRONICLE ────────────────────────────────────────────────
+function addChronicle(emoji, color, text) {
+  G.chronicle.push({
+    id: 'CH-' + Date.now(),
+    time: 'Day ' + G.world.gameDay + ', ' + formatTime(),
+    color: color || '#3b82f6',
+    text: (emoji ? emoji + ' ' : '') + text
+  });
+  saveGame();
+}
+
+// ── DISCLAIMER / INIT ────────────────────────────────────────
+function acknowledgeDisclaimer() {
+  G.meta.firstVisit = false;
+  const ov = el('disclaimer-overlay');
+  if (ov) ov.classList.add('hidden');
+  const app = el('app');
+  if (app) app.classList.add('visible');
+  init();
+  saveGame();
+}
+
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  const panel = el('tab-' + id);
+  if (panel) panel.classList.add('active');
+  if (id === 'relationships') setTimeout(drawRelGraph, 50);
+}
+
+// ── HEADER ───────────────────────────────────────────────────
+function renderHeader() {
+  const phase = ELECTION_PHASES.find(p => p.num === G.world.currentElectionPhase) || ELECTION_PHASES[5];
+  setText('hdr-phase-text', 'Phase ' + phase.num + ': ' + phase.name);
+  const chaos = clamp(G.world.chaosIndex, 0, 100);
+  setStyle('hdr-chaos-fill', 'width', chaos + '%');
+  setText('hdr-chaos-val', Math.round(chaos));
+  setText('hdr-clock', formatTime());
+  const energy = clamp(G.player.energy, 0, 100);
+  setStyle('hdr-energy-fill', 'width', energy + '%');
+  setText('hdr-energy-val', Math.round(energy) + '%');
+}
+
+// ── SIDEBAR ──────────────────────────────────────────────────
+function renderSidebar() {
+  setText('sb-name', G.player.name || 'Ibrahim Musa Al-Amin');
+  setText('sb-role', G.player.role || 'Campaign Manager');
+  setText('sb-party', G.player.party || 'NPA');
+  setText('sb-state', G.player.state || 'Kwara');
+  setText('sb-wealth', formatNum(G.player.wealth));
+  setText('sb-influence', G.player.influence || 0);
+  setText('sb-network', G.player.network || 0);
+  setText('sb-fairplay', G.player.fairPlay || 0);
+  setText('sb-day', 'Day ' + G.world.gameDay);
+  setText('sb-dte', G.world.daysToElection + ' days to election');
+
+  // Life stats bars
+  let lifeHtml = '';
+  for (const ls of LIFE_STATS) {
+    const val = clamp(safeGet(G.player, ls.key, 50), 0, 100);
+    const displayVal = ls.invert ? (100 - val) : val;
+    lifeHtml += `<div style="margin-bottom:8px">
+      <div style="display:flex;justify-content:space-between;font-size:0.72rem;margin-bottom:3px">
+        <span style="color:var(--tx2)">${ls.label}</span>
+        <span style="color:${ls.color}">${val}%</span>
+      </div>
+      ${barHTML(displayVal, ls.color, 100)}
+    </div>`;
+  }
+  setInnerHTML('sb-life-stats', lifeHtml);
+
+  // Capital bars
+  let capHtml = '';
+  for (const [key, label] of Object.entries(CAPITAL_LABELS)) {
+    const val = clamp(safeGet(G.player.capital, key, 0), 0, 999);
+    const color = CAPITAL_COLORS[key] || '#6b7280';
+    const barPct = clamp(Math.round((val / 600) * 100), 0, 100);
+    capHtml += `<div style="margin-bottom:7px">
+      <div style="display:flex;justify-content:space-between;font-size:0.7rem;margin-bottom:3px">
+        <span style="color:var(--tx2)">${label}</span>
+        <span style="color:${color}">${val}</span>
+      </div>
+      <div style="background:var(--bg3);border-radius:3px;height:5px;overflow:hidden">
+        <div style="width:${barPct}%;height:100%;background:${color};border-radius:3px;transition:width 0.4s"></div>
+      </div>
+    </div>`;
+  }
+  setInnerHTML('sb-capital-bars', capHtml);
+
+  // Career stages
+  let careerHtml = '';
+  CAREER_STAGES.forEach((stage, i) => {
+    const active = i === G.player.careerStage;
+    const done = i < G.player.careerStage;
+    careerHtml += `<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;font-size:0.72rem">
+      <div style="width:10px;height:10px;border-radius:50%;background:${done ? '#10b981' : active ? '#3b82f6' : 'var(--bg3)'}"></div>
+      <span style="color:${active ? 'var(--tx1)' : done ? '#10b981' : 'var(--tx3)'}">${stage}${active ? ' ◀' : ''}</span>
+    </div>`;
+  });
+  setInnerHTML('sb-career', careerHtml);
+}
+
+// ── ELECTION HUB ─────────────────────────────────────────────
+function computeElectoralStrength(candidate) {
+  const c = candidate;
+  const es =
+    (safeGet(c, 'grassroots', 0) * 0.15) +
+    (safeGet(c, 'popularity', 0) * 0.14) +
+    (safeGet(c, 'partyStrength', 0) * 0.12) +
+    (safeGet(c, 'coalitionSupport', 0) * 0.11) +
+    (safeGet(c, 'mediaScore', 0) * 0.11) +
+    (safeGet(c, 'economyScore', 0) * 0.10) +
+    (safeGet(c, 'trustScore', 0) * 0.12) +
+    (safeGet(c, 'stateConditions', 0) * 0.08) +
+    (safeGet(c, 'campaignQuality', 0) * 0.12) +
+    (safeGet(c, 'random', 0) * 0.05) +
+    (safeGet(c, 'incumbentBonus', 0));
+  candidate.electoralStrength = clamp(Math.round(es), 0, 100);
+  return candidate.electoralStrength;
+}
+
+function renderElectionHub() {
+  G.election.candidates.forEach(c => computeElectoralStrength(c));
+
+  // Phase timeline
+  let phaseHtml = '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px">';
+  ELECTION_PHASES.forEach(p => {
+    const done = p.num < G.election.currentPhase;
+    const active = p.num === G.election.currentPhase;
+    const bg = done ? '#10b981' : active ? '#3b82f6' : 'var(--bg3)';
+    const tx = done || active ? '#fff' : 'var(--tx3)';
+    phaseHtml += `<div style="padding:4px 8px;border-radius:12px;font-size:0.68rem;background:${bg};color:${tx};cursor:default;border:1px solid ${active ? '#3b82f6' : 'transparent'}" title="${p.desc}">
+      ${p.num}. ${p.name}
+    </div>`;
+  });
+  phaseHtml += '</div>';
+  setInnerHTML('election-phase-timeline', phaseHtml);
+
+  // Phase detail
+  const curPhase = ELECTION_PHASES.find(p => p.num === G.election.currentPhase) || ELECTION_PHASES[5];
+  setInnerHTML('election-phase-detail', `<div style="padding:10px;background:var(--bg3);border-radius:8px;border-left:3px solid #3b82f6">
+    <div style="font-size:0.78rem;font-weight:600;color:#3b82f6;margin-bottom:4px">Phase ${curPhase.num}: ${curPhase.name}</div>
+    <div style="font-size:0.75rem;color:var(--tx2)">${curPhase.desc}</div>
+    <div style="font-size:0.72rem;color:var(--tx3);margin-top:6px">${G.world.daysToElection} days to election</div>
+  </div>`);
+
+  // Candidate cards
+  const factors = [
+    { key: 'grassroots', label: 'Grassroots', color: '#22c55e' },
+    { key: 'popularity', label: 'Popularity', color: '#3b82f6' },
+    { key: 'partyStrength', label: 'Party Strength', color: '#8b5cf6' },
+    { key: 'coalitionSupport', label: 'Coalition', color: '#f59e0b' },
+    { key: 'mediaScore', label: 'Media', color: '#f97316' },
+    { key: 'economyScore', label: 'Economy', color: '#10b981' },
+    { key: 'trustScore', label: 'Trust', color: '#ec4899' },
+    { key: 'campaignQuality', label: 'Campaign', color: '#a855f7' }
+  ];
+
+  let gridHtml = '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">';
+  G.election.candidates.forEach(c => {
+    const isNPA = c.party === 'NPA';
+    gridHtml += `<div class="candidate-card" style="background:var(--bg2);border-radius:10px;padding:14px;border:1px solid ${isNPA ? '#f59e0b' : '#ef4444'}22">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <div>
+          <div style="font-size:0.85rem;font-weight:600">${c.name}</div>
+          <div style="font-size:0.7rem;color:${isNPA ? '#f59e0b' : '#ef4444'}">${c.party}${c.incumbentBonus > 0 ? ' · Incumbent +' + c.incumbentBonus : ''}</div>
+        </div>
+        <div style="font-size:1.6rem;font-weight:700;color:${isNPA ? '#f59e0b' : '#ef4444'}">${c.electoralStrength}</div>
+      </div>`;
+    factors.forEach(f => {
+      const v = safeGet(c, f.key, 0);
+      gridHtml += `<div style="display:flex;align-items:center;gap:6px;margin-bottom:5px">
+        <div style="width:70px;font-size:0.67rem;color:var(--tx3)">${f.label}</div>
+        <div style="flex:1;background:var(--bg3);border-radius:3px;height:5px"><div style="width:${v}%;height:100%;background:${f.color};border-radius:3px"></div></div>
+        <div style="width:25px;font-size:0.67rem;color:var(--tx2);text-align:right">${v}</div>
+      </div>`;
+    });
+    gridHtml += '</div>';
+  });
+  gridHtml += '</div>';
+  setInnerHTML('election-candidate-grid', gridHtml);
+
+  // Verdict
+  const c1 = G.election.candidates[0];
+  const c2 = G.election.candidates[1];
+  const diff = Math.abs(c1.electoralStrength - c2.electoralStrength);
+  const leader = c1.electoralStrength >= c2.electoralStrength ? c1 : c2;
+  const verdictColor = leader.party === 'NPA' ? '#f59e0b' : '#ef4444';
+  setInnerHTML('election-verdict', `<div style="text-align:center;padding:12px;background:var(--bg3);border-radius:8px">
+    <div style="font-size:0.9rem;font-weight:700;color:${verdictColor}">${leader.name.toUpperCase()} LEADS</div>
+    <div style="font-size:0.75rem;color:var(--tx2);margin-top:4px">by ${diff} electoral strength points</div>
+    <div style="display:flex;justify-content:center;gap:20px;margin-top:8px;font-size:0.72rem;color:var(--tx3)">
+      <span>${c1.name}: <b style="color:#f59e0b">${c1.electoralStrength}</b></span>
+      <span>${c2.name}: <b style="color:#ef4444">${c2.electoralStrength}</b></span>
+    </div>
+  </div>`);
+
+  // Integrity log
+  let logHtml = '';
+  G.election.integrityLog.forEach(entry => {
+    const color = entry.status === 'ok' ? '#10b981' : entry.status === 'warn' ? '#f59e0b' : '#ef4444';
+    const icon = entry.status === 'ok' ? '✔' : entry.status === 'warn' ? '⚠' : '✘';
+    logHtml += `<div class="audit-item" style="display:flex;gap:8px;padding:7px 0;border-bottom:1px solid var(--bg3)">
+      <span class="audit-status ${entry.status}" style="color:${color};font-size:0.75rem">${icon}</span>
+      <div style="flex:1">
+        <div style="font-size:0.75rem">${entry.text}</div>
+        <div style="font-size:0.68rem;color:var(--tx3)">${entry.time}</div>
+      </div>
+    </div>`;
+  });
+  setInnerHTML('election-integrity-log', logHtml);
+}
+
+function advancePhase() {
+  if (G.election.currentPhase < 13) {
+    G.election.currentPhase++;
+    G.world.currentElectionPhase = G.election.currentPhase;
+    const phase = ELECTION_PHASES.find(p => p.num === G.election.currentPhase);
+    addChronicle('📋', '#3b82f6', 'Election advanced to Phase ' + G.election.currentPhase + ': ' + (phase ? phase.name : ''));
+    saveGame();
+    renderAll();
+  }
+}
+
+function addIntegrityCheck() {
+  G.election.integrityLog.push({
+    status: 'ok',
+    text: 'Manual verification checkpoint added',
+    time: 'Day ' + G.world.gameDay
+  });
+  addChronicle('✔', '#10b981', 'Manual integrity checkpoint logged for Day ' + G.world.gameDay + '.');
+  saveGame();
+  renderAll();
+}
+
+// ── CAMPAIGN ─────────────────────────────────────────────────
+function renderCampaign() {
+  const actionsLeft = G.player.maxActionsPerDay - G.player.actionsToday;
+  setText('campaign-actions-remaining', actionsLeft + ' of ' + G.player.maxActionsPerDay + ' actions remaining today');
+
+  let actHtml = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px">';
+  CAMPAIGN_ACTIONS.forEach(action => {
+    const tooTired = G.player.energy < action.energyCost;
+    const tooManyActions = G.player.actionsToday >= G.player.maxActionsPerDay;
+    const disabled = tooTired || tooManyActions;
+    const reason = tooManyActions ? 'No actions remaining today' : 'Insufficient energy (' + action.energyCost + ' required)';
+    actHtml += `<div class="action-card${disabled ? ' disabled' : ''}" style="background:var(--bg2);border:1px solid var(--bg3);border-radius:10px;padding:12px;cursor:${disabled ? 'not-allowed' : 'pointer'};opacity:${disabled ? '0.5' : '1'};transition:all 0.2s"
+      onclick="${disabled ? '' : 'doAction(\'' + action.id + '\')'}"
+      title="${disabled ? reason : action.desc}">
+      <div style="font-size:1.4rem;margin-bottom:6px">${action.icon}</div>
+      <div style="font-size:0.8rem;font-weight:600;margin-bottom:4px">${action.name}</div>
+      <div style="font-size:0.7rem;color:var(--tx2);margin-bottom:8px">${action.desc}</div>
+      <div style="font-size:0.68rem;color:var(--tx3)">
+        <span style="color:#ef4444">⚡ ${action.energyCost}</span>
+        ${action.wealthCost > 0 ? '<span style="color:#f59e0b;margin-left:6px">₦' + (action.wealthCost / 1000) + 'K</span>' : ''}
+      </div>
+    </div>`;
+  });
+  actHtml += '</div>';
+  setInnerHTML('campaign-actions', actHtml);
+
+  // Promise list
+  const statusConfig = {
+    promised: { color: '#3b82f6', label: 'Promised' },
+    underway: { color: '#f59e0b', label: 'Underway' },
+    delivered: { color: '#10b981', label: 'Delivered' },
+    delayed: { color: '#f97316', label: 'Delayed' },
+    abandoned: { color: '#6b7280', label: 'Abandoned' },
+    broken: { color: '#ef4444', label: 'Broken' }
+  };
+  let promHtml = '';
+  G.promises.forEach(p => {
+    const sc = statusConfig[p.status] || { color: '#6b7280', label: p.status };
+    promHtml += `<div class="promise-item" style="display:flex;align-items:flex-start;gap:10px;padding:10px;border-bottom:1px solid var(--bg3)">
+      <span class="promise-status-badge ${p.status}" style="padding:2px 7px;border-radius:10px;font-size:0.67rem;font-weight:600;background:${sc.color}22;color:${sc.color};white-space:nowrap">${sc.label}</span>
+      <div style="flex:1">
+        <div style="font-size:0.78rem">${p.text}</div>
+        <div style="font-size:0.68rem;color:var(--tx3);margin-top:2px">${p.region} · Day ${p.day}</div>
+      </div>
+    </div>`;
+  });
+  setInnerHTML('campaign-promises', promHtml || '<div style="color:var(--tx3);font-size:0.78rem;padding:10px">No promises recorded.</div>');
+}
+
+function doAction(actionId) {
+  const action = CAMPAIGN_ACTIONS.find(a => a.id === actionId);
+  if (!action) return;
+  if (G.player.actionsToday >= G.player.maxActionsPerDay) return;
+  if (G.player.energy < action.energyCost) return;
+
+  G.pendingAction = actionId;
+
+  setText('modal-con-action-name', action.icon + ' ' + action.name);
+  let consHtml = '';
+  action.consequences.forEach(c => {
+    const col = c.conf === 'known' ? '#10b981' : c.conf === 'likely' ? '#f59e0b' : '#f97316';
+    const lbl = c.conf === 'known' ? 'Certain' : c.conf === 'likely' ? 'Likely' : 'Uncertain';
+    consHtml += `<div class="consequence-item" style="display:flex;gap:8px;padding:6px 0;border-bottom:1px solid var(--bg3)">
+      <span class="consequence-conf ${c.conf}" style="color:${col};font-size:0.7rem;font-weight:600;min-width:52px">${lbl}</span>
+      <span style="font-size:0.75rem;color:var(--tx2)">${c.text}</span>
+    </div>`;
+  });
+  setInnerHTML('modal-con-consequences', consHtml);
+
+  const confirmBtn = el('btn-con-confirm');
+  if (confirmBtn) {
+    confirmBtn.onclick = () => executeAction(actionId);
+  }
+  const modal = el('modal-consequence');
+  if (modal) modal.classList.remove('hidden');
+}
+
+function executeAction(actionId) {
+  closeModal('modal-consequence');
+  const action = CAMPAIGN_ACTIONS.find(a => a.id === actionId);
+  if (!action) return;
+
+  // Deduct costs
+  G.player.energy = clamp(G.player.energy - action.energyCost, 0, 100);
+  G.player.wealth = Math.max(0, G.player.wealth - action.wealthCost);
+
+  // Deduct capital costs
+  for (const [capKey, cost] of Object.entries(action.capitalCost)) {
+    if (G.player.capital[capKey] !== undefined) {
+      G.player.capital[capKey] = clamp(G.player.capital[capKey] - cost, 0, 999);
+    }
+  }
+
+  // Apply action effects to candidate and player stats
+  const c = G.election.candidates[0];
+  const effectDetails = [];
+
+  for (const [effectKey, delta] of Object.entries(action.effects)) {
+    const absDelta = Math.abs(delta);
+    const roll = Math.random() < 0.8 ? delta : (delta > 0 ? -Math.floor(delta * 0.3) : Math.floor(Math.abs(delta) * 0.3));
+
+    if (effectKey === 'Grassroots') {
+      c.grassroots = clamp(c.grassroots + roll, 0, 100);
+      effectDetails.push({ name: effectKey, delta: roll });
+    } else if (effectKey === 'Popularity') {
+      c.popularity = clamp(c.popularity + roll, 0, 100);
+      effectDetails.push({ name: effectKey, delta: roll });
+    } else if (effectKey === 'Trust') {
+      c.trustScore = clamp(c.trustScore + roll, 0, 100);
+      effectDetails.push({ name: effectKey, delta: roll });
+    } else if (effectKey === 'Media Score') {
+      c.mediaScore = clamp(c.mediaScore + roll, 0, 100);
+      effectDetails.push({ name: effectKey, delta: roll });
+    } else if (effectKey === 'Coalition Support') {
+      c.coalitionSupport = clamp(c.coalitionSupport + roll, 0, 100);
+      effectDetails.push({ name: effectKey, delta: roll });
+    } else if (effectKey === 'Campaign Quality') {
+      c.campaignQuality = clamp(c.campaignQuality + roll, 0, 100);
+      effectDetails.push({ name: effectKey, delta: roll });
+    } else if (effectKey === 'Financial Capital') {
+      G.player.capital.financial = clamp(G.player.capital.financial + absDelta, 0, 999);
+      effectDetails.push({ name: effectKey, delta: absDelta });
+    } else if (effectKey === 'Social Capital') {
+      G.player.capital.social = clamp(G.player.capital.social + roll, 0, 999);
+      effectDetails.push({ name: effectKey, delta: roll });
+    } else if (effectKey === 'Political Capital') {
+      G.player.capital.political = clamp(G.player.capital.political + absDelta, 0, 999);
+      effectDetails.push({ name: effectKey, delta: absDelta });
+    } else if (effectKey === 'Stress') {
+      G.player.stress = clamp(G.player.stress + delta, 0, 100);
+      effectDetails.push({ name: effectKey, delta: delta });
+    }
+  }
+
+  G.player.actionsToday = Math.min(G.player.actionsToday + 1, G.player.maxActionsPerDay);
+  computeElectoralStrength(G.election.candidates[0]);
+  computeElectoralStrength(G.election.candidates[1]);
+
+  // Slight chaos adjustment
+  if (actionId === 'rally' || actionId === 'travel') {
+    G.world.chaosIndex = clamp(G.world.chaosIndex + (Math.random() * 2 - 1), 0, 100);
+  }
+
+  // Store last action
+  G.lastAction = { actionId, actionName: action.name, effects: effectDetails, time: formatTime() };
+
+  // Show receipt modal
+  let receiptHtml = `<div style="font-size:0.75rem;margin-bottom:8px;color:var(--tx2)">Action completed at ${formatTime()}, Day ${G.world.gameDay}</div>`;
+  effectDetails.forEach(ef => {
+    const isPositive = ef.delta > 0;
+    const isBad = ef.name === 'Stress' && ef.delta > 0;
+    const color = isBad ? '#ef4444' : isPositive ? '#10b981' : '#ef4444';
+    receiptHtml += `<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--bg3)">
+      <span style="font-size:0.75rem">${ef.name}</span>
+      <span style="font-size:0.75rem;color:${color}">${ef.delta > 0 ? '+' : ''}${ef.delta}</span>
+    </div>`;
+  });
+  receiptHtml += `<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--bg3)">
+    <span style="font-size:0.75rem;color:var(--tx3)">Energy spent</span>
+    <span style="font-size:0.75rem;color:#ef4444">−${action.energyCost}</span>
+  </div>`;
+  if (action.wealthCost > 0) {
+    receiptHtml += `<div style="display:flex;justify-content:space-between;padding:5px 0">
+      <span style="font-size:0.75rem;color:var(--tx3)">Wealth spent</span>
+      <span style="font-size:0.75rem;color:#f59e0b">−₦${(action.wealthCost / 1000).toFixed(0)}K</span>
+    </div>`;
+  }
+
+  const receiptModal = el('modal-receipt');
+  if (receiptModal) {
+    setText('modal-receipt-action-name', action.icon + ' ' + action.name);
+    setInnerHTML('modal-receipt-body', receiptHtml);
+    receiptModal.classList.remove('hidden');
+  }
+
+  addChronicle(action.icon, '#3b82f6', action.name + ' executed. ES: ' + G.election.candidates[0].electoralStrength + '.');
+  saveGame();
+  renderAll();
+}
+
+// ── ECONOMY ──────────────────────────────────────────────────
+function renderEconomy() {
+  let econHtml = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px">';
+  ECON_DEFS.forEach(def => {
+    const val = safeGet(G.economy, def.key, 50);
+    const trend = safeGet(G.economy.trends, def.key, 0);
+    const trendIcon = trend > 0.05 ? '▲' : trend < -0.05 ? '▼' : '●';
+    const barColor = def.higherIsBad
+      ? (val > 70 ? '#ef4444' : val > 50 ? '#f97316' : '#10b981')
+      : (val > 60 ? '#10b981' : val > 35 ? '#f59e0b' : '#ef4444');
+    const trendColor = def.higherIsBad
+      ? (trend > 0 ? '#ef4444' : trend < 0 ? '#10b981' : '#6b7280')
+      : (trend > 0 ? '#10b981' : trend < 0 ? '#ef4444' : '#6b7280');
+    econHtml += `<div class="econ-card" style="background:var(--bg2);border-radius:8px;padding:10px;border:1px solid var(--bg3)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <div style="font-size:0.72rem;color:var(--tx2)">${def.label}</div>
+        <span style="font-size:0.68rem;color:${trendColor}">${trendIcon}</span>
+      </div>
+      <div style="font-size:1.2rem;font-weight:600;color:${barColor};margin-bottom:6px">${val.toFixed(1)}${def.unit}</div>
+      ${barHTML(val, barColor, 100)}
+    </div>`;
+  });
+  econHtml += '</div>';
+  setInnerHTML('econ-cards', econHtml);
+
+  // Narrative
+  const infl = G.economy.inflation;
+  const emp = G.economy.employment;
+  const bus = G.economy.businessConfidence;
+  let narrative = 'Kwara State economic outlook: ';
+  if (infl > 30) narrative += 'Inflation is critically high at ' + infl.toFixed(1) + '%, eroding household purchasing power. ';
+  else if (infl > 20) narrative += 'Inflation remains elevated at ' + infl.toFixed(1) + '%, placing pressure on voters. ';
+  else narrative += 'Inflation is moderate at ' + infl.toFixed(1) + '%. ';
+  if (emp < 45) narrative += 'Employment is low — youth unemployment is a visible electoral vulnerability. ';
+  else if (emp > 65) narrative += 'Employment figures are strong, providing incumbency advantage. ';
+  else narrative += 'Employment is middling; no clear advantage or disadvantage. ';
+  if (bus < 40) narrative += 'Business confidence is depressed; investors are cautious about Kwara\'s near-term outlook.';
+  else narrative += 'Business confidence shows resilience despite macro headwinds.';
+  setInnerHTML('econ-narrative', `<div style="padding:10px;background:var(--bg3);border-radius:8px;font-size:0.75rem;color:var(--tx2);line-height:1.6">${narrative}</div>`);
+}
+
+function econTick() {
+  for (const def of ECON_DEFS) {
+    const trend = safeGet(G.economy.trends, def.key, 0);
+    const noise = (Math.random() - 0.5) * 0.3;
+    if (def.key === 'inflation') {
+      G.economy.inflation = clamp(G.economy.inflation + trend + noise, 5, 60);
+    } else {
+      G.economy[def.key] = clamp(safeGet(G.economy, def.key, 50) + trend + noise, 0, 100);
+    }
+  }
+  // Chaos updates from economy
+  if (G.economy.inflation > 30) G.world.chaosIndex = clamp(G.world.chaosIndex + 0.5, 0, 100);
+  if (G.economy.employment < 40) G.world.chaosIndex = clamp(G.world.chaosIndex + 0.3, 0, 100);
+  if (G.economy.businessConfidence < 30) G.world.chaosIndex = clamp(G.world.chaosIndex + 0.2, 0, 100);
+  if (G.economy.employment > 65) G.world.chaosIndex = clamp(G.world.chaosIndex - 0.2, 0, 100);
+  if (G.economy.businessConfidence > 60) G.world.chaosIndex = clamp(G.world.chaosIndex - 0.1, 0, 100);
+
+  const cb = getChaosband();
+  G.world.chaosLevel = cb.label;
+  saveGame();
+  renderAll();
+}
+
+function forceEconTick() {
+  econTick();
+  addChronicle('📈', '#f59e0b', 'Manual economy tick applied.');
+}
+
+// ── SIM LAB ──────────────────────────────────────────────────
+function computeSimLabStrength() {
+  const s = G.simLab;
+  const es =
+    (safeGet(s, 'grassroots', 0) * 0.15) +
+    (safeGet(s, 'popularity', 0) * 0.14) +
+    (safeGet(s, 'partyStrength', 0) * 0.12) +
+    (safeGet(s, 'coalitionSupport', 0) * 0.11) +
+    (safeGet(s, 'mediaScore', 0) * 0.11) +
+    (safeGet(s, 'economyScore', 0) * 0.10) +
+    (safeGet(s, 'trustScore', 0) * 0.12) +
+    (safeGet(s, 'stateConditions', 0) * 0.08) +
+    (safeGet(s, 'campaignQuality', 0) * 0.12) +
+    (safeGet(s, 'random', 0) * 0.05);
+  return clamp(Math.round(es), 0, 100);
+}
+
+function renderSimLab() {
+  const simFactors = [
+    { key: 'grassroots', label: 'Grassroots', weight: '0.15' },
+    { key: 'popularity', label: 'Popularity', weight: '0.14' },
+    { key: 'partyStrength', label: 'Party Strength', weight: '0.12' },
+    { key: 'trustScore', label: 'Trust Score', weight: '0.12' },
+    { key: 'campaignQuality', label: 'Campaign Quality', weight: '0.12' },
+    { key: 'coalitionSupport', label: 'Coalition Support', weight: '0.11' },
+    { key: 'mediaScore', label: 'Media Score', weight: '0.11' },
+    { key: 'economyScore', label: 'Economy Score', weight: '0.10' },
+    { key: 'stateConditions', label: 'State Conditions', weight: '0.08' },
+    { key: 'random', label: 'Random Factor', weight: '0.05' }
+  ];
+
+  const formulaHtml = `<div style="background:var(--bg3);border-radius:8px;padding:10px;font-family:monospace;font-size:0.7rem;color:#22c55e;margin-bottom:14px;line-height:1.6;overflow-x:auto">
+    ES = (grassroots×0.15) + (popularity×0.14) + (partyStrength×0.12) + (coalition×0.11)<br>
+       + (media×0.11) + (economy×0.10) + (trust×0.12) + (stateConditions×0.08)<br>
+       + (campaign×0.12) + (random×0.05) + incumbentBonus
+  </div>`;
+
+  let slidersHtml = '';
+  simFactors.forEach(f => {
+    const val = safeGet(G.simLab, f.key, 50);
+    slidersHtml += `<div style="margin-bottom:12px">
+      <div style="display:flex;justify-content:space-between;font-size:0.75rem;margin-bottom:4px">
+        <span style="color:var(--tx2)">${f.label} <span style="color:var(--tx3)">(w=${f.weight})</span></span>
+        <span id="sim-val-${f.key}" style="color:#3b82f6;font-weight:600">${val}</span>
+      </div>
+      <input type="range" min="0" max="100" value="${val}"
+        style="width:100%;accent-color:#3b82f6"
+        oninput="G.simLab['${f.key}']=parseInt(this.value); document.getElementById('sim-val-${f.key}').textContent=this.value; updateSimScore()">
+    </div>`;
+  });
+
+  const score = computeSimLabStrength();
+  const simContent = formulaHtml + slidersHtml;
+  setInnerHTML('simlab-sliders', simContent);
+  setText('simlab-score', score);
+  renderCounterfactual();
+}
+
+function updateSimScore() {
+  const score = computeSimLabStrength();
+  setText('simlab-score', score);
+  renderCounterfactual();
+}
+
+function resetSimSliders() {
+  const c = G.election.candidates[0];
+  G.simLab = {
+    grassroots: c.grassroots, popularity: c.popularity, partyStrength: c.partyStrength,
+    coalitionSupport: c.coalitionSupport, mediaScore: c.mediaScore, economyScore: c.economyScore,
+    trustScore: c.trustScore, stateConditions: c.stateConditions, campaignQuality: c.campaignQuality,
+    random: c.random
+  };
+  renderSimLab();
+}
+
+function renderCounterfactual() {
+  const cfA = computeSimLabStrength();
+  setInnerHTML('cf-scenario-a', `<div style="text-align:center;padding:10px;background:var(--bg3);border-radius:8px">
+    <div style="font-size:0.72rem;color:var(--tx3);margin-bottom:4px">Current Scenario</div>
+    <div style="font-size:2rem;font-weight:700;color:#3b82f6">${cfA}</div>
+    <div style="font-size:0.7rem;color:var(--tx2);margin-top:4px">Based on current slider values.</div>
+  </div>`);
+}
+
+function runCounterfactual(type) {
+  const base = Object.assign({}, G.simLab);
+  const baseScore = computeSimLabStrength();
+
+  const modifiedSim = Object.assign({}, G.simLab);
+  let scenarioLabel = '';
+  let scenarioDesc = '';
+
+  if (type === 'media') {
+    modifiedSim.mediaScore = clamp(modifiedSim.mediaScore + 20, 0, 100);
+    modifiedSim.campaignQuality = clamp(modifiedSim.campaignQuality + 10, 0, 100);
+    scenarioLabel = 'Media Surge Scenario';
+    scenarioDesc = 'Media score +20, Campaign quality +10.';
+  } else if (type === 'grassroots') {
+    modifiedSim.grassroots = clamp(modifiedSim.grassroots + 15, 0, 100);
+    modifiedSim.coalitionSupport = clamp(modifiedSim.coalitionSupport + 10, 0, 100);
+    scenarioLabel = 'Grassroots Push Scenario';
+    scenarioDesc = 'Grassroots +15, Coalition +10.';
+  } else if (type === 'coalition') {
+    modifiedSim.coalitionSupport = clamp(modifiedSim.coalitionSupport + 20, 0, 100);
+    modifiedSim.partyStrength = clamp(modifiedSim.partyStrength + 10, 0, 100);
+    scenarioLabel = 'Coalition Deal Scenario';
+    scenarioDesc = 'Coalition support +20, Party strength +10.';
+  }
+
+  const prevSim = G.simLab;
+  G.simLab = modifiedSim;
+  const modScore = computeSimLabStrength();
+  G.simLab = base;
+
+  const diff = modScore - baseScore;
+  const diffColor = diff > 0 ? '#10b981' : diff < 0 ? '#ef4444' : '#6b7280';
+  const narrative1 = diff > 3 ? 'This scenario significantly improves electoral strength by ' + diff + ' points.' : diff > 0 ? 'A modest gain of ' + diff + ' points — helpful but not decisive.' : 'No meaningful improvement over baseline.';
+  const narrative2 = type === 'media' ? 'Media dominance reshapes voter perception but may not reach low-connectivity wards.' : type === 'grassroots' ? 'Ground mobilisation has compounding effects — trust and turnout reinforce each other.' : 'Coalition mathematics can shift the outcome but require costly concessions.';
+
+  setInnerHTML('cf-scenario-a', `<div style="text-align:center;padding:10px;background:var(--bg3);border-radius:8px">
+    <div style="font-size:0.72rem;color:var(--tx3);margin-bottom:4px">Baseline</div>
+    <div style="font-size:2rem;font-weight:700;color:#3b82f6">${baseScore}</div>
+    <div style="font-size:0.7rem;color:var(--tx2);margin-top:4px">Current slider configuration.</div>
+  </div>`);
+
+  setInnerHTML('cf-scenario-b', `<div style="text-align:center;padding:10px;background:var(--bg3);border-radius:8px;border:1px solid ${diffColor}44">
+    <div style="font-size:0.72rem;color:var(--tx3);margin-bottom:2px">${scenarioLabel}</div>
+    <div style="font-size:2rem;font-weight:700;color:${diffColor}">${modScore}</div>
+    <div style="font-size:0.68rem;color:${diffColor};margin-bottom:4px">${diff > 0 ? '+' : ''}${diff} vs baseline</div>
+    <div style="font-size:0.7rem;color:var(--tx3)">${scenarioDesc}</div>
+    <div style="font-size:0.72rem;color:var(--tx2);margin-top:6px;text-align:left;line-height:1.5">${narrative1} ${narrative2}</div>
+  </div>`);
+}
+
+// ── SOCIAL FEED ──────────────────────────────────────────────
+function renderSocialFeed() {
+  const severityColor = { warning: '#f59e0b', info: '#3b82f6', critical: '#ef4444', neutral: '#6b7280' };
+  let html = '';
+  G.socialFeed.slice().reverse().forEach(item => {
+    const sc = severityColor[item.severity] || '#6b7280';
+    const actionBtns = (item.actions || []).map(a =>
+      `<button onclick="feedAction('${item.id}','${a}')" style="padding:4px 10px;border-radius:6px;font-size:0.68rem;background:var(--bg3);border:1px solid var(--bg4,#374151);color:var(--tx2);cursor:pointer">${a}</button>`
+    ).join('');
+    html += `<div class="feed-item" style="background:var(--bg2);border-radius:10px;padding:12px;margin-bottom:10px;border-left:3px solid ${sc}">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <span style="font-size:0.75rem;font-weight:600">${item.emoji || '📡'} ${item.author}</span>
+        <span class="severity-badge ${item.severity}" style="font-size:0.68rem;color:var(--tx3)">${item.time}</span>
+      </div>
+      <div style="font-size:0.77rem;color:var(--tx2);line-height:1.55;margin-bottom:8px">${item.text}</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">${actionBtns}</div>
+    </div>`;
+  });
+  setInnerHTML('social-feed-list', html || '<div style="color:var(--tx3);font-size:0.78rem;padding:10px">No feed items.</div>');
+}
+
+function feedAction(feedId, action) {
+  const item = G.socialFeed.find(f => f.id === feedId);
+  if (!item) return;
+
+  if (action === 'Why?') {
+    showWhyModal();
+    return;
+  }
+  if (action === 'Amplify') {
+    G.player.capital.media = clamp(G.player.capital.media + 5, 0, 999);
+    addChronicle('📢', '#f97316', 'Amplified: ' + item.author + ' — media capital +5.');
+  } else if (action === 'Issue Statement') {
+    G.player.capital.media = clamp(G.player.capital.media - 8, 0, 999);
+    G.election.candidates[0].trustScore = clamp(G.election.candidates[0].trustScore + 2, 0, 100);
+    addChronicle('📣', '#3b82f6', 'Statement issued in response to ' + item.author + '.');
+    G.notifications.push({
+      id: 'N-' + Date.now(), priority: 'blue',
+      text: 'Statement issued re: ' + item.author + '. Trust +2.',
+      time: formatTime(), read: false
+    });
+  } else if (action === 'Suppress') {
+    G.player.capital.media = clamp(G.player.capital.media - 5, 0, 999);
+    G.player.fairPlay = clamp(G.player.fairPlay - 3, 0, 100);
+    addChronicle('🔇', '#ef4444', 'Suppression attempt on ' + item.author + ' story. FairPlay −3.');
+  } else if (action === 'Counter Message') {
+    G.player.capital.media = clamp(G.player.capital.media - 6, 0, 999);
+    G.election.candidates[0].mediaScore = clamp(G.election.candidates[0].mediaScore + 2, 0, 100);
+    addChronicle('↩️', '#3b82f6', 'Counter-message to ' + item.author + ' deployed.');
+  } else if (action === 'Monitor') {
+    G.player.capital.intelligence = clamp(G.player.capital.intelligence + 3, 0, 999);
+    addChronicle('👁️', '#8b5cf6', 'Monitoring ' + item.author + '. Intelligence +3.');
+  } else if (action === 'Request Briefing') {
+    addChronicle('📋', '#6b7280', 'Briefing requested on ' + item.author + ' report.');
+  } else if (action === 'Ignore') {
+    addChronicle('—', '#6b7280', 'Ignored: ' + item.author + '.');
+  } else {
+    addChronicle('⚡', '#6b7280', 'Action "' + action + '" on ' + item.author + '.');
+  }
+  saveGame();
+  renderRightPanel();
+  renderSocialFeed();
+}
+
+const FEED_TEMPLATES = [
+  { author: 'NTA Ilorin', emoji: '📺', severity: 'warning',
+    texts: ["BREAKING: Governor Adeyemi announces emergency infrastructure package ahead of election.", "Live coverage: Kwara South rally draws mixed crowds amid security concerns."],
+    actions: ['Monitor', 'Amplify', 'Counter Message'] },
+  { author: 'Kwara Daily', emoji: '📰', severity: 'info',
+    texts: ["New INEC figures show voter registration up 8% in Ilorin West.", "Business community endorses incumbent's economic track record."],
+    actions: ['Amplify', 'Ignore'] },
+  { author: 'Social Intel', emoji: '🔍', severity: 'critical',
+    texts: ["#KwaraDecides trending nationally — 22,000 posts in 3 hours.", "Opposition digital push: #ChangeKwara reaches 15K engagements."],
+    actions: ['Issue Statement', 'Counter Message', 'Suppress'] },
+  { author: 'Punch Correspondent', emoji: '🗞️', severity: 'info',
+    texts: ["Okafor holds press conference on healthcare reform proposal.", "DRP coalition partners confirm unified ticket for governorship."],
+    actions: ['Monitor', 'Counter Message'] },
+  { author: 'Radio Kwara', emoji: '📻', severity: 'neutral',
+    texts: ["Morning talk: Voters in Offa discuss cost of living and candidate credibility.", "Call-in show: Majority of callers cite infrastructure as top issue."],
+    actions: ['Monitor', 'Amplify'] },
+  { author: 'Field Report', emoji: '🌾', severity: 'warning',
+    texts: ["Ward agents report low turnout at NPA rally in Kwara North due to flooding.", "Ground intelligence: 200 undecided voters identified in Asa LGA swing wards."],
+    actions: ['Request Briefing', 'Monitor'] }
+];
+
+function generateFeedEvent() {
+  const template = FEED_TEMPLATES[Math.floor(Math.random() * FEED_TEMPLATES.length)];
+  const text = template.texts[Math.floor(Math.random() * template.texts.length)];
+  const minsAgo = Math.floor(Math.random() * 60) + 1;
+  G.socialFeed.push({
+    id: 'SF-' + Date.now(),
+    author: template.author,
+    emoji: template.emoji,
+    time: minsAgo + 'm ago',
+    severity: template.severity,
+    text: text,
+    actions: template.actions
+  });
+  if (G.socialFeed.length > 20) G.socialFeed.shift();
+
+  // Badge on social tab
+  const btn = document.querySelector('[onclick*="social"]');
+  if (btn) { btn.style.position = 'relative'; }
+
+  saveGame();
+  renderSocialFeed();
+}
+
+// ── RELATIONS GRAPH ──────────────────────────────────────────
+function drawRelGraph() {
+  const container = el('rel-graph');
+  if (!container) return;
+
+  const W = container.offsetWidth || 700;
+  const H = 360;
+
+  const svgNS = 'http://www.w3.org/2000/svg';
+  let svg = container.querySelector('svg');
+  if (!svg) {
+    svg = document.createElementNS(svgNS, 'svg');
+    container.appendChild(svg);
+  }
+  svg.setAttribute('width', W);
+  svg.setAttribute('height', H);
+  svg.setAttribute('viewBox', '0 0 700 360');
+  svg.innerHTML = '';
+
+  // Draw edges
+  REL_EDGES.forEach(edge => {
+    const fromNode = REL_NODES.find(n => n.id === edge.from);
+    const toNode = REL_NODES.find(n => n.id === edge.to);
+    if (!fromNode || !toNode) return;
+
+    const line = document.createElementNS(svgNS, 'line');
+    line.setAttribute('x1', fromNode.x);
+    line.setAttribute('y1', fromNode.y);
+    line.setAttribute('x2', toNode.x);
+    line.setAttribute('y2', toNode.y);
+    line.setAttribute('stroke', edge.color);
+    line.setAttribute('stroke-width', edge.type === 'rival' ? '2.5' : '1.5');
+    line.setAttribute('stroke-dasharray', edge.type === 'volatile' ? '6,3' : edge.type === 'neutral' ? '4,2' : 'none');
+    line.setAttribute('opacity', '0.6');
+    svg.appendChild(line);
+
+    // Edge label at midpoint
+    const mx = (fromNode.x + toNode.x) / 2;
+    const my = (fromNode.y + toNode.y) / 2;
+    const elabel = document.createElementNS(svgNS, 'text');
+    elabel.setAttribute('x', mx);
+    elabel.setAttribute('y', my - 4);
+    elabel.setAttribute('text-anchor', 'middle');
+    elabel.setAttribute('font-size', '9');
+    elabel.setAttribute('fill', edge.color);
+    elabel.setAttribute('opacity', '0.8');
+    elabel.textContent = edge.label;
+    svg.appendChild(elabel);
+  });
+
+  // Draw nodes
+  REL_NODES.forEach(node => {
+    const g = document.createElementNS(svgNS, 'g');
+    g.setAttribute('style', 'cursor:pointer');
+    g.setAttribute('data-id', node.id);
+
+    const circle = document.createElementNS(svgNS, 'circle');
+    circle.setAttribute('cx', node.x);
+    circle.setAttribute('cy', node.y);
+    circle.setAttribute('r', node.size);
+    circle.setAttribute('fill', node.color);
+    circle.setAttribute('fill-opacity', '0.85');
+    circle.setAttribute('stroke', '#fff');
+    circle.setAttribute('stroke-width', '2');
+    g.appendChild(circle);
+
+    const text = document.createElementNS(svgNS, 'text');
+    text.setAttribute('x', node.x);
+    text.setAttribute('y', node.y + node.size + 13);
+    text.setAttribute('text-anchor', 'middle');
+    text.setAttribute('font-size', '10');
+    text.setAttribute('fill', 'var(--tx2, #9ca3af)');
+    text.textContent = node.label;
+    g.appendChild(text);
+
+    g.addEventListener('click', () => showRelDetail(node));
+    svg.appendChild(g);
+  });
+}
+
+function showRelDetail(node) {
+  const connected = REL_EDGES
+    .filter(e => e.from === node.id || e.to === node.id)
+    .map(e => {
+      const otherId = e.from === node.id ? e.to : e.from;
+      const other = REL_NODES.find(n => n.id === otherId);
+      return other ? `<li style="font-size:0.72rem;color:var(--tx2);padding:3px 0">${e.label} → ${other.label}</li>` : '';
+    }).join('');
+
+  setInnerHTML('rel-detail', `<div style="padding:12px;background:var(--bg3);border-radius:8px;border-left:3px solid ${node.color}">
+    <div style="font-size:0.85rem;font-weight:600;color:${node.color};margin-bottom:6px">${node.label}</div>
+    <ul style="margin:0;padding-left:16px">${connected || '<li style="color:var(--tx3);font-size:0.72rem">No connections listed.</li>'}</ul>
+  </div>`);
+}
+
+// ── LEADERBOARD ──────────────────────────────────────────────
+let lbSortKey = 'economy';
+
+function renderLeaderboard() {
+  const playerScore = Math.round((safeGet(G.player.capital, 'reputation', 50) + safeGet(G.player, 'influence', 50)) / 2);
+  const kwaraRow = G.leaderboard.find(r => r.isPlayer);
+  if (kwaraRow) kwaraRow.playerScore = playerScore;
+
+  const sorted = G.leaderboard.slice().sort((a, b) => {
+    const va = safeGet(a, lbSortKey, 0) + (a.isPlayer ? safeGet(a, 'playerScore', 0) : 0);
+    const vb = safeGet(b, lbSortKey, 0) + (b.isPlayer ? safeGet(b, 'playerScore', 0) : 0);
+    if (lbSortKey === 'playerScore') return (b.playerScore || 0) - (a.playerScore || 0);
+    return vb - va;
+  });
+
+  const trendIcon = { up: '▲', down: '▼', neutral: '●' };
+  const trendColor = { up: '#10b981', down: '#ef4444', neutral: '#6b7280' };
+
+  let html = '';
+  sorted.forEach((row, i) => {
+    const rank = i + 1;
+    const econVal = safeGet(row, 'economy', 0);
+    const stabVal = safeGet(row, 'stability', 0);
+    const devVal = safeGet(row, 'development', 0);
+    const pscore = row.isPlayer ? safeGet(row, 'playerScore', 0) : '—';
+    const tc = trendColor[row.trend] || '#6b7280';
+    const ti = trendIcon[row.trend] || '●';
+    html += `<tr class="${row.isPlayer ? 'self' : ''}" style="${row.isPlayer ? 'background:var(--bg3);font-weight:600' : ''}">
+      <td style="padding:8px;font-size:0.75rem;color:var(--tx3)">${rank}</td>
+      <td style="padding:8px;font-size:0.78rem">${row.isPlayer ? '⭐ ' : ''}${row.state}</td>
+      <td style="padding:8px;font-size:0.75rem;text-align:center">${econVal}</td>
+      <td style="padding:8px;font-size:0.75rem;text-align:center">${stabVal}</td>
+      <td style="padding:8px;font-size:0.75rem;text-align:center">${devVal}</td>
+      <td style="padding:8px;font-size:0.75rem;text-align:center;color:${row.isPlayer ? '#3b82f6' : 'var(--tx3)'}">${pscore}</td>
+      <td style="padding:8px;font-size:0.75rem;text-align:center;color:${tc}">${ti}</td>
+    </tr>`;
+  });
+  setInnerHTML('leaderboard-tbody', html);
+}
+
+function sortLeaderboard(val) {
+  lbSortKey = val;
+  renderLeaderboard();
+}
+
+// ── CHRONICLE ────────────────────────────────────────────────
+function renderChronicle() {
+  const items = G.chronicle.slice().reverse();
+  let html = '';
+  items.forEach(entry => {
+    html += `<div class="chronicle-item" style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--bg3)">
+      <div style="width:3px;min-width:3px;background:${entry.color || '#3b82f6'};border-radius:2px"></div>
+      <div style="flex:1">
+        <div style="font-size:0.75rem">${entry.text}</div>
+        <div style="font-size:0.67rem;color:var(--tx3);margin-top:2px">${entry.time}</div>
+      </div>
+    </div>`;
+  });
+  setInnerHTML('chronicle-list', html || '<div style="color:var(--tx3);font-size:0.78rem;padding:10px">No chronicle entries.</div>');
+}
+
+function clearChronicle() {
+  G.chronicle = [];
+  saveGame();
+  renderChronicle();
+}
+
+function exportChronicle() {
+  const lines = G.chronicle.map(e => `[${e.time}] ${e.text}`).join('\n');
+  const blob = new Blob(['Natashas Election Engine — Chronicle Export\n' + new Date().toISOString() + '\n\n' + lines], { type: 'text/plain' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'natashas-chronicle-day' + G.world.gameDay + '.txt';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+// ── RIGHT PANEL ──────────────────────────────────────────────
+function renderRightPanel() {
+  // Emergency banner
+  const banner = el('emergency-banner-top');
+  if (banner) {
+    if (G.world.emergencyState === 'EMERGENCY') {
+      banner.style.display = 'block';
+      banner.style.background = '#ef4444';
+      banner.style.color = '#fff';
+      banner.style.padding = '6px 12px';
+      banner.style.fontSize = '0.75rem';
+      banner.style.fontWeight = '600';
+      banner.textContent = '⚠ EMERGENCY STATE ACTIVE — Immediate action required';
+    } else if (G.world.emergencyState === 'ALERT') {
+      banner.style.display = 'block';
+      banner.style.background = '#f97316';
+      banner.style.color = '#fff';
+      banner.style.padding = '6px 12px';
+      banner.style.fontSize = '0.75rem';
+      banner.textContent = '⚡ ELEVATED ALERT — Monitor situation closely';
+    } else {
+      banner.style.display = 'none';
+    }
+  }
+
+  // Chaos gauge
+  const cb = getChaosband();
+  const chaosEl = el('chaos-big-fill');
+  if (chaosEl) {
+    chaosEl.style.width = clamp(G.world.chaosIndex, 0, 100) + '%';
+    chaosEl.style.background = cb.color;
+  }
+  setText('chaos-big-label', cb.label);
+  setText('chaos-big-val', Math.round(G.world.chaosIndex));
+  setInnerHTML('chaos-big-desc', `<div style="font-size:0.7rem;color:var(--tx3)">Chaos Index: ${Math.round(G.world.chaosIndex)}/100 — ${cb.label}</div>`);
+
+  // Notifications
+  const unread = G.notifications.filter(n => !n.read);
+  const read = G.notifications.filter(n => n.read);
+  const ordered = [...unread, ...read].slice(0, 20);
+
+  const priCol = { red: '#ef4444', orange: '#f97316', yellow: '#f59e0b', blue: '#3b82f6', gray: '#6b7280' };
+  let notifHtml = '';
+  ordered.forEach(n => {
+    const col = priCol[n.priority] || '#6b7280';
+    notifHtml += `<div class="notif-item" style="display:flex;gap:8px;padding:8px;border-radius:6px;margin-bottom:4px;background:${n.read ? 'transparent' : 'var(--bg3)'}">
+      <div class="notif-dot ${n.priority}" style="width:6px;min-width:6px;border-radius:3px;background:${col};margin-top:2px"></div>
+      <div style="flex:1">
+        <div style="font-size:0.75rem;color:${n.read ? 'var(--tx3)' : 'var(--tx1)'}">${n.text}</div>
+        <div style="font-size:0.67rem;color:var(--tx3);margin-top:2px">${n.time}</div>
+      </div>
+    </div>`;
+  });
+  setInnerHTML('notifications-list', notifHtml || '<div style="color:var(--tx3);font-size:0.78rem;padding:8px">No notifications.</div>');
+
+  // Scandals
+  let scandHtml = '';
+  G.scandals.forEach(scandal => {
+    if (!scandal.dismissed) scandHtml += renderScandalCard(scandal);
+  });
+  setInnerHTML('scandals-list', scandHtml || '<div style="color:var(--tx3);font-size:0.78rem;padding:8px">No active scandals.</div>');
+
+  // Adviser message
+  const msgIdx = G.world.gameDay % ADVISER_MESSAGES.length;
+  setText('adviser-message', ADVISER_MESSAGES[msgIdx]);
+}
+
+function renderScandalCard(scandal) {
+  return `<div class="scandal-card" style="background:var(--bg3);border-radius:8px;padding:12px;margin-bottom:8px;border-left:3px solid #ef4444">
+    <div style="font-size:0.8rem;font-weight:600;margin-bottom:4px">${scandal.title}</div>
+    <div style="font-size:0.68rem;color:var(--tx3);margin-bottom:8px">Source: ${scandal.source} · ${scandal.investigationStatus}</div>
+    <div style="margin-bottom:8px">
+      ${miniBar('Evidence', scandal.evidence, '#f59e0b')}
+      ${miniBar('Visibility', scandal.visibility, '#f97316')}
+      ${miniBar('Credibility', scandal.credibility, '#ef4444')}
+    </div>
+    <div style="display:flex;gap:6px">
+      <button class="scandal-btn" onclick="scandalsResponse('${scandal.id}','Deny')" style="flex:1;padding:4px 8px;border-radius:6px;font-size:0.68rem;background:#ef444422;border:1px solid #ef4444;color:#ef4444;cursor:pointer">Deny</button>
+      <button class="scandal-btn" onclick="scandalsResponse('${scandal.id}','Deflect')" style="flex:1;padding:4px 8px;border-radius:6px;font-size:0.68rem;background:#f9741622;border:1px solid #f97316;color:#f97316;cursor:pointer">Deflect</button>
+      <button class="scandal-btn" onclick="scandalsResponse('${scandal.id}','Cooperate')" style="flex:1;padding:4px 8px;border-radius:6px;font-size:0.68rem;background:#10b98122;border:1px solid #10b981;color:#10b981;cursor:pointer">Cooperate</button>
+    </div>
+  </div>`;
+}
+
+function miniBar(label, val, color) {
+  return `<div style="margin-bottom:5px">
+    <div style="display:flex;justify-content:space-between;font-size:0.67rem;margin-bottom:2px">
+      <span style="color:var(--tx3)">${label}</span><span style="color:${color}">${val}%</span>
+    </div>
+    ${barHTML(val, color, 100)}
+  </div>`;
+}
+
+function dismissAllNotifs() {
+  G.notifications.forEach(n => { n.read = true; });
+  saveGame();
+  renderRightPanel();
+}
+
+function scandalsResponse(scandalId, choice) {
+  const scandal = G.scandals.find(s => s.id === scandalId);
+  if (!scandal) return;
+
+  if (choice === 'Deny') {
+    scandal.credibility = clamp(scandal.credibility - 8, 0, 100);
+    scandal.visibility = clamp(scandal.visibility + 5, 0, 100);
+    G.player.fairPlay = clamp(G.player.fairPlay - 5, 0, 100);
+    addChronicle('❌', '#ef4444', 'Denied allegation: "' + scandal.title + '". Visibility +5, FairPlay −5.');
+  } else if (choice === 'Deflect') {
+    scandal.credibility = clamp(scandal.credibility - 3, 0, 100);
+    scandal.visibility = clamp(scandal.visibility - 5, 0, 100);
+    addChronicle('↩️', '#f97316', 'Deflected: "' + scandal.title + '". Visibility −5.');
+  } else if (choice === 'Cooperate') {
+    scandal.credibility = clamp(scandal.credibility + 10, 0, 100);
+    scandal.visibility = clamp(scandal.visibility - 10, 0, 100);
+    G.player.fairPlay = clamp(G.player.fairPlay + 5, 0, 100);
+    G.election.candidates[0].trustScore = clamp(G.election.candidates[0].trustScore + 3, 0, 100);
+    addChronicle('🤝', '#10b981', 'Cooperated on "' + scandal.title + '". Trust +3, FairPlay +5.');
+  }
+  saveGame();
+  renderAll();
+}
+
+// ── TICKER ───────────────────────────────────────────────────
+function renderTicker() {
+  const items = [
+    'Day ' + G.world.gameDay,
+    formatTime(),
+    'Chaos: ' + Math.round(G.world.chaosIndex) + ' — ' + getChaosband().label,
+    'Energy: ' + Math.round(G.player.energy) + '%',
+    'Election: ' + G.world.daysToElection + ' days',
+    'Wealth: ' + formatNum(G.player.wealth),
+    'ES (NPA): ' + G.election.candidates[0].electoralStrength,
+    'ES (DRP): ' + G.election.candidates[1].electoralStrength,
+    'Phase: ' + G.world.currentElectionPhase + '/13'
+  ];
+  const ticker = el('ticker-bar');
+  if (ticker) {
+    ticker.innerHTML = items.map(i => `<span style="margin-right:30px;color:var(--tx2);font-size:0.72rem">${i}</span>`).join('');
+  }
+}
+
+// ── MODALS ───────────────────────────────────────────────────
+function closeModal(id) {
+  const m = el(id);
+  if (m) m.classList.add('hidden');
+}
+
+function showWhyModal() {
+  const lastAct = G.lastAction;
+  if (!lastAct) {
+    setInnerHTML('why-summary', '<div style="color:var(--tx3);font-size:0.78rem">No recent action to explain.</div>');
+    setInnerHTML('why-factors', '');
+  } else {
+    setInnerHTML('why-summary', `<div style="font-size:0.78rem;color:var(--tx2)">
+      Last action: <b>${lastAct.actionName}</b> at ${lastAct.time}, Day ${G.world.gameDay}.
+    </div>`);
+    const factors = [
+      { name: 'Electoral Context', desc: 'With 28 days to election, all actions have amplified impact on candidate scores. Timing multiplies effects.', weight: 85 },
+      { name: 'Grassroots Capital Base', desc: 'Kwara NPA has strong ground infrastructure. Ground-level actions gain bonus efficiency from existing networks.', weight: 72 },
+      { name: 'Chaos Index', desc: 'At ' + Math.round(G.world.chaosIndex) + ' (Tense), volatility adds minor randomness to outcomes. Stable environment favours planned actions.', weight: 60 },
+      { name: 'Player Energy Level', desc: 'Energy at ' + Math.round(G.player.energy) + '% — actions near the bottom of energy range carry higher stress penalties.', weight: 55 },
+      { name: 'Opposition Response', desc: "Okafor's campaign monitors NPA moves and may counter within 24–48 hours, partially neutralising gains.", weight: 40 }
+    ];
+    let fHtml = '';
+    factors.forEach(f => {
+      fHtml += `<div class="why-factor" style="padding:8px 0;border-bottom:1px solid var(--bg3)">
+        <div style="display:flex;justify-content:space-between;font-size:0.75rem;margin-bottom:4px">
+          <span style="font-weight:600">${f.name}</span>
+          <span style="color:#3b82f6">${f.weight}%</span>
+        </div>
+        <div style="font-size:0.7rem;color:var(--tx2);margin-bottom:4px">${f.desc}</div>
+        ${barHTML(f.weight, '#3b82f6', 100)}
+      </div>`;
+    });
+    setInnerHTML('why-factors', fHtml);
+  }
+  const m = el('modal-why');
+  if (m) m.classList.remove('hidden');
+}
+
+function respondEmergency() {
+  closeModal('modal-emergency');
+  if (G.world.chaosIndex > 60) {
+    G.world.emergencyState = 'EMERGENCY';
+    G.world.chaosIndex = clamp(G.world.chaosIndex - 5, 0, 100);
+    addChronicle('🚨', '#ef4444', 'Emergency response initiated. Chaos −5.');
+  } else {
+    G.world.emergencyState = 'NORMAL';
+    addChronicle('✔', '#10b981', 'Emergency situation reviewed — normal state restored.');
+  }
+  saveGame();
+  renderAll();
+}
+
+// ── NOTIFICATIONS GENERATOR ──────────────────────────────────
+function generateNotification() {
+  let priority = 'blue';
+  let text = '';
+
+  const energy = G.player.energy;
+  const scandCred = G.scandals.length > 0 ? G.scandals[0].credibility : 0;
+  const chaos = G.world.chaosIndex;
+  const dte = G.world.daysToElection;
+
+  if (energy < 20 || scandCred > 80 || chaos > 70) {
+    priority = 'red';
+    if (energy < 20) text = 'Critical: Energy at ' + Math.round(energy) + '%. Rest or delegate to avoid collapse.';
+    else if (scandCred > 80) text = 'Crisis: Scandal credibility has reached ' + Math.round(scandCred) + '%. Public trust eroding.';
+    else text = 'Chaos index has breached 70. Stability at risk — review emergency protocols.';
+  } else if (dte < 7 || chaos > 55) {
+    priority = 'orange';
+    if (dte < 7) text = 'Final week: ' + dte + ' days to election. All remaining resources should focus on GOTV.';
+    else text = 'Elevated chaos (' + Math.round(chaos) + '). Monitor situation for escalation triggers.';
+  } else if (G.player.actionsToday >= G.player.maxActionsPerDay) {
+    priority = 'yellow';
+    text = 'Daily action limit reached. Advance day or rest — no further campaign moves possible today.';
+  } else if (G.player.capital.media < 100) {
+    priority = 'yellow';
+    text = 'Media capital running low (' + G.player.capital.media + '). Consider a budget review or messaging pause.';
+  } else {
+    const routines = [
+      'Ward coordinators confirm canvassing rosters for all 16 LGAs.',
+      'Opposition polling suggests Adeyemi holds +' + (Math.floor(Math.random() * 6) + 2) + 'pt lead in Ilorin Metro.',
+      'Routine: Daily security briefing complete — no new threats flagged.',
+      'NPA party chair requests campaign update meeting.',
+      'Youth volunteer intake: 47 new canvassers registered this week.',
+      'Ally endorsement: Kwara Traders Association reaffirms NPA support.'
+    ];
+    const infoItems = [
+      { p: 'blue', t: routines[Math.floor(Math.random() * routines.length)] }
+    ];
+    priority = infoItems[0].p;
+    text = infoItems[0].t;
+  }
+
+  const newNotif = {
+    id: 'N-' + Date.now(),
+    priority: priority,
+    text: text,
+    time: formatTime(),
+    read: false
+  };
+  G.notifications.unshift(newNotif);
+  if (G.notifications.length > 20) G.notifications.pop();
+  saveGame();
+}
+
+// ── GAME CLOCK ───────────────────────────────────────────────
+let clockTick = 0;
+let clockInterval = null;
+let econInterval = null;
+
+function startClock() {
+  if (clockInterval) clearInterval(clockInterval);
+  clockInterval = setInterval(() => {
+    G.world.clockMinute += 30;
+    if (G.world.clockMinute >= 60) {
+      G.world.clockMinute -= 60;
+      G.world.clockHour++;
+      if (G.world.clockHour >= 24) {
+        G.world.clockHour = 0;
+        G.world.gameDay++;
+        G.world.daysToElection = Math.max(0, G.world.daysToElection - 1);
+        G.election.daysToElection = G.world.daysToElection;
+        G.player.actionsToday = 0;
+        if (G.world.daysToElection === 0 && G.election.currentPhase < 10) {
+          advancePhase();
+        }
+      }
+    }
+    clockTick++;
+    if (clockTick % 3 === 0) econTick();
+    if (clockTick % 5 === 0) generateNotification();
+    renderHeader();
+    renderTicker();
+    saveGame();
+  }, 10000);
+}
+
+// ── RENDER ALL ───────────────────────────────────────────────
+function renderAll() {
+  renderHeader();
+  renderSidebar();
+  renderElectionHub();
+  renderCampaign();
+  renderEconomy();
+  renderSimLab();
+  renderSocialFeed();
+  renderLeaderboard();
+  renderChronicle();
+  renderRightPanel();
+  renderTicker();
+}
+
+// ── INIT ─────────────────────────────────────────────────────
+function init() {
+  loadGame();
+
+  if (G.meta.firstVisit) {
+    const ov = el('disclaimer-overlay');
+    const app = el('app');
+    if (ov) ov.classList.remove('hidden');
+    if (app) app.classList.remove('visible');
+  } else {
+    const ov = el('disclaimer-overlay');
+    const app = el('app');
+    if (ov) ov.classList.add('hidden');
+    if (app) app.classList.add('visible');
+    computeElectoralStrength(G.election.candidates[0]);
+    computeElectoralStrength(G.election.candidates[1]);
+    renderAll();
+    drawRelGraph();
+    startClock();
+  }
+}
+
+// ── ADDITIONAL BUTTON WIRES ──────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  // Wire receipt close button
+  const receiptClose = el('btn-receipt-close');
+  if (receiptClose) receiptClose.addEventListener('click', () => closeModal('modal-receipt'));
+
+  const whyClose = el('btn-why-close');
+  if (whyClose) whyClose.addEventListener('click', () => closeModal('modal-why'));
+
+  init();
+});
+</script>
+</html>
