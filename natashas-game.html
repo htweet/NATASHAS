@@ -293,7 +293,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;-webkit-font-sm
 .hud-chip .hv{font-weight:700;color:#e8ecf4;font-size:11px}
 .hud-chip.urg{border-color:rgba(239,68,68,.4)}.hud-chip.urg .hv{color:#ef4444}
 .hud-chip.gld{border-color:rgba(245,158,11,.3)}.hud-chip.gld .hv{color:#f59e0b}
-.hud-chip.grn{border-color:rgba(0,135,81,.3)}.hud-chip.grn .hv{color:#008751}
+.hud-chip.grn{border-color:rgba(0,135,81,.3)}.hud-chip.grn .hv{color:#00b86e}
 #hud-top .sp{flex:1}
 .hud-btn{
   display:inline-flex;align-items:center;gap:5px;
@@ -306,7 +306,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;-webkit-font-sm
 }
 .hud-btn:hover{background:rgba(20,30,60,.7);border-color:rgba(255,255,255,.28);transform:translateY(-1px)}
 .hud-btn:active{transform:translateY(0)}
-.hud-btn.ac{border-color:rgba(0,135,81,.45);color:#008751}
+.hud-btn.ac{border-color:rgba(0,135,81,.45);color:#00b86e}
 .hud-btn.ac:hover{background:rgba(0,135,81,.13)}
 .hud-btn.gd{border-color:rgba(245,158,11,.45);color:#f59e0b}
 .hud-btn.gd:hover{background:rgba(245,158,11,.1)}
@@ -388,7 +388,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;-webkit-font-sm
 }
 @keyframes urgent-blink{0%,100%{opacity:1}50%{opacity:.6}}
 #ev-label.calm{animation:none;color:#3b82f6}
-#ev-label.info{animation:none;color:#008751}
+#ev-label.info{animation:none;color:#00b86e}
 #ev-label.warn{animation:none;color:#f59e0b}
 #ev-title{
   font-size:17px;font-weight:700;color:#e8ecf4;
@@ -426,7 +426,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;-webkit-font-sm
   font-size:8px;font-weight:700;letter-spacing:.5px;
   padding:2px 6px;border-radius:3px;white-space:nowrap;flex-shrink:0
 }
-.ec-badge.known{background:rgba(0,135,81,.15);color:#008751}
+.ec-badge.known{background:rgba(0,135,81,.15);color:#00b86e}
 .ec-badge.likely{background:rgba(59,130,246,.15);color:#3b82f6}
 .ec-badge.uncertain{background:rgba(90,98,117,.15);color:#5a6275}
 #ev-choices{
@@ -495,7 +495,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;-webkit-font-sm
   color:#ffffff;letter-spacing:-2px;line-height:1;margin-bottom:8px;
   text-shadow:0 4px 40px rgba(0,0,0,.9)
 }
-.sp-title .n{color:#008751;text-shadow:0 0 40px rgba(0,135,81,.5)}
+.sp-title .n{color:#f59e0b;text-shadow:0 0 40px rgba(245,158,11,.4)}
 .sp-sub{
   font-family:var(--f);font-size:14px;color:#8a94a8;
   line-height:1.65;max-width:340px;margin:0 auto 6px
@@ -558,7 +558,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;-webkit-font-sm
 }
 .isr:last-child{border-bottom:none}
 .isr-l{color:#8e97aa}.isr-v{font-weight:700;color:#e8ecf4}
-.isr-v.g{color:#008751}.isr-v.r{color:#ef4444}.isr-v.o{color:#f59e0b}
+.isr-v.g{color:#00b86e}.isr-v.r{color:#ef4444}.isr-v.o{color:#f59e0b}
 .i-meter{display:flex;align-items:center;gap:7px;padding:5px 0}
 .im-label{font-family:var(--f);font-size:10px;color:#8e97aa;min-width:80px}
 .im-track{flex:1;height:5px;background:rgba(255,255,255,.08);border-radius:3px;overflow:hidden}
@@ -586,7 +586,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;-webkit-font-sm
 .prom-badge{padding:2px 7px;border-radius:8px;font-size:9px;font-weight:700;white-space:nowrap}
 .pb-promised{background:rgba(59,130,246,.15);color:#3b82f6}
 .pb-underway{background:rgba(245,158,11,.15);color:#f59e0b}
-.pb-delivered{background:rgba(0,135,81,.15);color:#008751}
+.pb-delivered{background:rgba(0,135,81,.15);color:#00b86e}
 .pb-delayed{background:rgba(249,115,22,.15);color:#f97316}
 .pb-abandoned{background:rgba(107,114,128,.15);color:#6b7280}
 .pb-broken{background:rgba(239,68,68,.15);color:#ef4444}
@@ -615,7 +615,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;-webkit-font-sm
   animation:t-in .3s ease,t-out .4s ease 2.6s forwards
 }
 .toast.urg{border-color:rgba(239,68,68,.4);color:#ef4444}
-.toast.ok{border-color:rgba(0,135,81,.4);color:#008751}
+.toast.ok{border-color:rgba(0,135,81,.4);color:#00b86e}
 .toast.info{border-color:rgba(59,130,246,.35);color:#3b82f6}
 @keyframes t-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 @keyframes t-out{from{opacity:1}to{opacity:0;transform:translateY(-10px)}}
@@ -1723,7 +1723,7 @@ ${G.scandals.filter(s=>!s.dismissed).map(s=>`
   <div style="display:flex;gap:6px;margin-top:8px">
     <button onclick="scandalsResponse('${s.id}','Deny');closeIntel()" style="flex:1;padding:4px;border-radius:5px;font-size:9px;background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);color:#ef4444;cursor:pointer">Deny</button>
     <button onclick="scandalsResponse('${s.id}','Deflect');closeIntel()" style="flex:1;padding:4px;border-radius:5px;font-size:9px;background:rgba(249,115,22,.12);border:1px solid rgba(249,115,22,.3);color:#f97316;cursor:pointer">Deflect</button>
-    <button onclick="scandalsResponse('${s.id}','Cooperate');closeIntel()" style="flex:1;padding:4px;border-radius:5px;font-size:9px;background:rgba(0,135,81,.12);border:1px solid rgba(0,135,81,.3);color:#008751;cursor:pointer">Cooperate</button>
+    <button onclick="scandalsResponse('${s.id}','Cooperate');closeIntel()" style="flex:1;padding:4px;border-radius:5px;font-size:9px;background:rgba(0,135,81,.12);border:1px solid rgba(0,135,81,.3);color:#00b86e;cursor:pointer">Cooperate</button>
   </div>
 </div>`).join('')||'<div style="font-family:var(--f);font-size:11px;color:#5a6275;padding:8px">No active scandals.</div>'}`;
   }
