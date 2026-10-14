@@ -1,0 +1,1843 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>NATASHAS — The Campaign</title>
+<style>
+/* ============================================================
+   NATASHAS GAME ENGINE v4.0 — World-first three-layer design
+   Layer 1: World Scene  |  Layer 2: HUD  |  Layer 3: Events
+   ============================================================ */
+:root {
+  --bg:#0a0c11; --ac:#10b981; --gold:#f59e0b;
+  --red:#ef4444; --orange:#f97316; --blue:#3b82f6;
+  --tx:#e8ecf4; --tx2:#8e97aa; --tx3:#5a6275;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;overflow:hidden;background:#000;-webkit-font-smoothing:antialiased}
+
+/* ─ GAME ROOT ─ */
+#game-root{position:fixed;inset:0;overflow:hidden;user-select:none}
+#game-root.hidden{display:none}
+
+/* ═══════════════════════════════════════
+   LAYER 1 — WORLD SCENE
+   ═══════════════════════════════════════ */
+#world-scene{position:absolute;inset:0;overflow:hidden}
+.scene-env{position:absolute;inset:0;opacity:0;transition:opacity 1.2s ease;pointer-events:none}
+.scene-env.active{opacity:1;pointer-events:auto}
+
+/* SCENE A — Government House, Ilorin Dawn */
+#s-govhouse{
+  background:linear-gradient(180deg,
+    #08051a 0%,#160d38 18%,#3d1230 35%,
+    #7a2808 52%,#b55420 68%,#cd6e38 80%,#e09050 100%)
+}
+#s-govhouse .gh-stars{
+  position:absolute;inset:0;height:55%;
+  background-image:radial-gradient(circle,rgba(255,255,255,.7) 1px,transparent 1px),
+    radial-gradient(circle,rgba(255,255,255,.4) 1px,transparent 1px);
+  background-size:80px 60px,40px 35px;
+  background-position:10px 8px,30px 20px;
+  animation:twinkle 6s infinite alternate
+}
+@keyframes twinkle{0%{opacity:.25}100%{opacity:.55}}
+#s-govhouse .gh-haze{
+  position:absolute;inset:0;
+  background:linear-gradient(180deg,transparent 45%,rgba(200,120,60,.1) 70%,rgba(160,80,30,.18) 100%);
+  pointer-events:none
+}
+#s-govhouse .gh-ground{
+  position:absolute;bottom:0;left:0;right:0;height:130px;
+  background:linear-gradient(180deg,#3a1204 0%,#5a1f08 40%,#7d3010 100%)
+}
+#s-govhouse .gh-path{
+  position:absolute;bottom:0;left:50%;transform:translateX(-50%);
+  width:90px;height:130px;
+  background:linear-gradient(180deg,#c05e28 0%,#8b3a0f 100%);
+  clip-path:polygon(28% 0%,72% 0%,100% 100%,0% 100%)
+}
+#s-govhouse .gh-building{
+  position:absolute;bottom:100px;left:50%;transform:translateX(-50%);
+  width:560px;height:280px;
+  background:#07060e;
+  clip-path:polygon(8% 100%,8% 38%,13% 33%,22% 33%,22% 22%,27% 17%,33% 22%,33% 33%,44% 33%,44% 12%,46% 6%,50% 0%,54% 6%,56% 12%,56% 33%,67% 33%,67% 22%,73% 17%,78% 22%,78% 33%,87% 33%,87% 38%,92% 100%)
+}
+#s-govhouse .gh-window{
+  position:absolute;width:8px;height:12px;
+  background:rgba(245,200,80,.25);border-radius:2px
+}
+.gh-w1{bottom:160px;left:calc(50% - 80px)}
+.gh-w2{bottom:160px;left:calc(50% - 40px)}
+.gh-w3{bottom:160px;left:calc(50% + 20px)}
+.gh-w4{bottom:160px;left:calc(50% + 60px)}
+#s-govhouse .palm{
+  position:absolute;bottom:100px;
+  width:9px;background:linear-gradient(180deg,#280d02 0%,#1a0801 100%);
+  border-radius:4px
+}
+#s-govhouse .palm::before{
+  content:'';position:absolute;top:-22px;left:50%;transform:translateX(-50%);
+  width:90px;height:45px;
+  background:radial-gradient(ellipse 45px 22px at center,#1a3d10 0%,transparent 75%);
+  pointer-events:none
+}
+.palm-l1{left:10%;height:160px}
+.palm-l2{left:22%;height:110px}
+.palm-r1{right:10%;height:160px}
+.palm-r2{right:22%;height:110px}
+.palm-m1{left:36%;height:80px}
+.palm-m2{right:36%;height:80px}
+
+/* SCENE B — Campaign Office, Evening */
+#s-campaign{background:linear-gradient(180deg,#030509 0%,#060810 60%,#0a0d18 100%)}
+#s-campaign .co-floor{
+  position:absolute;bottom:0;left:0;right:0;height:220px;
+  background:linear-gradient(180deg,#0a0d18 0%,#07090e 100%)
+}
+#s-campaign .co-desk{
+  position:absolute;bottom:160px;left:50%;transform:translateX(-50%);
+  width:300px;height:14px;background:#1e1408;border-radius:3px;
+  box-shadow:0 6px 24px rgba(0,0,0,.7)
+}
+#s-campaign .co-paper{
+  position:absolute;top:-16px;left:20px;width:60px;height:14px;
+  background:#f5f0e0;border-radius:1px;transform:rotate(-2deg)
+}
+#s-campaign .co-lamp{
+  position:absolute;bottom:176px;left:50%;transform:translateX(-50%);
+  width:4px;height:60px;background:#1a1208
+}
+#s-campaign .co-lamp::after{
+  content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);
+  width:60px;height:30px;
+  background:radial-gradient(ellipse at center,rgba(245,200,60,.3) 0%,transparent 70%)
+}
+#s-campaign .co-window{
+  position:absolute;top:30px;right:100px;width:110px;height:170px;
+  background:linear-gradient(180deg,#0d2045 0%,#061228 100%);
+  border:2px solid #1a2840;border-radius:4px;overflow:hidden
+}
+#s-campaign .co-window::after{
+  content:'';position:absolute;inset:-40px;border-radius:50%;
+  background:radial-gradient(circle,rgba(30,80,180,.12) 0%,transparent 65%)
+}
+#s-campaign .co-banner{
+  position:absolute;top:30px;left:70px;width:55px;height:95px;
+  background:linear-gradient(180deg,#f59e0b 0%,#c07800 100%);
+  border-radius:2px 2px 0 0
+}
+#s-campaign .co-banner::after{
+  content:'NPA';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  color:#0a0c11;font-size:10px;font-weight:700;font-family:Georgia,serif;letter-spacing:1px
+}
+
+/* SCENE C — Rally Grounds, Evening */
+#s-rally{background:linear-gradient(180deg,#030508 0%,#060a12 55%,#0a0e1c 100%)}
+#s-rally .rg-ground{
+  position:absolute;bottom:0;left:0;right:0;height:160px;
+  background:linear-gradient(180deg,#08080c 0%,#05050a 100%)
+}
+#s-rally .rg-spotlight{
+  position:absolute;top:0;width:220px;height:440px;
+  background:linear-gradient(180deg,rgba(255,215,60,.1) 0%,transparent 100%);
+  clip-path:polygon(38% 0%,62% 0%,100% 100%,0% 100%);
+  pointer-events:none
+}
+.rg-sl1{left:28%}.rg-sl2{left:55%}
+#s-rally .rg-stage{
+  position:absolute;bottom:120px;left:50%;transform:translateX(-50%);
+  width:340px;height:18px;background:#1a1408;border-radius:3px 3px 0 0;
+  box-shadow:0 -4px 20px rgba(255,200,50,.08)
+}
+#s-rally .rg-crowd{
+  position:absolute;bottom:0;left:0;right:0;height:140px;
+  overflow:hidden
+}
+#s-rally .rg-crowd::before{
+  content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(90deg,transparent,transparent 9px,rgba(30,50,90,.35) 9px,rgba(30,50,90,.35) 18px);
+  mask-image:linear-gradient(180deg,transparent 0%,rgba(0,0,0,.9) 40%,rgba(0,0,0,.6) 100%);
+  -webkit-mask-image:linear-gradient(180deg,transparent 0%,rgba(0,0,0,.9) 40%,rgba(0,0,0,.6) 100%)
+}
+#s-rally .rg-banner-text{
+  position:absolute;top:80px;left:50%;transform:translateX(-50%);
+  font-family:Georgia,serif;font-size:13px;font-weight:700;
+  color:rgba(245,158,11,.5);letter-spacing:3px;white-space:nowrap
+}
+
+/* SCENE D — Night Crisis */
+#s-night{background:linear-gradient(180deg,#080203 0%,#120306 55%,#190406 100%)}
+#s-night .nc-glow{
+  position:absolute;inset:0;
+  background:radial-gradient(circle at 50% 35%,rgba(239,68,68,.07) 0%,transparent 55%);
+  animation:crisis-glow 2.5s infinite
+}
+@keyframes crisis-glow{0%,100%{opacity:.8}50%{opacity:1.2}}
+#s-night .nc-floor{
+  position:absolute;bottom:0;left:0;right:0;height:180px;
+  background:linear-gradient(180deg,#0d0205 0%,#090104 100%)
+}
+#s-night .nc-screen{
+  position:absolute;top:60px;left:50%;transform:translateX(-50%);
+  width:260px;height:160px;
+  background:rgba(239,68,68,.06);border:1px solid rgba(239,68,68,.18);border-radius:4px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:Georgia,serif;font-size:11px;color:rgba(239,68,68,.5);letter-spacing:2px
+}
+#s-night .nc-pulse{
+  position:absolute;top:0;left:0;right:0;height:3px;
+  background:rgba(239,68,68,.6);
+  animation:nc-scan 3s linear infinite
+}
+@keyframes nc-scan{0%{top:0;opacity:1}100%{top:100%;opacity:0}}
+
+/* ─ CHARACTER SPRITES ─ */
+.char-sprite{
+  position:absolute;bottom:100px;width:80px;height:200px;
+  opacity:0;transition:opacity .6s ease,transform .6s ease;transform:translateX(30px)
+}
+.char-sprite.visible{opacity:1;transform:translateX(0)}
+.char-sprite.exit{opacity:0;transform:translateX(-30px)}
+/* Adeyemi (NPA/agbada/gold) */
+#char-adeyemi{left:18%}
+#char-adeyemi .char-body::before{
+  content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);
+  width:72px;height:165px;
+  background:linear-gradient(180deg,#f59e0b 0%,#d08000 55%,#8b5500 100%);
+  clip-path:polygon(18% 0%,82% 0%,92% 18%,100% 40%,96% 100%,4% 100%,0% 40%,8% 18%);
+  border-radius:4px 4px 0 0
+}
+#char-adeyemi .char-body::after{
+  content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);
+  width:42px;height:42px;background:#a0522d;border-radius:50%;
+  box-shadow:0 -4px 0 #5a2a0a
+}
+/* Okafor (DRP/suit/dark blue) */
+#char-okafor{right:18%}
+#char-okafor .char-body::before{
+  content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);
+  width:62px;height:158px;
+  background:linear-gradient(180deg,#1e3050 0%,#0f1e38 55%,#080e1c 100%);
+  clip-path:polygon(22% 0%,78% 0%,88% 22%,90% 100%,10% 100%,12% 22%)
+}
+#char-okafor .char-body::after{
+  content:'';position:absolute;top:5px;left:50%;transform:translateX(-50%);
+  width:38px;height:38px;background:#8b6050;border-radius:50%
+}
+/* Fatima (community/adire/green) */
+#char-fatima{left:50%;transform:translateX(-50%)}
+#char-fatima.visible{transform:translateX(-50%)}
+#char-fatima .char-body::before{
+  content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);
+  width:66px;height:152px;
+  background:repeating-linear-gradient(135deg,#1a4d2e 0px,#1a4d2e 10px,#0d6040 10px,#0d6040 20px);
+  clip-path:polygon(20% 0%,80% 0%,90% 22%,100% 100%,0% 100%,10% 22%);
+  border-radius:4px 4px 0 0
+}
+#char-fatima .char-body::after{
+  content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);
+  width:40px;height:40px;background:#8b7060;border-radius:50%;
+  box-shadow:0 -14px 0 #1a4d2e
+}
+/* Adviser silhouette */
+#char-adviser{right:30%;bottom:90px;width:60px;height:160px}
+#char-adviser .char-body::before{
+  content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);
+  width:52px;height:148px;
+  background:linear-gradient(180deg,#2d2d3a 0%,#1a1a24 100%);
+  clip-path:polygon(22% 0%,78% 0%,85% 18%,90% 100%,10% 100%,15% 18%)
+}
+#char-adviser .char-body::after{
+  content:'';position:absolute;top:5px;left:50%;transform:translateX(-50%);
+  width:34px;height:34px;background:#6b5040;border-radius:50%
+}
+
+/* ═══════════════════════════════════════
+   LAYER 2 — HUD OVERLAY
+   ═══════════════════════════════════════ */
+#hud{position:absolute;inset:0;pointer-events:none;z-index:100}
+#hud>*{pointer-events:auto}
+
+/* HUD Top */
+#hud-top{
+  position:absolute;top:0;left:0;right:0;height:52px;
+  background:linear-gradient(180deg,rgba(0,0,0,.78) 0%,transparent 100%);
+  display:flex;align-items:center;padding:0 16px;gap:10px
+}
+.hud-chip{
+  display:inline-flex;align-items:center;gap:5px;
+  background:rgba(0,0,0,.52);border:1px solid rgba(255,255,255,.1);
+  border-radius:20px;padding:4px 11px;
+  font-family:Georgia,serif;font-size:10px;color:#9ba5b7;
+  backdrop-filter:blur(4px);white-space:nowrap
+}
+.hud-chip .hv{font-weight:700;color:#e8ecf4;font-size:11px}
+.hud-chip.urg{border-color:rgba(239,68,68,.4)}.hud-chip.urg .hv{color:#ef4444}
+.hud-chip.gld{border-color:rgba(245,158,11,.3)}.hud-chip.gld .hv{color:#f59e0b}
+.hud-chip.grn{border-color:rgba(16,185,129,.3)}.hud-chip.grn .hv{color:#10b981}
+#hud-top .sp{flex:1}
+.hud-btn{
+  display:inline-flex;align-items:center;gap:5px;
+  background:rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.15);
+  border-radius:7px;padding:6px 13px;
+  font-family:Georgia,serif;font-size:11px;font-weight:700;
+  color:#c8d0dc;cursor:pointer;backdrop-filter:blur(6px);
+  transition:background .15s,border-color .15s,transform .1s;
+  text-transform:uppercase;letter-spacing:.5px;white-space:nowrap
+}
+.hud-btn:hover{background:rgba(20,30,60,.7);border-color:rgba(255,255,255,.28);transform:translateY(-1px)}
+.hud-btn:active{transform:translateY(0)}
+.hud-btn.ac{border-color:rgba(16,185,129,.45);color:#10b981}
+.hud-btn.ac:hover{background:rgba(16,185,129,.13)}
+.hud-btn.gd{border-color:rgba(245,158,11,.45);color:#f59e0b}
+.hud-btn.gd:hover{background:rgba(245,158,11,.1)}
+.hud-btn.rd{border-color:rgba(239,68,68,.45);color:#ef4444}
+.hud-btn.rd:hover{background:rgba(239,68,68,.12)}
+
+/* Notif badge */
+#notif-dot{
+  position:absolute;top:13px;right:16px;
+  width:8px;height:8px;background:#ef4444;
+  border-radius:50%;display:none;
+  animation:notif-pulse 1.5s infinite
+}
+@keyframes notif-pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.5);opacity:.7}}
+
+/* HUD Bottom */
+#hud-bottom{
+  position:absolute;bottom:0;left:0;right:0;height:78px;
+  background:linear-gradient(0deg,rgba(0,0,0,.82) 0%,transparent 100%);
+  display:flex;align-items:flex-end;padding:0 16px 14px;gap:16px
+}
+/* Meters left */
+#hud-meters{display:flex;flex-direction:column;gap:7px;min-width:180px}
+.hud-meter{display:flex;align-items:center;gap:8px}
+.hm-label{
+  font-family:Georgia,serif;font-size:9px;color:#5a6275;
+  text-transform:uppercase;letter-spacing:.5px;min-width:50px;text-align:right
+}
+.hm-track{flex:1;height:5px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden}
+.hm-fill{height:100%;border-radius:3px;transition:width .4s ease}
+.hm-val{font-family:Georgia,serif;font-size:9px;font-weight:700;color:#e8ecf4;min-width:26px;text-align:right}
+/* ES race center */
+#hud-es{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px}
+.es-labels{display:flex;width:100%;justify-content:space-between;font-family:Georgia,serif;font-size:9px;color:#5a6275}
+.es-bar{width:100%;height:7px;background:rgba(255,255,255,.08);border-radius:4px;overflow:hidden;display:flex}
+#es-fill-npa{background:linear-gradient(90deg,#f59e0b,#d97706);transition:width .5s ease;border-radius:4px 0 0 4px}
+#es-fill-drp{background:linear-gradient(90deg,#ef4444,#dc2626);transition:width .5s ease;border-radius:0 4px 4px 0}
+.es-vals{display:flex;width:100%;justify-content:space-between;font-family:Georgia,serif;font-size:11px;font-weight:700}
+#es-npa-v{color:#f59e0b}#es-drp-v{color:#ef4444}
+/* Buttons right */
+#hud-btns-r{display:flex;gap:8px;align-items:center}
+
+/* ═══════════════════════════════════════
+   LAYER 3 — EVENT LAYER
+   ═══════════════════════════════════════ */
+#event-layer{
+  position:absolute;inset:0;z-index:200;
+  pointer-events:none;
+  display:flex;align-items:center;justify-content:center
+}
+#event-layer.active{pointer-events:auto}
+#ev-backdrop{
+  position:absolute;inset:0;background:rgba(0,0,0,.62);
+  backdrop-filter:blur(3px);opacity:0;transition:opacity .3s ease
+}
+#event-layer.active #ev-backdrop{opacity:1}
+#event-card{
+  position:relative;z-index:1;
+  width:520px;max-width:calc(100vw - 40px);
+  background:linear-gradient(180deg,#0c1020 0%,#101828 100%);
+  border:1px solid rgba(255,255,255,.1);border-radius:12px;
+  box-shadow:0 24px 80px rgba(0,0,0,.85),0 0 0 1px rgba(255,255,255,.04);
+  overflow:hidden;
+  transform:translateY(24px);opacity:0;
+  transition:transform .35s ease,opacity .35s ease
+}
+#event-layer.active #event-card{transform:translateY(0);opacity:1}
+#ev-header{
+  padding:16px 20px 12px;
+  display:flex;align-items:flex-start;gap:14px;
+  border-bottom:1px solid rgba(255,255,255,.07)
+}
+#ev-pri-bar{width:3px;align-self:stretch;border-radius:2px;flex-shrink:0;background:#ef4444}
+#ev-meta{flex:1;min-width:0}
+#ev-label{
+  font-size:9px;letter-spacing:1.8px;font-weight:700;
+  text-transform:uppercase;color:#ef4444;margin-bottom:5px;
+  font-family:Georgia,serif;animation:urgent-blink 1.5s step-end infinite
+}
+@keyframes urgent-blink{0%,100%{opacity:1}50%{opacity:.6}}
+#ev-label.calm{animation:none;color:#3b82f6}
+#ev-label.info{animation:none;color:#10b981}
+#ev-label.warn{animation:none;color:#f59e0b}
+#ev-title{
+  font-size:17px;font-weight:700;color:#e8ecf4;
+  line-height:1.25;font-family:Georgia,serif
+}
+#ev-portrait{
+  width:46px;height:46px;border-radius:8px;
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);
+  display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0
+}
+#ev-body{padding:14px 20px}
+#ev-dialogue{
+  font-family:Georgia,serif;font-size:13px;color:#8a94a8;
+  line-height:1.7;margin-bottom:12px;font-style:italic;
+  border-left:2px solid rgba(255,255,255,.08);padding-left:12px;
+  display:none
+}
+#ev-dialogue.show{display:block}
+#ev-desc{
+  font-family:Georgia,serif;font-size:13px;color:#bdc4d0;
+  line-height:1.65;margin-bottom:14px
+}
+#ev-cons{
+  background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.06);
+  border-radius:8px;padding:10px 14px;margin-bottom:14px;display:none
+}
+#ev-cons.show{display:block}
+.ec-row{
+  display:flex;align-items:flex-start;gap:8px;padding:5px 0;
+  border-bottom:1px solid rgba(255,255,255,.05);
+  font-family:Georgia,serif;font-size:11px;color:#8e97aa
+}
+.ec-row:last-child{border-bottom:none}
+.ec-badge{
+  font-size:8px;font-weight:700;letter-spacing:.5px;
+  padding:2px 6px;border-radius:3px;white-space:nowrap;flex-shrink:0
+}
+.ec-badge.known{background:rgba(16,185,129,.15);color:#10b981}
+.ec-badge.likely{background:rgba(59,130,246,.15);color:#3b82f6}
+.ec-badge.uncertain{background:rgba(90,98,117,.15);color:#5a6275}
+#ev-choices{
+  padding:12px 20px 16px;
+  display:flex;flex-direction:column;gap:8px;
+  border-top:1px solid rgba(255,255,255,.06)
+}
+.ev-choice{
+  width:100%;background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.1);border-radius:8px;
+  padding:11px 16px;text-align:left;
+  font-family:Georgia,serif;font-size:13px;color:#c8d0dc;
+  cursor:pointer;display:flex;align-items:center;gap:10px;
+  transition:background .15s,border-color .15s,transform .1s
+}
+.ev-choice:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.22);transform:translateY(-1px)}
+.ev-choice:active{transform:translateY(0)}
+.ev-choice.pri{border-color:rgba(16,185,129,.3);background:rgba(16,185,129,.06)}
+.ev-choice.pri:hover{background:rgba(16,185,129,.12);border-color:rgba(16,185,129,.5)}
+.ev-choice.dan{border-color:rgba(239,68,68,.25);background:rgba(239,68,68,.05)}
+.ev-choice.dan:hover{background:rgba(239,68,68,.1)}
+.ev-choice:disabled{opacity:.38;cursor:not-allowed;transform:none!important}
+.ec-icon{font-size:16px;flex-shrink:0}
+.ec-text{flex:1}
+.ec-cost{font-size:10px;color:#5a6275;white-space:nowrap}
+.ec-cost .ec-e{color:#ef4444}.ec-cost .ec-w{color:#f59e0b;margin-left:3px}
+
+/* ─ SPLASH ─ */
+#splash{
+  position:absolute;inset:0;z-index:1000;
+  background:linear-gradient(180deg,#080417 0%,#180c36 20%,#3c1030 38%,#7a2808 55%,#b55420 72%,#cd6e38 85%,#e09050 100%);
+  display:flex;flex-direction:column;align-items:center;justify-content:center
+}
+#splash.hidden{display:none}
+.sp-stars{
+  position:absolute;top:0;left:0;right:0;height:58%;
+  background-image:radial-gradient(circle,rgba(255,255,255,.75) 1px,transparent 1px),
+    radial-gradient(circle,rgba(255,255,255,.35) 1px,transparent 1px);
+  background-size:70px 55px,35px 28px;
+  background-position:12px 8px,28px 18px;
+  animation:twinkle 6s infinite alternate;pointer-events:none
+}
+.sp-palm{
+  position:absolute;width:10px;background:#160604;border-radius:5px;pointer-events:none
+}
+.sp-palm::before{
+  content:'';position:absolute;top:-28px;left:50%;transform:translateX(-50%);
+  width:100px;height:52px;
+  background:radial-gradient(ellipse 50px 25px at center,#1a3d10 0%,transparent 72%)
+}
+.sp-p1{left:7%;bottom:18%;height:200px}
+.sp-p2{left:19%;bottom:18%;height:140px}
+.sp-p3{right:7%;bottom:18%;height:200px}
+.sp-p4{right:19%;bottom:18%;height:140px}
+.sp-horizon{
+  position:absolute;bottom:0;left:0;right:0;height:38%;
+  background:linear-gradient(0deg,rgba(196,98,42,.55) 0%,transparent 100%);pointer-events:none
+}
+.sp-content{position:relative;z-index:1;text-align:center;padding:32px 40px}
+.sp-eyebrow{
+  font-family:Georgia,serif;font-size:10px;letter-spacing:5px;
+  color:rgba(245,158,11,.7);text-transform:uppercase;margin-bottom:10px
+}
+.sp-title{
+  font-family:Georgia,serif;font-size:58px;font-weight:700;
+  color:#e8ecf4;letter-spacing:-1px;line-height:1;margin-bottom:8px;
+  text-shadow:0 4px 40px rgba(0,0,0,.9)
+}
+.sp-title .n{color:#f59e0b}
+.sp-sub{
+  font-family:Georgia,serif;font-size:14px;color:#8a94a8;
+  line-height:1.65;max-width:340px;margin:0 auto 6px
+}
+.sp-setting{
+  font-family:Georgia,serif;font-size:11px;color:#5a6275;
+  letter-spacing:.5px;margin-bottom:36px
+}
+.sp-btn{
+  background:linear-gradient(135deg,#f59e0b 0%,#c07800 100%);
+  border:none;border-radius:8px;padding:14px 50px;
+  font-family:Georgia,serif;font-size:14px;font-weight:700;
+  color:#0a0c11;cursor:pointer;letter-spacing:1px;text-transform:uppercase;
+  transition:transform .2s,box-shadow .2s;
+  box-shadow:0 8px 32px rgba(0,0,0,.55);margin-bottom:18px
+}
+.sp-btn:hover{transform:translateY(-2px);box-shadow:0 14px 44px rgba(0,0,0,.7)}
+.sp-btn:active{transform:translateY(0)}
+.sp-note{
+  font-size:10px;color:rgba(255,255,255,.22);
+  max-width:300px;line-height:1.55;font-family:Georgia,serif;margin:0 auto
+}
+
+/* ─ DAY TRANSITION ─ */
+#day-tx{
+  position:absolute;inset:0;z-index:500;background:#000;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+  opacity:0;pointer-events:none;transition:opacity .5s
+}
+#day-tx.show{opacity:1;pointer-events:auto}
+#dt-day{font-family:Georgia,serif;font-size:44px;font-weight:700;color:rgba(245,158,11,.9)}
+#dt-sub{font-family:Georgia,serif;font-size:13px;color:#5a6275;letter-spacing:2.5px}
+
+/* ─ INTEL DRAWER ─ */
+#intel-drawer{
+  position:absolute;inset:0;z-index:300;display:none;
+  background:rgba(0,0,0,.76);backdrop-filter:blur(8px);
+  align-items:center;justify-content:center
+}
+#intel-drawer.open{display:flex}
+#intel-panel{
+  width:560px;max-width:calc(100vw - 32px);max-height:82vh;overflow-y:auto;
+  background:linear-gradient(180deg,#0c1020 0%,#101828 100%);
+  border:1px solid rgba(255,255,255,.1);border-radius:12px;
+  padding:20px;box-shadow:0 24px 80px rgba(0,0,0,.85)
+}
+#intel-panel h2{
+  font-family:Georgia,serif;font-size:13px;color:#f59e0b;
+  letter-spacing:2.5px;text-transform:uppercase;margin-bottom:14px;
+  padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,.08)
+}
+.is-title{
+  font-family:Georgia,serif;font-size:9px;color:#5a6275;
+  text-transform:uppercase;letter-spacing:1.2px;margin-bottom:10px;margin-top:16px
+}
+.isr{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:6px 0;border-bottom:1px solid rgba(255,255,255,.04);
+  font-family:Georgia,serif;font-size:11px
+}
+.isr:last-child{border-bottom:none}
+.isr-l{color:#8e97aa}.isr-v{font-weight:700;color:#e8ecf4}
+.isr-v.g{color:#10b981}.isr-v.r{color:#ef4444}.isr-v.o{color:#f59e0b}
+.i-meter{display:flex;align-items:center;gap:7px;padding:5px 0}
+.im-label{font-family:Georgia,serif;font-size:10px;color:#8e97aa;min-width:80px}
+.im-track{flex:1;height:5px;background:rgba(255,255,255,.08);border-radius:3px;overflow:hidden}
+.im-fill{height:100%;border-radius:3px;transition:width .4s}
+.im-val{font-family:Georgia,serif;font-size:10px;font-weight:700;color:#e8ecf4;min-width:28px;text-align:right}
+#actions-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:8px}
+.a-tile{
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);
+  border-radius:8px;padding:10px 12px;cursor:pointer;
+  transition:background .15s,border-color .15s
+}
+.a-tile:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.18)}
+.a-tile.dis{opacity:.38;cursor:not-allowed}
+.a-tile.dis:hover{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.08)}
+.at-ico{font-size:18px;margin-bottom:4px}
+.at-name{font-family:Georgia,serif;font-size:12px;font-weight:700;color:#c8d0dc;margin-bottom:2px}
+.at-meta{font-size:10px;color:#5a6275}
+.at-meta .ae{color:#ef4444}.at-meta .aw{color:#f59e0b;margin-left:4px}
+.prom-item{
+  display:flex;align-items:flex-start;gap:10px;padding:7px 0;
+  border-bottom:1px solid rgba(255,255,255,.05);
+  font-family:Georgia,serif
+}
+.prom-item:last-child{border-bottom:none}
+.prom-badge{padding:2px 7px;border-radius:8px;font-size:9px;font-weight:700;white-space:nowrap}
+.pb-promised{background:rgba(59,130,246,.15);color:#3b82f6}
+.pb-underway{background:rgba(245,158,11,.15);color:#f59e0b}
+.pb-delivered{background:rgba(16,185,129,.15);color:#10b981}
+.pb-delayed{background:rgba(249,115,22,.15);color:#f97316}
+.pb-abandoned{background:rgba(107,114,128,.15);color:#6b7280}
+.pb-broken{background:rgba(239,68,68,.15);color:#ef4444}
+.prom-text{font-size:11px;color:#8e97aa;line-height:1.5;flex:1}
+.chron-item{
+  display:flex;gap:10px;padding:6px 0;
+  border-bottom:1px solid rgba(255,255,255,.04);
+  font-family:Georgia,serif
+}
+.chron-item:last-child{border-bottom:none}
+.ci-bar{width:3px;min-width:3px;border-radius:2px;align-self:stretch}
+.ci-text{font-size:11px;color:#8e97aa;flex:1;line-height:1.4}
+.ci-time{font-size:9px;color:#5a6275;margin-top:2px}
+
+/* ─ TOASTS ─ */
+#toast-box{
+  position:absolute;bottom:96px;left:50%;transform:translateX(-50%);
+  z-index:400;display:flex;flex-direction:column;gap:8px;align-items:center;
+  pointer-events:none
+}
+.toast{
+  background:rgba(8,10,20,.92);border:1px solid rgba(255,255,255,.12);
+  border-radius:8px;padding:9px 18px;
+  font-family:Georgia,serif;font-size:12px;color:#c8d0dc;
+  backdrop-filter:blur(8px);white-space:nowrap;max-width:360px;text-align:center;
+  animation:t-in .3s ease,t-out .4s ease 2.6s forwards
+}
+.toast.urg{border-color:rgba(239,68,68,.4);color:#ef4444}
+.toast.ok{border-color:rgba(16,185,129,.4);color:#10b981}
+.toast.info{border-color:rgba(59,130,246,.35);color:#3b82f6}
+@keyframes t-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes t-out{from{opacity:1}to{opacity:0;transform:translateY(-10px)}}
+
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.14);border-radius:2px}
+</style>
+</head>
+<body>
+
+<!-- ════════════════ SPLASH ════════════════ -->
+<div id="splash">
+  <div class="sp-stars"></div>
+  <div class="sp-palm sp-p1"></div>
+  <div class="sp-palm sp-p2"></div>
+  <div class="sp-palm sp-p3"></div>
+  <div class="sp-palm sp-p4"></div>
+  <div class="sp-horizon"></div>
+  <div class="sp-content">
+    <div class="sp-eyebrow">A political thriller — Kwara State, Nigeria</div>
+    <div class="sp-title"><span class="n">NATASHAS</span></div>
+    <div class="sp-sub">28 days to election. One candidate. A state on the edge. Every decision leaves a mark.</div>
+    <div class="sp-setting">Day 187 · Ilorin, Kwara State · 2025 Gubernatorial Election</div>
+    <button class="sp-btn" onclick="startGame()">BEGIN CAMPAIGN</button>
+    <div class="sp-note">
+      This is a fictional political simulation. All characters, parties and events are invented for dramatic purposes.
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════ GAME ROOT ════════════════ -->
+<div id="game-root" class="hidden">
+
+  <!-- LAYER 1 — WORLD SCENE -->
+  <div id="world-scene">
+    <!-- Scene A: Government House Dawn (starting scene) -->
+    <div id="s-govhouse" class="scene-env active">
+      <div class="gh-stars"></div>
+      <div class="gh-haze"></div>
+      <div class="gh-ground"></div>
+      <div class="gh-path"></div>
+      <div class="gh-building"></div>
+      <div class="gh-window gh-w1"></div>
+      <div class="gh-window gh-w2"></div>
+      <div class="gh-window gh-w3"></div>
+      <div class="gh-window gh-w4"></div>
+      <div class="palm palm-l1"></div>
+      <div class="palm palm-l2"></div>
+      <div class="palm palm-r1"></div>
+      <div class="palm palm-r2"></div>
+      <div class="palm palm-m1"></div>
+      <div class="palm palm-m2"></div>
+    </div>
+    <!-- Scene B: Campaign Office -->
+    <div id="s-campaign" class="scene-env">
+      <div class="co-floor"></div>
+      <div class="co-window"></div>
+      <div class="co-banner"></div>
+      <div class="co-desk"><div class="co-paper"></div></div>
+      <div class="co-lamp"></div>
+    </div>
+    <!-- Scene C: Rally Grounds -->
+    <div id="s-rally" class="scene-env">
+      <div class="rg-ground"></div>
+      <div class="rg-spotlight rg-sl1"></div>
+      <div class="rg-spotlight rg-sl2"></div>
+      <div class="rg-stage"></div>
+      <div class="rg-crowd"></div>
+      <div class="rg-banner-text">NPA · KWARA DECIDES</div>
+    </div>
+    <!-- Scene D: Night Crisis -->
+    <div id="s-night" class="scene-env">
+      <div class="nc-glow"></div>
+      <div class="nc-floor"></div>
+      <div class="nc-screen">⚠ EMERGENCY ALERT</div>
+      <div class="nc-pulse"></div>
+    </div>
+  </div>
+
+  <!-- CHARACTER SPRITES -->
+  <div id="char-adeyemi" class="char-sprite"><div class="char-body"></div></div>
+  <div id="char-okafor"  class="char-sprite"><div class="char-body"></div></div>
+  <div id="char-fatima"  class="char-sprite"><div class="char-body"></div></div>
+  <div id="char-adviser" class="char-sprite"><div class="char-body"></div></div>
+
+  <!-- LAYER 2 — HUD -->
+  <div id="hud">
+    <div id="hud-top">
+      <div class="hud-chip gld">Day <span class="hv" id="h-day">187</span></div>
+      <div class="hud-chip">⏱ <span class="hv" id="h-clock">09:47</span></div>
+      <div class="hud-chip grn"><span class="hv" id="h-dte">28</span> days to election</div>
+      <div class="hud-chip" id="h-phase-chip">Phase <span class="hv" id="h-phase">6</span></div>
+      <div class="sp"></div>
+      <button class="hud-btn gd" onclick="openIntel()">📋 Intel</button>
+      <button class="hud-btn ac"  id="btn-campaign" onclick="openCampaign()">🎯 Campaign</button>
+      <button class="hud-btn"     onclick="endDay()">⏭ End Day</button>
+    </div>
+
+    <div id="hud-bottom">
+      <div id="hud-meters">
+        <div class="hud-meter">
+          <div class="hm-label">Energy</div>
+          <div class="hm-track"><div class="hm-fill" id="hm-energy" style="background:#3b82f6;width:83%"></div></div>
+          <div class="hm-val" id="hv-energy">83%</div>
+        </div>
+        <div class="hud-meter">
+          <div class="hm-label">Chaos</div>
+          <div class="hm-track"><div class="hm-fill" id="hm-chaos" style="background:#f97316;width:32%"></div></div>
+          <div class="hm-val" id="hv-chaos">32</div>
+        </div>
+        <div class="hud-meter">
+          <div class="hm-label">Actions</div>
+          <div class="hm-track"><div class="hm-fill" id="hm-actions" style="background:#10b981;width:0%"></div></div>
+          <div class="hm-val" id="hv-actions">0/5</div>
+        </div>
+      </div>
+
+      <div id="hud-es">
+        <div class="es-labels">
+          <span id="es-l-npa">NPA — Adeyemi</span>
+          <span id="es-l-drp">Okafor — DRP</span>
+        </div>
+        <div class="es-bar">
+          <div id="es-fill-npa" style="width:52%"></div>
+          <div id="es-fill-drp" style="width:48%"></div>
+        </div>
+        <div class="es-vals">
+          <span id="es-npa-v">—</span>
+          <span style="font-size:9px;color:#5a6275;font-family:Georgia,serif">ELECTORAL STRENGTH</span>
+          <span id="es-drp-v">—</span>
+        </div>
+      </div>
+
+      <div id="hud-btns-r">
+        <button class="hud-btn rd" id="btn-scandal" onclick="openScandalEvent()" style="display:none">⚠ Scandal</button>
+        <button class="hud-btn" onclick="togglePause()">⏸ Pause</button>
+      </div>
+    </div>
+
+    <div id="notif-dot"></div>
+  </div>
+
+  <!-- LAYER 3 — EVENT LAYER -->
+  <div id="event-layer">
+    <div id="ev-backdrop" onclick="tryDismissEvent()"></div>
+    <div id="event-card">
+      <div id="ev-header">
+        <div id="ev-pri-bar"></div>
+        <div id="ev-meta">
+          <div id="ev-label">BREAKING</div>
+          <div id="ev-title">Event Title</div>
+        </div>
+        <div id="ev-portrait">🏛️</div>
+      </div>
+      <div id="ev-body">
+        <div id="ev-dialogue"></div>
+        <div id="ev-desc">Description goes here.</div>
+        <div id="ev-cons"></div>
+      </div>
+      <div id="ev-choices"></div>
+    </div>
+  </div>
+
+  <!-- DAY TRANSITION -->
+  <div id="day-tx">
+    <div id="dt-day">DAY 188</div>
+    <div id="dt-sub">ILORIN · KWARA STATE</div>
+  </div>
+
+  <!-- INTEL DRAWER -->
+  <div id="intel-drawer" onclick="closeIntelIfBg(event)">
+    <div id="intel-panel">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+        <h2 style="margin:0;padding:0;border:none">CAMPAIGN INTELLIGENCE</h2>
+        <button class="hud-btn" onclick="closeIntel()" style="font-size:10px;padding:4px 10px">✕ Close</button>
+      </div>
+      <div id="intel-content"></div>
+    </div>
+  </div>
+
+  <!-- TOASTS -->
+  <div id="toast-box"></div>
+
+</div><!-- /game-root -->
+
+<script>
+/* ============================================================
+   NATASHAS v4.0 — MAIN GAME SCRIPT
+   World-first political thriller browser game
+   ============================================================ */
+
+// ── GAME STATE ───────────────────────────────────────────────
+let G = {
+  meta:{ version:'4.0.0', firstVisit:true, lastSaved:null },
+  world:{
+    chaosIndex:32, chaosLevel:'Tense',
+    emergencyState:'NORMAL',
+    gameDay:187, gameYear:1, clockHour:9, clockMinute:47,
+    daysToElection:28, currentElectionPhase:6,
+    currentScene:'govhouse'
+  },
+  player:{
+    name:'Ibrahim Musa Al-Amin', role:'Campaign Manager',
+    party:'NPA', state:'Kwara',
+    health:74, energy:83, wealth:2800000, stress:43, living:61, security:37,
+    capital:{financial:420,political:380,social:510,institutional:340,media:290,grassroots:510,intelligence:220,reputation:72},
+    careerStage:2, influence:48, network:71, loyalty:59, legacyScore:0, fairPlay:87,
+    actionsToday:0, maxActionsPerDay:5
+  },
+  election:{
+    daysToElection:28, currentPhase:6,
+    candidates:[
+      {id:'c1',name:'Gov. Tunde Adeyemi',party:'NPA',incumbentBonus:8,
+       grassroots:62,popularity:58,partyStrength:71,coalitionSupport:54,
+       mediaScore:67,economyScore:48,trustScore:63,stateConditions:58,campaignQuality:71,random:5,electoralStrength:0},
+      {id:'c2',name:'Barr. Chidi Okafor',party:'DRP',incumbentBonus:0,
+       grassroots:54,popularity:47,partyStrength:53,coalitionSupport:61,
+       mediaScore:74,economyScore:48,trustScore:58,stateConditions:58,campaignQuality:63,random:3,electoralStrength:0}
+    ],
+    integrityLog:[
+      {status:'ok',text:'INEC registration validated',time:'Day 160'},
+      {status:'ok',text:'Candidate affidavits filed',time:'Day 165'},
+      {status:'warn',text:'Opposition alleges voter list irregularities',time:'Day 182'},
+      {status:'ok',text:'All accredited observers registered',time:'Day 185'}
+    ]
+  },
+  economy:{
+    inflation:24.7, commodityAvailability:62, transportCosts:78, foodPrices:81,
+    employment:54, businessConfidence:43, consumerDemand:57, govRevenue:67,
+    stateRevenue:61, investment:38, infraOutput:44,
+    trends:{inflation:0.2,commodityAvailability:-0.1,transportCosts:0.1,foodPrices:0.3,
+      employment:0,businessConfidence:-0.1,consumerDemand:-0.1,govRevenue:0,
+      stateRevenue:-0.1,investment:-0.1,infraOutput:0.1}
+  },
+  scandals:[
+    {id:'SC-001',title:'Contractor Kickback Allegation',
+     evidence:42,visibility:68,credibility:55,
+     investigationStatus:'Active Media Investigation',source:'Opposition Leak',dismissed:false}
+  ],
+  promises:[
+    {id:'PR-001',text:'Rebuild Ilorin-Jebba highway within 18 months',status:'underway',day:45,region:'Kwara North'},
+    {id:'PR-002',text:'Recruit 500 additional healthcare workers by Year 2',status:'promised',day:92,region:'All LGAs'},
+    {id:'PR-003',text:'Reduce electricity tariff by 15% through state subsidy',status:'delivered',day:130,region:'Kwara'},
+    {id:'PR-004',text:'Build 12 new primary schools in rural wards',status:'delayed',day:60,region:'Rural LGAs'},
+    {id:'PR-005',text:'Establish Kwara Agro-Processing Hub Phase 1',status:'abandoned',day:75,region:'Kwara Central'},
+    {id:'PR-006',text:'Quarterly youth employment summits',status:'broken',day:30,region:'All LGAs'}
+  ],
+  notifications:[
+    {id:'N1',priority:'red',text:'Kickback story at 48K social posts. Immediate response required.',time:'09:15',read:false},
+    {id:'N2',priority:'orange',text:"Okafor's welfare pledge gaining 12% polling shift in Offa LGA.",time:'08:40',read:false},
+    {id:'N3',priority:'yellow',text:'Campaign fund review overdue by 3 days.',time:'08:00',read:false},
+    {id:'N4',priority:'blue',text:'Ilorin-Jebba highway progress report available.',time:'07:30',read:true}
+  ],
+  chronicle:[
+    {id:'CH-001',time:'Day 180, 08:30',color:'#3b82f6',text:'Campaign rally in Ilorin East draws 3,400 attendees. Grassroots +4.'},
+    {id:'CH-002',time:'Day 182, 14:15',color:'#f59e0b',text:'Opposition releases disputed voter roll — INEC opens inquiry.'},
+    {id:'CH-003',time:'Day 184, 09:00',color:'#10b981',text:'NPA coalition expanded: Kwara Progressive Alliance joins ticket.'},
+    {id:'CH-004',time:'Day 185, 16:45',color:'#ef4444',text:'Contractor kickback story breaks in state media. Credibility −6.'},
+    {id:'CH-005',time:'Day 186, 11:20',color:'#3b82f6',text:'Ibrahim Musa secures endorsement from Kwara Elders Council.'}
+  ],
+  eventQueue:[],
+  currentEvent:null,
+  pendingActionId:null,
+  lastAction:null,
+  paused:false
+};
+
+// ── CONSTANTS ────────────────────────────────────────────────
+const ELECTION_PHASES=[
+  {num:1,name:'Pre-Declaration'},{num:2,name:'Candidate Declaration'},
+  {num:3,name:'INEC Registration'},{num:4,name:'Party Primary'},
+  {num:5,name:'Nomination & Filing'},{num:6,name:'Active Campaign'},
+  {num:7,name:'Coalition Building'},{num:8,name:'Final Campaign Push'},
+  {num:9,name:'Campaign Silence'},{num:10,name:'Voting Day'},
+  {num:11,name:'Collation'},{num:12,name:'Declaration'},{num:13,name:'Transition'}
+];
+
+const CAMPAIGN_ACTIONS=[
+  {id:'rally',icon:'🎤',name:'Campaign Rally',desc:'Mass rally in a swing LGA.',
+   energyCost:20,wealthCost:500000,
+   capitalCost:{grassroots:15,financial:30},
+   effects:{Grassroots:5,Popularity:3,Stress:8},
+   consequences:[
+     {conf:'known',text:'Energy −20. Campaign fund −₦500K.'},
+     {conf:'likely',text:'Grassroots +5. Attendance 2,000–4,000 expected.'},
+     {conf:'uncertain',text:'Opposition may counter-rally.'}
+   ]},
+  {id:'speech',icon:'📣',name:'Policy Speech',desc:'Formal governance address.',
+   energyCost:12,wealthCost:0,
+   capitalCost:{media:10,institutional:8},
+   effects:{'Media Score':4,Trust:3,Stress:5},
+   consequences:[
+     {conf:'known',text:'Energy −12. Institutional capital consumed.'},
+     {conf:'likely',text:'Media coverage and editorial discussion follow.'},
+     {conf:'uncertain',text:'Gaffe risk: one wrong line dominates the story.'}
+   ]},
+  {id:'debate',icon:'🏛️',name:'Televised Debate',desc:'Live debate vs. Okafor.',
+   energyCost:25,wealthCost:0,
+   capitalCost:{media:20},
+   effects:{'Media Score':8,Popularity:6,Trust:5},
+   consequences:[
+     {conf:'known',text:'Energy −25. High media capital spend.'},
+     {conf:'likely',text:'Win: +6 Popularity. Loss: −6 Popularity.'},
+     {conf:'uncertain',text:'Audience Q&A may surface scandal topics.'}
+   ]},
+  {id:'travel',icon:'🚗',name:'State Tour',desc:'Multi-LGA visibility tour.',
+   energyCost:30,wealthCost:800000,
+   capitalCost:{grassroots:20,financial:25},
+   effects:{Grassroots:8,'Social Capital':4,Stress:10},
+   consequences:[
+     {conf:'known',text:'Energy −30. ₦800K logistics cost.'},
+     {conf:'likely',text:'Grassroots +8 across visited LGAs.'},
+     {conf:'uncertain',text:'Road conditions and security risks apply.'}
+   ]},
+  {id:'coalition',icon:'🤝',name:'Coalition Meeting',desc:'Negotiate with minor parties.',
+   energyCost:15,wealthCost:0,
+   capitalCost:{political:20,social:15},
+   effects:{'Coalition Support':6,'Political Capital':3,Stress:6},
+   consequences:[
+     {conf:'known',text:'Energy −15. Political and social capital spent.'},
+     {conf:'likely',text:'Coalition support +6 if talks succeed.'},
+     {conf:'uncertain',text:'Partners may demand costly concessions.'}
+   ]},
+  {id:'staff',icon:'👥',name:'Staff Management',desc:'Review field ops and morale.',
+   energyCost:8,wealthCost:200000,
+   capitalCost:{financial:10},
+   effects:{'Campaign Quality':4,Stress:3},
+   consequences:[
+     {conf:'known',text:'Energy −8. ₦200K staff welfare.'},
+     {conf:'likely',text:'Campaign quality improves across all LGAs.'},
+     {conf:'uncertain',text:'May surface internal disputes.'}
+   ]},
+  {id:'budget',icon:'💰',name:'Budget Review',desc:'Rebalance campaign fund allocation.',
+   energyCost:5,wealthCost:0,
+   capitalCost:{institutional:5},
+   effects:{'Financial Capital':15,Stress:2},
+   consequences:[
+     {conf:'known',text:'Energy −5. Financial capital recovered +15.'},
+     {conf:'uncertain',text:'Audit may reveal undisclosed expenses.'}
+   ]},
+  {id:'messaging',icon:'📢',name:'Public Messaging',desc:'Strategic communications package.',
+   energyCost:10,wealthCost:300000,
+   capitalCost:{media:12},
+   effects:{'Media Score':5,Popularity:2,Stress:4},
+   consequences:[
+     {conf:'known',text:'Energy −10. ₦300K production cost.'},
+     {conf:'likely',text:'Media score +5. Positive state media framing.'},
+     {conf:'uncertain',text:'Opposition will attempt to rebut.'}
+   ]},
+  {id:'media',icon:'📺',name:'Media Appearance',desc:'Interview or press conference.',
+   energyCost:12,wealthCost:0,
+   capitalCost:{media:8},
+   effects:{'Media Score':6,Popularity:2,Trust:1},
+   consequences:[
+     {conf:'known',text:'Energy −12.'},
+     {conf:'likely',text:'Media score +6. Story control for 24–48 hours.'},
+     {conf:'uncertain',text:'Hostile journalist may pivot to kickback story.'}
+   ]},
+  {id:'grassroots',icon:'🌾',name:'Grassroots Mobilisation',desc:'Ward meetings and canvassing.',
+   energyCost:22,wealthCost:150000,
+   capitalCost:{grassroots:10},
+   effects:{Grassroots:9,Trust:3,Stress:8},
+   consequences:[
+     {conf:'known',text:'Energy −22. ₦150K operational cost.'},
+     {conf:'known',text:'Grassroots capital +9.'},
+     {conf:'likely',text:'Trust score improves +3.'}
+   ]},
+  {id:'digital',icon:'💻',name:'Digital Campaign',desc:'Social media blitz.',
+   energyCost:8,wealthCost:400000,
+   capitalCost:{media:15,financial:10},
+   effects:{'Media Score':7,Popularity:3,Stress:3},
+   consequences:[
+     {conf:'known',text:'Energy −8. ₦400K digital spend.'},
+     {conf:'likely',text:'Media score +7. Online narrative improved.'},
+     {conf:'uncertain',text:'Opposing digital teams counter within hours.'}
+   ]}
+];
+
+const CHAOS_BANDS=[
+  {min:0,max:20,label:'Stable',color:'#10b981'},
+  {min:21,max:40,label:'Tense',color:'#22c55e'},
+  {min:41,max:60,label:'Unstable',color:'#f59e0b'},
+  {min:61,max:80,label:'Crisis',color:'#f97316'},
+  {min:81,max:100,label:'National Chaos',color:'#ef4444'}
+];
+
+const CAPITAL_LABELS={
+  financial:'Financial',political:'Political',social:'Social',
+  institutional:'Institutional',media:'Media',grassroots:'Grassroots',
+  intelligence:'Intelligence',reputation:'Reputation'
+};
+
+const ECON_DEFS=[
+  {key:'inflation',label:'Inflation Rate',unit:'%',higherIsBad:true},
+  {key:'employment',label:'Employment Rate',unit:'%',higherIsBad:false},
+  {key:'businessConfidence',label:'Business Confidence',unit:'',higherIsBad:false},
+  {key:'foodPrices',label:'Food Price Index',unit:'',higherIsBad:true},
+  {key:'commodityAvailability',label:'Commodity Supply',unit:'%',higherIsBad:false},
+  {key:'investment',label:'Private Investment',unit:'%',higherIsBad:false}
+];
+
+// ── UTILITY ──────────────────────────────────────────────────
+function clamp(v,lo,hi){return Math.max(lo,Math.min(hi,v))}
+function el(id){return document.getElementById(id)}
+function setText(id,t){const e=el(id);if(e)e.textContent=t!=null?String(t):''}
+function setHTML(id,h){const e=el(id);if(e)e.innerHTML=h}
+function formatTime(){return String(G.world.clockHour).padStart(2,'0')+':'+String(G.world.clockMinute).padStart(2,'0')}
+function fmtNaira(n){if(Math.abs(n)>=1e6)return '₦'+(n/1e6).toFixed(1)+'M';if(Math.abs(n)>=1000)return '₦'+(n/1000).toFixed(0)+'K';return String(n)}
+function safeGet(o,k,fb){const v=o&&o[k];return(v==null||isNaN(v)&&typeof v==='number')?fb:v}
+function getChaosband(){return CHAOS_BANDS.find(b=>G.world.chaosIndex>=b.min&&G.world.chaosIndex<=b.max)||CHAOS_BANDS[1]}
+function deepMerge(target,source){
+  if(typeof source!=='object'||source===null)return target;
+  const out=Object.assign({},target);
+  for(const k of Object.keys(source)){
+    if(source[k]!==null&&typeof source[k]==='object'&&!Array.isArray(source[k]))
+      out[k]=deepMerge(target[k]||{},source[k]);
+    else out[k]=source[k];
+  }
+  return out;
+}
+
+// ── SAVE / LOAD ──────────────────────────────────────────────
+function saveGame(){
+  try{G.meta.lastSaved=new Date().toISOString();localStorage.setItem('natashas_v3',JSON.stringify(G));}
+  catch(e){console.warn('Save failed',e)}
+}
+function loadGame(){
+  try{
+    const s=localStorage.getItem('natashas_v3');
+    if(s){const d=JSON.parse(s);G=deepMerge(G,d);}
+  }catch(e){console.warn('Load failed',e)}
+}
+
+// ── CHRONICLE ────────────────────────────────────────────────
+function addChronicle(icon,color,text){
+  G.chronicle.push({
+    id:'CH-'+Date.now(),
+    time:'Day '+G.world.gameDay+', '+formatTime(),
+    color:color||'#3b82f6',
+    text:(icon?icon+' ':'')+text
+  });
+  saveGame();
+}
+
+// ── NOTIFICATION ─────────────────────────────────────────────
+function pushNotif(priority,text){
+  G.notifications.unshift({id:'N-'+Date.now(),priority,text,time:formatTime(),read:false});
+  if(G.notifications.length>20)G.notifications.pop();
+  el('notif-dot').style.display='block';
+  showToast(text,priority==='red'?'urg':priority==='orange'?'urg':'info');
+  saveGame();
+}
+
+// ── ELECTORAL STRENGTH ───────────────────────────────────────
+function computeES(c){
+  const es=(safeGet(c,'grassroots',0)*.15)+(safeGet(c,'popularity',0)*.14)+
+    (safeGet(c,'partyStrength',0)*.12)+(safeGet(c,'coalitionSupport',0)*.11)+
+    (safeGet(c,'mediaScore',0)*.11)+(safeGet(c,'economyScore',0)*.10)+
+    (safeGet(c,'trustScore',0)*.12)+(safeGet(c,'stateConditions',0)*.08)+
+    (safeGet(c,'campaignQuality',0)*.12)+(safeGet(c,'random',0)*.05)+
+    safeGet(c,'incumbentBonus',0);
+  c.electoralStrength=clamp(Math.round(es),0,100);
+  return c.electoralStrength;
+}
+
+// ── ECONOMY ENGINE ───────────────────────────────────────────
+function econTick(){
+  for(const def of ECON_DEFS){
+    const trend=safeGet(G.economy.trends,def.key,0);
+    const noise=(Math.random()-.5)*.3;
+    if(def.key==='inflation')G.economy.inflation=clamp(G.economy.inflation+trend+noise,5,60);
+    else G.economy[def.key]=clamp(safeGet(G.economy,def.key,50)+trend+noise,0,100);
+  }
+  if(G.economy.inflation>30)G.world.chaosIndex=clamp(G.world.chaosIndex+.5,0,100);
+  if(G.economy.employment<40)G.world.chaosIndex=clamp(G.world.chaosIndex+.3,0,100);
+  if(G.economy.businessConfidence<30)G.world.chaosIndex=clamp(G.world.chaosIndex+.2,0,100);
+  if(G.economy.employment>65)G.world.chaosIndex=clamp(G.world.chaosIndex-.2,0,100);
+  if(G.economy.businessConfidence>60)G.world.chaosIndex=clamp(G.world.chaosIndex-.1,0,100);
+  const cb=getChaosband();G.world.chaosLevel=cb.label;
+}
+
+// ── SCANDAL ENGINE ───────────────────────────────────────────
+function scandalsResponse(id,choice){
+  const s=G.scandals.find(x=>x.id===id);
+  if(!s)return;
+  if(choice==='Deny'){
+    s.credibility=clamp(s.credibility-8,0,100);s.visibility=clamp(s.visibility+5,0,100);
+    G.player.fairPlay=clamp(G.player.fairPlay-5,0,100);
+    addChronicle('❌','#ef4444','Denied "'+s.title+'". Visibility +5, FairPlay −5.');
+    pushNotif('orange','Denial issued. Media visibility increased by 5.');
+  }else if(choice==='Deflect'){
+    s.credibility=clamp(s.credibility-3,0,100);s.visibility=clamp(s.visibility-5,0,100);
+    addChronicle('↩️','#f97316','Deflected "'+s.title+'". Visibility −5.');
+    pushNotif('blue','Deflection deployed. Story cooling slightly.');
+  }else if(choice==='Cooperate'){
+    s.credibility=clamp(s.credibility+10,0,100);s.visibility=clamp(s.visibility-10,0,100);
+    G.player.fairPlay=clamp(G.player.fairPlay+5,0,100);
+    G.election.candidates[0].trustScore=clamp(G.election.candidates[0].trustScore+3,0,100);
+    addChronicle('🤝','#10b981','Cooperated on "'+s.title+'". Trust +3, FairPlay +5.');
+    pushNotif('ok','Cooperation pledge issued. Trust improves.');
+  }
+  saveGame();renderHUD();closeEvent();
+  if(G.scandals.some(x=>!x.dismissed))el('btn-scandal').style.display='inline-flex';
+  else el('btn-scandal').style.display='none';
+}
+
+// ── HUD RENDERING ────────────────────────────────────────────
+function renderHUD(){
+  setText('h-day',G.world.gameDay);
+  setText('h-clock',formatTime());
+  setText('h-dte',G.world.daysToElection);
+  setText('h-phase',G.world.currentElectionPhase);
+
+  const e=clamp(G.player.energy,0,100);
+  el('hm-energy').style.width=e+'%';
+  const ec=e<30?'#ef4444':e<60?'#f59e0b':'#3b82f6';
+  el('hm-energy').style.background=ec;
+  setText('hv-energy',Math.round(e)+'%');
+
+  const chaos=clamp(G.world.chaosIndex,0,100);
+  el('hm-chaos').style.width=chaos+'%';
+  const cb=getChaosband();
+  el('hm-chaos').style.background=cb.color;
+  setText('hv-chaos',Math.round(chaos));
+
+  const ap=G.player.actionsToday;const am=G.player.maxActionsPerDay;
+  el('hm-actions').style.width=(ap/am*100)+'%';
+  el('hm-actions').style.background='#10b981';
+  setText('hv-actions',ap+'/'+am);
+
+  computeES(G.election.candidates[0]);
+  computeES(G.election.candidates[1]);
+  const es1=G.election.candidates[0].electoralStrength;
+  const es2=G.election.candidates[1].electoralStrength;
+  const tot=es1+es2||1;
+  el('es-fill-npa').style.width=(es1/tot*100)+'%';
+  el('es-fill-drp').style.width=(es2/tot*100)+'%';
+  setText('es-npa-v',es1);
+  setText('es-drp-v',es2);
+
+  const unread=G.notifications.filter(n=>!n.read).length;
+  el('notif-dot').style.display=unread>0?'block':'none';
+
+  const activeScandal=G.scandals.some(s=>!s.dismissed&&s.visibility>50);
+  el('btn-scandal').style.display=activeScandal?'inline-flex':'none';
+
+  updateScene();
+}
+
+// ── SCENE MANAGEMENT ─────────────────────────────────────────
+function updateScene(){
+  const chaos=G.world.chaosIndex;
+  const hour=G.world.clockHour;
+  let newScene='govhouse';
+  if(chaos>80)newScene='night';
+  else if(chaos>60)newScene='rally';
+  else if(chaos>40)newScene='campaign';
+  else if(hour>=18||hour<6)newScene='campaign';
+  else newScene='govhouse';
+
+  if(G.world.currentScene!==newScene){
+    G.world.currentScene=newScene;
+    document.querySelectorAll('.scene-env').forEach(s=>s.classList.remove('active'));
+    const target=el('s-'+newScene);
+    if(target)target.classList.add('active');
+    hideAllChars();
+    setTimeout(()=>showSceneChars(newScene),600);
+  }
+}
+
+function hideAllChars(){
+  document.querySelectorAll('.char-sprite').forEach(c=>{
+    c.classList.remove('visible');c.classList.add('exit');
+  });
+  setTimeout(()=>document.querySelectorAll('.char-sprite').forEach(c=>c.classList.remove('exit')),600);
+}
+
+function showSceneChars(scene){
+  if(scene==='govhouse'){
+    showChar('char-adeyemi');
+    if(Math.random()>.5)setTimeout(()=>showChar('char-adviser'),400);
+  }else if(scene==='campaign'){
+    showChar('char-adviser');
+  }else if(scene==='rally'){
+    showChar('char-adeyemi');
+  }else if(scene==='night'){
+    // no chars in crisis
+  }
+}
+function showChar(id){
+  const c=el(id);
+  if(c){c.classList.add('visible');c.classList.remove('exit')}
+}
+
+// ── TOAST ────────────────────────────────────────────────────
+function showToast(msg,type=''){
+  const box=el('toast-box');
+  const t=document.createElement('div');
+  t.className='toast'+(type?' '+type:'');
+  t.textContent=msg;
+  box.appendChild(t);
+  setTimeout(()=>{if(t.parentNode)t.parentNode.removeChild(t)},3200);
+}
+
+// ── EVENT SYSTEM ─────────────────────────────────────────────
+let eventDismissable=false;
+let pendingChoiceFn=null;
+
+function showEvent(evt){
+  G.currentEvent=evt;
+  eventDismissable=evt.dismissable!==false;
+
+  el('ev-pri-bar').style.background=
+    evt.priority==='red'?'#ef4444':
+    evt.priority==='orange'?'#f97316':
+    evt.priority==='yellow'?'#f59e0b':'#3b82f6';
+
+  const labelEl=el('ev-label');
+  labelEl.textContent=evt.label||'INTELLIGENCE';
+  labelEl.className='';
+  if(evt.priority==='red')labelEl.className='';
+  else if(evt.priority==='orange')labelEl.className='warn';
+  else if(evt.priority==='blue'||evt.priority==='gray')labelEl.className='info';
+  else labelEl.className='calm';
+
+  setText('ev-title',evt.title);
+  el('ev-portrait').textContent=evt.portrait||'🏛️';
+
+  if(evt.dialogue){
+    el('ev-dialogue').textContent='"'+evt.dialogue+'"';
+    el('ev-dialogue').classList.add('show');
+  }else{
+    el('ev-dialogue').textContent='';
+    el('ev-dialogue').classList.remove('show');
+  }
+  setText('ev-desc',evt.desc);
+
+  const consEl=el('ev-cons');
+  if(evt.consequences&&evt.consequences.length){
+    let ch='';
+    evt.consequences.forEach(c=>{
+      const lbl=c.conf==='known'?'CERTAIN':c.conf==='likely'?'LIKELY':'UNCERTAIN';
+      ch+=`<div class="ec-row"><span class="ec-badge ${c.conf}">${lbl}</span>${c.text}</div>`;
+    });
+    consEl.innerHTML=ch;
+    consEl.classList.add('show');
+  }else{
+    consEl.innerHTML='';
+    consEl.classList.remove('show');
+  }
+
+  const choicesEl=el('ev-choices');
+  let choiceHtml='';
+  if(evt.choices&&evt.choices.length){
+    evt.choices.forEach((ch,i)=>{
+      const disabled=ch.disabled?'disabled':'';
+      const cls=ch.primary?'ev-choice pri':ch.danger?'ev-choice dan':'ev-choice';
+      const costHtml=ch.energyCost||ch.wealthCost?
+        `<span class="ec-cost">${ch.energyCost?`<span class="ec-e">⚡${ch.energyCost}</span>`:''}${ch.wealthCost?`<span class="ec-w">${fmtNaira(ch.wealthCost)}</span>`:''}</span>`:'';
+      choiceHtml+=`<button class="${cls}" ${disabled} onclick="handleChoice(${i})">${ch.icon?`<span class="ec-icon">${ch.icon}</span>`:''}
+        <span class="ec-text">${ch.text}</span>${costHtml}</button>`;
+    });
+  }
+  choicesEl.innerHTML=choiceHtml;
+
+  el('event-layer').classList.add('active');
+  G.eventQueue=G.eventQueue||[];
+  saveGame();
+}
+
+function closeEvent(){
+  el('event-layer').classList.remove('active');
+  G.currentEvent=null;
+  pendingChoiceFn=null;
+  saveGame();
+  setTimeout(()=>fireNextEvent(),600);
+}
+
+function tryDismissEvent(){
+  if(eventDismissable)closeEvent();
+}
+
+function handleChoice(idx){
+  const evt=G.currentEvent;
+  if(!evt||!evt.choices)return;
+  const choice=evt.choices[idx];
+  if(!choice||choice.disabled)return;
+  if(choice.fn)choice.fn();
+  else{
+    if(choice.action)executeNamedAction(choice.action);
+    else closeEvent();
+  }
+}
+
+function executeNamedAction(actionId){
+  const action=CAMPAIGN_ACTIONS.find(a=>a.id===actionId);
+  if(!action)return;
+  if(G.player.actionsToday>=G.player.maxActionsPerDay){
+    showToast('No actions remaining today. End the day to continue.','urg');
+    closeEvent();return;
+  }
+  if(G.player.energy<action.energyCost){
+    showToast('Insufficient energy: '+action.energyCost+' required.','urg');
+    closeEvent();return;
+  }
+  G.player.energy=clamp(G.player.energy-action.energyCost,0,100);
+  G.player.wealth=Math.max(0,G.player.wealth-action.wealthCost);
+  for(const[k,cost]of Object.entries(action.capitalCost||{})){
+    if(G.player.capital[k]!==undefined)
+      G.player.capital[k]=clamp(G.player.capital[k]-cost,0,999);
+  }
+  const c=G.election.candidates[0];
+  const effectLog=[];
+  for(const[ek,delta]of Object.entries(action.effects)){
+    const roll=Math.random()<.8?delta:delta>0?-Math.floor(delta*.3):Math.floor(Math.abs(delta)*.3);
+    if(ek==='Grassroots'){c.grassroots=clamp(c.grassroots+roll,0,100);effectLog.push({n:ek,d:roll});}
+    else if(ek==='Popularity'){c.popularity=clamp(c.popularity+roll,0,100);effectLog.push({n:ek,d:roll});}
+    else if(ek==='Trust'){c.trustScore=clamp(c.trustScore+roll,0,100);effectLog.push({n:ek,d:roll});}
+    else if(ek==='Media Score'){c.mediaScore=clamp(c.mediaScore+roll,0,100);effectLog.push({n:ek,d:roll});}
+    else if(ek==='Coalition Support'){c.coalitionSupport=clamp(c.coalitionSupport+roll,0,100);effectLog.push({n:ek,d:roll});}
+    else if(ek==='Campaign Quality'){c.campaignQuality=clamp(c.campaignQuality+roll,0,100);effectLog.push({n:ek,d:roll});}
+    else if(ek==='Financial Capital'){G.player.capital.financial=clamp(G.player.capital.financial+Math.abs(delta),0,999);effectLog.push({n:ek,d:Math.abs(delta)});}
+    else if(ek==='Social Capital'){G.player.capital.social=clamp(G.player.capital.social+roll,0,999);effectLog.push({n:ek,d:roll});}
+    else if(ek==='Political Capital'){G.player.capital.political=clamp(G.player.capital.political+Math.abs(delta),0,999);effectLog.push({n:ek,d:Math.abs(delta)});}
+    else if(ek==='Stress'){G.player.stress=clamp(G.player.stress+delta,0,100);effectLog.push({n:ek,d:delta});}
+  }
+  G.player.actionsToday=Math.min(G.player.actionsToday+1,G.player.maxActionsPerDay);
+  computeES(G.election.candidates[0]);
+  computeES(G.election.candidates[1]);
+  if(actionId==='rally'||actionId==='travel')
+    G.world.chaosIndex=clamp(G.world.chaosIndex+(Math.random()*2-1),0,100);
+  G.lastAction={actionId,actionName:action.name,effects:effectLog,time:formatTime()};
+  addChronicle(action.icon,'#3b82f6',action.name+' executed. ES now '+G.election.candidates[0].electoralStrength+'.');
+  saveGame();
+
+  // Show receipt as event
+  const effectDesc=effectLog.map(ef=>{
+    const col=ef.d>0&&ef.n!=='Stress'?'#10b981':'#ef4444';
+    return `<span style="color:${col}">${ef.n}: ${ef.d>0?'+':''}${ef.d}</span>`;
+  }).join(' · ');
+
+  closeEvent();
+  setTimeout(()=>{
+    showEvent({
+      priority:'blue',label:'ACTION RECEIPT',title:action.icon+' '+action.name,
+      portrait:action.icon,
+      desc:'Executed at '+formatTime()+', Day '+G.world.gameDay+'. Effects: '+effectLog.map(e=>e.n+(e.d>0?'+':'')+e.d).join(', ')+'.',
+      consequences:[],
+      choices:[{text:'Acknowledge',icon:'✔',primary:true,fn:closeEvent}],
+      dismissable:true
+    });
+    renderHUD();
+  },400);
+}
+
+function queueEvent(evt){
+  if(!G.eventQueue)G.eventQueue=[];
+  G.eventQueue.push(evt);
+}
+
+function fireNextEvent(){
+  if(G.paused)return;
+  if(G.currentEvent)return;
+  if(G.eventQueue&&G.eventQueue.length>0){
+    showEvent(G.eventQueue.shift());
+  }
+}
+
+// ── MORNING BRIEF ────────────────────────────────────────────
+function fireMorningBrief(){
+  const es1=G.election.candidates[0].electoralStrength;
+  const es2=G.election.candidates[1].electoralStrength;
+  const lead=es1>es2?'NPA leads by '+(es1-es2)+' ES points.':'DRP has closed the gap. Only '+(es2-es1)+' ES points separate the candidates.';
+  const chaos=Math.round(G.world.chaosIndex);
+  const cb=getChaosband();
+  showEvent({
+    priority:'blue',label:'MORNING BRIEF',
+    title:'Day '+G.world.gameDay+' Situation Report',
+    portrait:'🌅',
+    dialogue:'The morning harmattan carries dust off the laterite roads. Another day to shape history.',
+    desc:'Kwara State · Day '+G.world.gameDay+' · '+G.world.daysToElection+' days to election.\n\n'+
+      lead+' Chaos Index: '+chaos+' ('+cb.label+'). Energy: '+Math.round(G.player.energy)+'%. Actions today: 0/'+G.player.maxActionsPerDay+'.',
+    consequences:[
+      {conf:'known',text:'Actions available: '+G.player.maxActionsPerDay+'. Energy: '+Math.round(G.player.energy)+'%.'},
+      {conf:'likely',text:chaos>60?'High chaos increases event volatility today.':'Normal conditions. Plan your moves strategically.'}
+    ],
+    choices:[
+      {text:'Begin the day',icon:'🌅',primary:true,fn:closeEvent},
+      {text:'Review Campaign Actions',icon:'🎯',fn:()=>{closeEvent();setTimeout(openCampaign,300);}}
+    ],
+    dismissable:false
+  });
+}
+
+// ── RANDOM EVENT QUEUE ───────────────────────────────────────
+const RANDOM_EVENTS=[
+  ()=>({
+    priority:'orange',label:'OPPONENT INTEL',
+    title:"Okafor's Healthcare Pledge Gains Traction",
+    portrait:'⚕️',
+    dialogue:"The DRP candidate has found a message that resonates. Our southern ward numbers are shifting.",
+    desc:"Barr. Okafor announced an expanded welfare package at Offa. Field reports show 12% polling shift in Offa LGA. NPA response needed within 24 hours.",
+    consequences:[
+      {conf:'likely',text:'Ignoring this loses 2–4 popularity points in southern LGAs.'},
+      {conf:'uncertain',text:'A counter-pledge may be seen as reactive and desperate.'}
+    ],
+    choices:[
+      {text:'Issue a counter-statement',icon:'📣',primary:true,fn:()=>{
+        G.player.capital.media=clamp(G.player.capital.media-8,0,999);
+        G.election.candidates[0].trustScore=clamp(G.election.candidates[0].trustScore+2,0,100);
+        addChronicle('📣','#3b82f6','Counter-statement on Okafor healthcare pledge. Trust +2.');
+        pushNotif('blue','Counter-statement issued. Media capital −8, Trust +2.');
+        closeEvent();
+      }},
+      {text:'Deploy a grassroots response team',icon:'🌾',fn:()=>{
+        G.player.energy=clamp(G.player.energy-10,0,100);
+        G.election.candidates[0].grassroots=clamp(G.election.candidates[0].grassroots+3,0,100);
+        addChronicle('🌾','#10b981','Grassroots response deployed on Okafor pledge.');
+        pushNotif('ok','Ground response deployed. Grassroots +3.');
+        closeEvent();
+      }},
+      {text:'Monitor and do nothing for now',icon:'👁️',fn:()=>{
+        G.player.capital.intelligence=clamp(G.player.capital.intelligence+4,0,999);
+        addChronicle('👁️','#8b5cf6','Monitoring DRP healthcare pledge. Intelligence +4.');
+        closeEvent();
+      }}
+    ],
+    dismissable:false
+  }),
+  ()=>({
+    priority:'red',label:'SCANDAL ALERT',
+    title:'Kickback Story Escalates on Social Media',
+    portrait:'📱',
+    dialogue:"The hashtag is trending. Every hour we wait, it gets harder to manage.",
+    desc:'#KwaraKickback now at 48,000 social posts. Opposition amplifying the contractor allegation. Credibility risk elevated to high. Immediate response required.',
+    consequences:[
+      {conf:'known',text:'Visibility at 68%. Credibility at 55%.'},
+      {conf:'likely',text:'Denial increases visibility but reduces credibility temporarily.'},
+      {conf:'uncertain',text:'Full cooperation may expose additional details.'}
+    ],
+    choices:[
+      {text:'Deny all allegations',icon:'❌',danger:true,fn:()=>{scandalsResponse('SC-001','Deny');closeEvent();}},
+      {text:'Deflect — change the story',icon:'↩️',fn:()=>{scandalsResponse('SC-001','Deflect');closeEvent();}},
+      {text:'Cooperate with investigators',icon:'🤝',primary:true,fn:()=>{scandalsResponse('SC-001','Cooperate');closeEvent();}}
+    ],
+    dismissable:false
+  }),
+  ()=>({
+    priority:'yellow',label:'ECONOMIC ALERT',
+    title:'Inflation Hits '+G.economy.inflation.toFixed(1)+'% — Voters Feeling the Pressure',
+    portrait:'📈',
+    desc:'State inflation is at '+G.economy.inflation.toFixed(1)+'%, above the national average. Food prices at index '+G.economy.foodPrices.toFixed(0)+'. Employment: '+G.economy.employment.toFixed(0)+'%. Kwara voters rank cost-of-living as top election issue.',
+    consequences:[
+      {conf:'likely',text:'Economy score affects candidate electoral strength.'},
+      {conf:'uncertain',text:'A visible infrastructure announcement could counteract economic sentiment.'}
+    ],
+    choices:[
+      {text:'Announce a cost-of-living relief package',icon:'💊',primary:true,fn:()=>{
+        G.election.candidates[0].economyScore=clamp(G.election.candidates[0].economyScore+4,0,100);
+        G.player.wealth=Math.max(0,G.player.wealth-300000);
+        addChronicle('💊','#10b981','Cost-of-living relief package announced. Economy score +4.');
+        pushNotif('ok','Relief announcement deployed. Economy score +4.');
+        closeEvent();
+      }},
+      {text:'Blame federal government policy',icon:'📢',fn:()=>{
+        G.election.candidates[0].trustScore=clamp(G.election.candidates[0].trustScore-2,0,100);
+        G.election.candidates[0].mediaScore=clamp(G.election.candidates[0].mediaScore+3,0,100);
+        addChronicle('📢','#f97316','Federal blame deflection on economy. Media +3, Trust −2.');
+        closeEvent();
+      }},
+      {text:'No response — focus on other issues',icon:'—',fn:closeEvent}
+    ],
+    dismissable:true
+  }),
+  ()=>({
+    priority:'blue',label:'COALITION OPPORTUNITY',
+    title:'Kwara Elders Council Requests Urgent Meeting',
+    portrait:'🤝',
+    desc:'The Kwara Elders Council, representing 12 LGAs, has requested a private meeting with the NPA campaign leadership. Senior figures indicate conditional support is possible — but they want visible infrastructure commitments in exchange.',
+    consequences:[
+      {conf:'likely',text:'Attendance: Coalition +6, Community trust +4.'},
+      {conf:'uncertain',text:'Commitment demanded may conflict with existing promises.'}
+    ],
+    choices:[
+      {text:'Attend — accept the meeting',icon:'🤝',primary:true,
+       energyCost:15,
+       fn:()=>{
+        if(G.player.energy<15){showToast('Insufficient energy.','urg');return;}
+        G.player.energy=clamp(G.player.energy-15,0,100);
+        G.election.candidates[0].coalitionSupport=clamp(G.election.candidates[0].coalitionSupport+6,0,100);
+        G.election.candidates[0].trustScore=clamp(G.election.candidates[0].trustScore+4,0,100);
+        addChronicle('🤝','#10b981','Elders Council meeting attended. Coalition +6, Trust +4.');
+        pushNotif('ok','Elders Council endorsement secured. Coalition +6.');
+        closeEvent();
+      }},
+      {text:'Decline — too politically costly',icon:'✕',fn:()=>{
+        G.election.candidates[0].coalitionSupport=clamp(G.election.candidates[0].coalitionSupport-3,0,100);
+        addChronicle('✕','#6b7280','Declined Elders Council meeting. Coalition −3.');
+        closeEvent();
+      }}
+    ],
+    dismissable:true
+  }),
+  ()=>({
+    priority:'orange',label:'FIELD REPORT',
+    title:'Ward Agent Report: Unusual Activity in Asa LGA',
+    portrait:'🌾',
+    dialogue:"Something is moving in Asa. We've got vehicles we don't recognise at the polling officer's house.",
+    desc:'Ground intelligence from Asa LGA reports unusual activity near polling infrastructure. 200 undecided voters identified as a high-priority swing group. Opposition canvassers active in 3 wards.',
+    consequences:[
+      {conf:'likely',text:'Deploying a response team secures ~160 swing votes.'},
+      {conf:'uncertain',text:'Opposition may escalate if challenged.'}
+    ],
+    choices:[
+      {text:'Deploy NPA ward response team',icon:'🌾',primary:true,fn:()=>{
+        G.player.energy=clamp(G.player.energy-8,0,100);
+        G.election.candidates[0].grassroots=clamp(G.election.candidates[0].grassroots+2,0,100);
+        G.player.capital.intelligence=clamp(G.player.capital.intelligence+5,0,999);
+        addChronicle('🌾','#22c55e','Asa LGA response team deployed. Grassroots +2, Intel +5.');
+        pushNotif('ok','Field response in Asa LGA activated.');
+        closeEvent();
+      }},
+      {text:'Report to INEC observers',icon:'📋',fn:()=>{
+        G.player.fairPlay=clamp(G.player.fairPlay+3,0,100);
+        addChronicle('📋','#3b82f6','INEC report filed on Asa activity. FairPlay +3.');
+        closeEvent();
+      }},
+      {text:'Continue monitoring only',icon:'👁️',fn:closeEvent}
+    ],
+    dismissable:true
+  })
+];
+
+function generateRandomEvent(){
+  const idx=Math.floor(Math.random()*RANDOM_EVENTS.length);
+  queueEvent(RANDOM_EVENTS[idx]());
+}
+
+// ── CAMPAIGN ACTIONS — OPEN AS EVENT ─────────────────────────
+function openCampaignAction(actionId){
+  closeIntel();
+  const action=CAMPAIGN_ACTIONS.find(a=>a.id===actionId);
+  if(!action)return;
+  const tooTired=G.player.energy<action.energyCost;
+  const tooMany=G.player.actionsToday>=G.player.maxActionsPerDay;
+  if(tooTired||tooMany){
+    showToast(tooMany?'No actions remaining today.':'Insufficient energy: '+action.energyCost+' required.','urg');
+    return;
+  }
+  showEvent({
+    priority:'blue',label:'CAMPAIGN ACTION',
+    title:action.icon+' '+action.name,
+    portrait:action.icon,
+    desc:action.desc+'\n\nEnergy cost: '+action.energyCost+'%'+
+      (action.wealthCost?'. Campaign fund: '+fmtNaira(action.wealthCost)+'.':(action.capitalCost?'. Capital required.':'')),
+    consequences:action.consequences,
+    choices:[
+      {text:'Execute this action',icon:'⚡',primary:true,fn:()=>executeNamedAction(actionId)},
+      {text:'Cancel',icon:'✕',fn:closeEvent}
+    ],
+    dismissable:true
+  });
+}
+
+// ── CAMPAIGN BUTTON ───────────────────────────────────────────
+function openCampaign(){
+  openIntel('campaign');
+}
+
+// ── SCANDAL EVENT ────────────────────────────────────────────
+function openScandalEvent(){
+  const s=G.scandals.find(x=>!x.dismissed);
+  if(!s)return;
+  showEvent({
+    priority:'red',label:'SCANDAL MONITOR',
+    title:s.title,
+    portrait:'⚠️',
+    desc:'Source: '+s.source+' · '+s.investigationStatus+
+      '\n\nEvidence: '+s.evidence+'% · Visibility: '+s.visibility+'% · Credibility: '+s.credibility+'%',
+    consequences:[
+      {conf:'known',text:'Credibility at '+s.credibility+'%. Visibility: '+s.visibility+'%.'},
+      {conf:'likely',text:'Without response, visibility increases by 3–5 points per day.'}
+    ],
+    choices:[
+      {text:'Deny all allegations',icon:'❌',danger:true,fn:()=>{scandalsResponse(s.id,'Deny');}},
+      {text:'Deflect — change the narrative',icon:'↩️',fn:()=>{scandalsResponse(s.id,'Deflect');}},
+      {text:'Cooperate with the investigation',icon:'🤝',primary:true,fn:()=>{scandalsResponse(s.id,'Cooperate');}}
+    ],
+    dismissable:false
+  });
+}
+
+// ── END DAY ───────────────────────────────────────────────────
+function endDay(){
+  if(G.currentEvent)return;
+  const dt=el('day-tx');
+  dt.classList.add('show');
+  G.world.gameDay++;
+  G.world.daysToElection=Math.max(0,G.world.daysToElection-1);
+  G.election.daysToElection=G.world.daysToElection;
+  G.world.clockHour=7;G.world.clockMinute=30;
+  G.player.actionsToday=0;
+  G.player.energy=Math.min(100,G.player.energy+30);
+  G.player.stress=Math.max(0,G.player.stress-5);
+  econTick();
+  addChronicle('🌅','#f59e0b','Day '+G.world.gameDay+' begins. '+G.world.daysToElection+' days to election.');
+  computeES(G.election.candidates[0]);
+  computeES(G.election.candidates[1]);
+  setText('dt-day','DAY '+G.world.gameDay);
+  setText('dt-sub',G.world.daysToElection>0?(G.world.daysToElection+' DAYS TO ELECTION'):'ELECTION DAY');
+  saveGame();
+  setTimeout(()=>{
+    dt.classList.remove('show');
+    renderHUD();
+    if(Math.random()>.4)generateRandomEvent();
+    setTimeout(()=>fireMorningBrief(),400);
+  },2200);
+}
+
+// ── INTEL DRAWER ─────────────────────────────────────────────
+function openIntel(section){
+  const d=el('intel-drawer');
+  d.classList.add('open');
+  renderIntelContent(section||'overview');
+}
+function closeIntel(){el('intel-drawer').classList.remove('open')}
+function closeIntelIfBg(e){if(e.target===el('intel-drawer'))closeIntel()}
+
+function renderIntelContent(section){
+  const tabs=[
+    {k:'overview',label:'Overview'},
+    {k:'campaign',label:'Campaign'},
+    {k:'stats',label:'Stats'},
+    {k:'promises',label:'Promises'},
+    {k:'chronicle',label:'Chronicle'}
+  ];
+  let tabHtml='<div style="display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap">';
+  tabs.forEach(t=>{
+    const active=section===t.k;
+    tabHtml+=`<button onclick="renderIntelContent('${t.k}')" style="padding:5px 12px;border-radius:6px;font-size:10px;font-weight:700;font-family:Georgia,serif;letter-spacing:.5px;text-transform:uppercase;cursor:pointer;border:1px solid ${active?'rgba(245,158,11,.5)':'rgba(255,255,255,.1)'};background:${active?'rgba(245,158,11,.12)':'rgba(255,255,255,.04)'};color:${active?'#f59e0b':'#8e97aa'}">${t.label}</button>`;
+  });
+  tabHtml+='</div>';
+
+  let content='';
+  if(section==='overview'){
+    content=`<div class="is-title">PLAYER STATUS</div>
+<div class="isr"><span class="isr-l">Name</span><span class="isr-v">${G.player.name}</span></div>
+<div class="isr"><span class="isr-l">Role</span><span class="isr-v">${G.player.role}</span></div>
+<div class="isr"><span class="isr-l">Wealth</span><span class="isr-v o">${fmtNaira(G.player.wealth)}</span></div>
+<div class="isr"><span class="isr-l">Actions Today</span><span class="isr-v">${G.player.actionsToday} / ${G.player.maxActionsPerDay}</span></div>
+<div class="isr"><span class="isr-l">Fair Play</span><span class="isr-v ${G.player.fairPlay>70?'g':G.player.fairPlay>40?'':'r'}">${G.player.fairPlay}%</span></div>
+
+<div class="is-title" style="margin-top:16px">ELECTION STANDING</div>
+<div class="isr"><span class="isr-l">Phase</span><span class="isr-v">${G.world.currentElectionPhase}/13 · ${(ELECTION_PHASES[G.world.currentElectionPhase-1]||{name:''}).name}</span></div>
+<div class="isr"><span class="isr-l">Days to Election</span><span class="isr-v ${G.world.daysToElection<7?'r':'o'}">${G.world.daysToElection}</span></div>
+<div class="isr"><span class="isr-l">NPA Electoral Strength</span><span class="isr-v o">${G.election.candidates[0].electoralStrength}</span></div>
+<div class="isr"><span class="isr-l">DRP Electoral Strength</span><span class="isr-v r">${G.election.candidates[1].electoralStrength}</span></div>
+<div class="isr"><span class="isr-l">Chaos Index</span><span class="isr-v ${G.world.chaosIndex>60?'r':G.world.chaosIndex>40?'o':'g'}">${Math.round(G.world.chaosIndex)} — ${getChaosband().label}</span></div>
+
+<div class="is-title" style="margin-top:16px">POLITICAL CAPITAL</div>
+${Object.entries(CAPITAL_LABELS).map(([k,label])=>{
+  const v=clamp(safeGet(G.player.capital,k,0),0,999);
+  const pct=clamp(Math.round(v/600*100),0,100);
+  const colors={financial:'#f59e0b',political:'#8b5cf6',social:'#10b981',institutional:'#3b82f6',media:'#f97316',grassroots:'#22c55e',intelligence:'#a855f7',reputation:'#ec4899'};
+  const col=colors[k]||'#6b7280';
+  return `<div class="i-meter">
+    <div class="im-label">${label}</div>
+    <div class="im-track"><div class="im-fill" style="width:${pct}%;background:${col}"></div></div>
+    <div class="im-val" style="color:${col}">${v}</div>
+  </div>`;
+}).join('')}
+
+<div class="is-title" style="margin-top:16px">ECONOMY SNAPSHOT</div>
+${ECON_DEFS.map(def=>{
+  const v=safeGet(G.economy,def.key,50);
+  const good=def.higherIsBad?v<40:v>55;
+  const bad=def.higherIsBad?v>60:v<35;
+  return `<div class="isr"><span class="isr-l">${def.label}</span><span class="isr-v ${good?'g':bad?'r':'o'}">${v.toFixed(1)}${def.unit}</span></div>`;
+}).join('')}`;
+  }
+  else if(section==='campaign'){
+    const actLeft=G.player.maxActionsPerDay-G.player.actionsToday;
+    content=`<div class="is-title">${actLeft} ACTION${actLeft!==1?'S':''} REMAINING TODAY</div>
+<div id="actions-grid">
+${CAMPAIGN_ACTIONS.map(a=>{
+  const dis=G.player.energy<a.energyCost||G.player.actionsToday>=G.player.maxActionsPerDay;
+  return `<div class="a-tile ${dis?'dis':''}" onclick="${dis?'':` openCampaignAction('${a.id}')`}">
+    <div class="at-ico">${a.icon}</div>
+    <div class="at-name">${a.name}</div>
+    <div class="at-meta"><span class="ae">⚡${a.energyCost}</span>${a.wealthCost?`<span class="aw">${fmtNaira(a.wealthCost)}</span>`:''}</div>
+  </div>`;
+}).join('')}
+</div>
+
+<div class="is-title" style="margin-top:16px">ACTIVE SCANDALS</div>
+${G.scandals.filter(s=>!s.dismissed).map(s=>`
+<div style="background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.18);border-radius:8px;padding:10px 12px;margin-bottom:8px">
+  <div style="font-family:Georgia,serif;font-size:12px;font-weight:700;color:#e8ecf4;margin-bottom:6px">${s.title}</div>
+  <div style="font-size:10px;color:#5a6275;margin-bottom:8px">${s.investigationStatus}</div>
+  <div class="i-meter"><div class="im-label">Evidence</div><div class="im-track"><div class="im-fill" style="width:${s.evidence}%;background:#f59e0b"></div></div><div class="im-val">${s.evidence}%</div></div>
+  <div class="i-meter"><div class="im-label">Visibility</div><div class="im-track"><div class="im-fill" style="width:${s.visibility}%;background:#f97316"></div></div><div class="im-val">${s.visibility}%</div></div>
+  <div class="i-meter"><div class="im-label">Credibility</div><div class="im-track"><div class="im-fill" style="width:${s.credibility}%;background:#ef4444"></div></div><div class="im-val">${s.credibility}%</div></div>
+  <div style="display:flex;gap:6px;margin-top:8px">
+    <button onclick="scandalsResponse('${s.id}','Deny');closeIntel()" style="flex:1;padding:4px;border-radius:5px;font-size:9px;background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.3);color:#ef4444;cursor:pointer">Deny</button>
+    <button onclick="scandalsResponse('${s.id}','Deflect');closeIntel()" style="flex:1;padding:4px;border-radius:5px;font-size:9px;background:rgba(249,115,22,.12);border:1px solid rgba(249,115,22,.3);color:#f97316;cursor:pointer">Deflect</button>
+    <button onclick="scandalsResponse('${s.id}','Cooperate');closeIntel()" style="flex:1;padding:4px;border-radius:5px;font-size:9px;background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.3);color:#10b981;cursor:pointer">Cooperate</button>
+  </div>
+</div>`).join('')||'<div style="font-family:Georgia,serif;font-size:11px;color:#5a6275;padding:8px">No active scandals.</div>'}`;
+  }
+  else if(section==='stats'){
+    const lifeStats=[
+      {k:'health',label:'Health',color:'#10b981'},
+      {k:'energy',label:'Energy',color:'#3b82f6'},
+      {k:'stress',label:'Stress',color:'#ef4444',invert:true},
+      {k:'living',label:'Living Standard',color:'#f59e0b'},
+      {k:'security',label:'Security',color:'#8b5cf6'}
+    ];
+    content=`<div class="is-title">LIFE STATS</div>
+${lifeStats.map(ls=>{
+  const v=clamp(safeGet(G.player,ls.k,50),0,100);
+  const disp=ls.invert?(100-v):v;
+  return `<div class="i-meter">
+    <div class="im-label">${ls.label}</div>
+    <div class="im-track"><div class="im-fill" style="width:${disp}%;background:${ls.color}"></div></div>
+    <div class="im-val" style="color:${ls.color}">${v}%</div>
+  </div>`;
+}).join('')}
+
+<div class="is-title" style="margin-top:16px">CANDIDATE FACTORS — ADEYEMI (NPA)</div>
+${[['Grassroots','grassroots'],['Popularity','popularity'],['Party Strength','partyStrength'],
+   ['Coalition','coalitionSupport'],['Media Score','mediaScore'],['Trust','trustScore'],
+   ['Campaign Quality','campaignQuality']].map(([l,k])=>{
+  const v=G.election.candidates[0][k]||0;
+  return `<div class="i-meter">
+    <div class="im-label">${l}</div>
+    <div class="im-track"><div class="im-fill" style="width:${v}%;background:#f59e0b"></div></div>
+    <div class="im-val" style="color:#f59e0b">${v}</div>
+  </div>`;
+}).join('')}
+
+<div class="is-title" style="margin-top:16px">CANDIDATE FACTORS — OKAFOR (DRP)</div>
+${[['Grassroots','grassroots'],['Popularity','popularity'],['Media Score','mediaScore'],['Trust','trustScore'],['Coalition','coalitionSupport']].map(([l,k])=>{
+  const v=G.election.candidates[1][k]||0;
+  return `<div class="i-meter">
+    <div class="im-label">${l}</div>
+    <div class="im-track"><div class="im-fill" style="width:${v}%;background:#ef4444"></div></div>
+    <div class="im-val" style="color:#ef4444">${v}</div>
+  </div>`;
+}).join('')}`;
+  }
+  else if(section==='promises'){
+    const sc={promised:'pb-promised',underway:'pb-underway',delivered:'pb-delivered',delayed:'pb-delayed',abandoned:'pb-abandoned',broken:'pb-broken'};
+    content=`<div class="is-title">POLITICAL DEBT & PROMISES (${G.promises.length})</div>
+${G.promises.map(p=>`
+<div class="prom-item">
+  <span class="prom-badge ${sc[p.status]||'pb-promised'}">${p.status.toUpperCase()}</span>
+  <div>
+    <div class="prom-text">${p.text}</div>
+    <div style="font-size:9px;color:#5a6275;margin-top:2px">${p.region} · Day ${p.day}</div>
+  </div>
+</div>`).join('')}`;
+  }
+  else if(section==='chronicle'){
+    content=`<div class="is-title">EVENT CHRONICLE (Last ${Math.min(G.chronicle.length,20)})</div>
+${G.chronicle.slice().reverse().slice(0,20).map(e=>`
+<div class="chron-item">
+  <div class="ci-bar" style="background:${e.color||'#3b82f6'}"></div>
+  <div>
+    <div class="ci-text">${e.text}</div>
+    <div class="ci-time">${e.time}</div>
+  </div>
+</div>`).join('')}`;
+  }
+
+  setHTML('intel-content',tabHtml+content);
+}
+
+// ── PAUSE ─────────────────────────────────────────────────────
+function togglePause(){
+  G.paused=!G.paused;
+  showToast(G.paused?'Game paused.':'Game resumed.','info');
+  if(!G.paused)fireNextEvent();
+}
+
+// ── GAME CLOCK ───────────────────────────────────────────────
+let clockInterval=null;
+let clockTick=0;
+function startClock(){
+  if(clockInterval)clearInterval(clockInterval);
+  clockInterval=setInterval(()=>{
+    if(G.paused)return;
+    G.world.clockMinute+=30;
+    if(G.world.clockMinute>=60){
+      G.world.clockMinute-=60;G.world.clockHour++;
+      if(G.world.clockHour>=24){
+        G.world.clockHour=0;
+      }
+    }
+    clockTick++;
+    if(clockTick%3===0)econTick();
+    if(clockTick%8===0&&!G.currentEvent&&G.world.daysToElection>0){
+      if(Math.random()>.7)generateRandomEvent();
+    }
+    renderHUD();
+    saveGame();
+  },10000);
+}
+
+// ── START GAME ───────────────────────────────────────────────
+function startGame(){
+  el('splash').classList.add('hidden');
+  el('game-root').classList.remove('hidden');
+  loadGame();
+  G.meta.firstVisit=false;
+  computeES(G.election.candidates[0]);
+  computeES(G.election.candidates[1]);
+  renderHUD();
+  showSceneChars(G.world.currentScene||'govhouse');
+  startClock();
+  setTimeout(()=>fireMorningBrief(),800);
+  saveGame();
+}
+
+// ── BOOTSTRAP ────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded',()=>{
+  // Check if returning player
+  try{
+    const s=localStorage.getItem('natashas_v3');
+    if(s){
+      const d=JSON.parse(s);
+      if(d&&d.meta&&!d.meta.firstVisit){
+        // Returning player — show "Continue" on splash
+        const btn=document.querySelector('.sp-btn');
+        if(btn)btn.textContent='CONTINUE CAMPAIGN';
+      }
+    }
+  }catch(e){}
+});
+</script>
+</body>
+</html>
