@@ -1454,7 +1454,7 @@ body {
     <div class="gc dg" style="padding:16px 20px">
       <div style="display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap">
         <div class="body-text" style="flex:1">The recording story is gaining speed. Your Media Capital is bleeding <strong>−8</strong>. You have a narrow window to act.</div>
-        <button class="btn dng" style="flex:0;white-space:nowrap" onclick="nextScene()">→ Respond to Crisis</button>
+        <button class="btn dng" style="flex:0;white-space:nowrap" onclick="next()">→ Respond to Crisis</button>
       </div>
     </div>
 
@@ -1691,6 +1691,17 @@ const N = 5;
 let cur = 1, cfOn = false;
 const times = ['','07:30','08:20','09:05','10:35','14:20'];
 const lbls  = ['','World Entry — Ilorin, Kwara','NPC Encounter — Chief of Staff','Social Feed — NaijaPulse','Crisis Response + AI','Action Receipt + Enugu Travel'];
+const DIL_KEY = 'natashas_dil_v1';
+
+function saveDilState() {
+  try { localStorage.setItem(DIL_KEY, JSON.stringify({ cur, cfOn })); } catch(e){}
+}
+function loadDilState() {
+  try {
+    const raw = localStorage.getItem(DIL_KEY);
+    if (raw) { const s = JSON.parse(raw); cur = s.cur || 1; cfOn = !!s.cfOn; }
+  } catch(e){}
+}
 
 function enterGame(){
   document.getElementById('splash').classList.add('out');
@@ -1740,6 +1751,7 @@ function show(n){
     kl.style.transition='opacity 1s ease'; kl.style.opacity='1';
   }
   cur=n;
+  saveDilState();
 }
 
 function next(){ if(cur<N) show(cur+1); }
@@ -1756,6 +1768,7 @@ function toggleCF(){
   cfOn=!cfOn;
   document.getElementById('cf-tog').classList.toggle('on',cfOn);
   document.getElementById('cf-panel').classList.toggle('on',cfOn);
+  saveDilState();
 }
 
 function openAI(){ document.getElementById('ai-modal').classList.add('on'); }
@@ -1791,7 +1804,13 @@ document.addEventListener('keydown',e=>{
   if(e.key==='ArrowLeft'||e.key==='ArrowUp') prev();
 });
 
-show(1);
+// Init — restore persisted state
+loadDilState();
+show(cur);
+if (cfOn) {
+  document.getElementById('cf-tog').classList.add('on');
+  document.getElementById('cf-panel').classList.add('on');
+}
 </script>
 </body>
 </html>

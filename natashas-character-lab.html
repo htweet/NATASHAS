@@ -153,6 +153,9 @@ body{overflow-x:hidden;}
 .as-card.approved{border-color:var(--pos-bd);}
 .as-card.locked{border-color:var(--gold-bd);}
 .as-card.deprecated{border-color:rgba(239,68,68,0.22);}
+.as-card.review{border-color:rgba(168,85,247,0.28);}
+.as-card.retired{border-color:rgba(107,114,128,0.30);}
+.state-retired{background:rgba(107,114,128,0.10);color:#9ca3af;border:1px solid rgba(107,114,128,0.24);}
 
 /* ── FASHION & WARDROBE ── */
 .fw-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:4px;}
@@ -1517,7 +1520,7 @@ body{overflow-x:hidden;}
       <div class="wardrobe-row">
         <button class="wd-btn on" onclick="setWd('cos',0,this,'Professional (Navy Suit + Gold Tie)')">Pro Suit</button>
         <button class="wd-btn" onclick="setWd('cos',1,this,'Smart Casual (Kaftan + Trousers)')">Casual</button>
-        <button class="wd-btn" onclick="setWd('cos',2,this,'NPA Campaign Branded Attire')">Campaign</button>
+        <button class="wd-btn" onclick="setWd('cos',2,this,'DRP Campaign Attire')">Campaign</button>
       </div>
       <div class="wd-label" id="wd-label-cos">Professional (Navy Suit + Gold Tie)</div>
     </div>
@@ -2004,7 +2007,8 @@ body{overflow-x:hidden;}
           </div>
           <table style="width:100%;border-collapse:collapse;">
             <tr class="dr"><td class="dr-k">Character ID</td><td class="dr-v" style="font-family:monospace;font-size:12px">NATAS-CHAR-002</td></tr>
-            <tr class="dr"><td class="dr-k">Role</td><td class="dr-v">Chief of Staff, Kwara Government House</td></tr>
+            <tr class="dr"><td class="dr-k">Role</td><td class="dr-v">Chief of Staff (former) · DRP Gubernatorial Candidate</td></tr>
+            <tr class="dr"><td class="dr-k">Party</td><td class="dr-v">Democratic Reform Party (DRP)</td></tr>
             <tr class="dr"><td class="dr-k">Age Band</td><td class="dr-v">42–48 · Senior Professional</td></tr>
             <tr class="dr"><td class="dr-k">Region</td><td class="dr-v">Igbo/Enugu · Posted to Kwara</td></tr>
             <tr class="dr"><td class="dr-k">Signature</td><td class="dr-v dim">Gold-frame spectacles · Navy suit · Gold tie</td></tr>
@@ -2062,9 +2066,9 @@ body{overflow-x:hidden;}
         </div>
       </div>
       <!-- ASSET STATES GALLERY (shared — always visible in Profile tab) -->
-      <div class="sec" style="margin-top:6px;">Asset States — All Six Demonstrated</div>
+      <div class="sec" style="margin-top:6px;">Asset States — All Eight Demonstrated</div>
       <div class="gc" style="margin-bottom:4px;">
-        <div style="font-size:12px;color:var(--t2);line-height:1.70;margin-bottom:10px;">Every asset in NATASHAS exists in one of six canonical states. A browser-generated prototype is not automatically production-ready. Only Approved / Locked assets may become canonical production content.</div>
+        <div style="font-size:12px;color:var(--t2);line-height:1.70;margin-bottom:10px;">Every asset in NATASHAS exists in one of eight canonical states. A browser-generated prototype is not automatically production-ready. Only Approved / Locked assets may become canonical production content.</div>
         <div class="as-grid">
           <div class="as-card concept">
             <span class="as-card-badge state-concept">◌ Concept</span>
@@ -2081,6 +2085,11 @@ body{overflow-x:hidden;}
             <div class="as-card-name">NATAS-WD-GOV-004 — Full Traditional Yoruba</div>
             <div class="as-card-desc">Gov. Adeyemi's ceremonial aso-oke regalia variant. Generated, reviewed by director. Awaiting cultural authenticity sign-off before approval.</div>
           </div>
+          <div class="as-card review">
+            <span class="as-card-badge state-review">◐ Review</span>
+            <div class="as-card-name">NATAS-CHAR-002 — Barr. Okafor Portrait v2</div>
+            <div class="as-card-desc">Revised 2D portrait submitted for cultural and identity review. Director review in progress. Blocked from deployment until sign-off.</div>
+          </div>
           <div class="as-card approved">
             <span class="as-card-badge state-approved">◕ Approved</span>
             <div class="as-card-name">NATAS-WD-GOV-001 — Government Agbada</div>
@@ -2095,6 +2104,11 @@ body{overflow-x:hidden;}
             <span class="as-card-badge state-deprecated">✕ Deprecated</span>
             <div class="as-card-name">NATAS-WD-GOV-LEGACY-001 — Early Concept Agbada</div>
             <div class="as-card-desc">Pre-canonical revision. Fabric pattern inconsistent with Kwara regional identity. Replaced by NATAS-WD-GOV-001. Retained for lineage audit only. Do not use.</div>
+          </div>
+          <div class="as-card retired">
+            <span class="as-card-badge state-retired">— Retired</span>
+            <div class="as-card-name">NATAS-ENV-ILORIN-001 — Early City Concept</div>
+            <div class="as-card-desc">First-pass environmental sketch for Ilorin city centre. Superseded by Region Identity Engine output. Removed from all production pipelines. Archive only.</div>
           </div>
         </div>
       </div>
@@ -2712,9 +2726,23 @@ const DATA = {
 };
 
 let cur = 'gov';
+const LAB_KEY = 'natashas_lab_v1';
+const labState = { cur:'gov', wdIdx:{gov:0,cos:0,npc:0}, infoTab:'profile' };
+
+function saveLabState() {
+  try { localStorage.setItem(LAB_KEY, JSON.stringify(labState)); } catch(e){}
+}
+function loadLabState() {
+  try {
+    const raw = localStorage.getItem(LAB_KEY);
+    if (raw) { const s = JSON.parse(raw); Object.assign(labState, s); }
+  } catch(e){}
+}
 
 function selectChar(id){
   cur = id;
+  labState.cur = id;
+  saveLabState();
   document.querySelectorAll('.char-tab').forEach((t,i)=>{
     const ids=['gov','cos','npc'];
     t.classList.toggle('on', ids[i]===id);
@@ -2744,6 +2772,8 @@ function setWd(char, idx, btn, label){
   btn.classList.add('on');
   document.getElementById(`wd-label-${char}`).textContent=label;
   updateWardrobeDNA(char, idx);
+  labState.wdIdx[char] = idx;
+  saveLabState();
 }
 
 function setInfoTab(tab, btn){
@@ -2752,6 +2782,8 @@ function setInfoTab(tab, btn){
   document.querySelectorAll('.info-pane').forEach(p=>p.classList.remove('on'));
   document.getElementById('pane-'+tab).classList.add('on');
   if(tab==='consistency') updateConsistencyLab(cur);
+  labState.infoTab = tab;
+  saveLabState();
 }
 
 function updateDNA(id){
@@ -3277,8 +3309,10 @@ function setWd3D(wd, btn){
   if(btn) btn.classList.add('on');
 }
 
-// Init
-selectChar('gov');
+// Init — restore persisted state
+loadLabState();
+cur = labState.cur || 'gov';
+selectChar(cur);
 </script>
 </body>
 </html>
