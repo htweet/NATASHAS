@@ -133,6 +133,50 @@ body{overflow-x:hidden;}
 .state-candidate{background:var(--ai-bg);color:var(--ai);border:1px solid var(--ai-bd);}
 .state-approved{background:var(--pos-bg);color:var(--pos);border:1px solid var(--pos-bd);}
 .state-locked{background:var(--gold-bg);color:var(--gold);border:1px solid var(--gold-bd);}
+.state-deprecated{background:rgba(239,68,68,0.07);color:#f87171;border:1px solid rgba(239,68,68,0.22);}
+.state-review{background:rgba(168,85,247,0.10);color:#c084fc;border:1px solid rgba(168,85,247,0.24);}
+
+/* ── ASSET STATES GALLERY ── */
+.as-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:4px;}
+@media(max-width:899px){.as-grid{grid-template-columns:repeat(2,1fr);}}
+.as-card{
+  border-radius:var(--r2);padding:12px;
+  background:var(--sf);border:1px solid var(--bd);
+  display:flex;flex-direction:column;gap:6px;
+}
+.as-card-badge{font-size:9px;font-weight:900;padding:3px 8px;border-radius:var(--pill);letter-spacing:0.08em;text-transform:uppercase;align-self:flex-start;}
+.as-card-name{font-size:11px;font-weight:700;color:var(--t1);}
+.as-card-desc{font-size:10.5px;color:var(--t3);line-height:1.55;}
+.as-card.concept{border-color:var(--lat-bd);}
+.as-card.prototype{border-color:var(--warn-bd);}
+.as-card.candidate{border-color:var(--ai-bd);}
+.as-card.approved{border-color:var(--pos-bd);}
+.as-card.locked{border-color:var(--gold-bd);}
+.as-card.deprecated{border-color:rgba(239,68,68,0.22);}
+
+/* ── FASHION & WARDROBE ── */
+.fw-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:4px;}
+@media(max-width:699px){.fw-grid{grid-template-columns:1fr;}}
+.fw-card{
+  border-radius:var(--r2);padding:14px;
+  background:var(--sf);border:1px solid var(--bd);
+  display:flex;flex-direction:column;gap:6px;
+}
+.fw-card.youth{border-color:var(--teal-bd);background:var(--teal-bg);}
+.fw-cat{font-size:9px;font-weight:900;letter-spacing:0.10em;text-transform:uppercase;padding:2px 8px;border-radius:var(--pill);align-self:flex-start;}
+.fw-cat.everyday{background:var(--lat-bg);color:var(--laterite);border:1px solid var(--lat-bd);}
+.fw-cat.professional{background:var(--enugu-bg);color:var(--enugu2);border:1px solid var(--enugu-bd);}
+.fw-cat.campaign{background:var(--ng-bg);color:var(--ng-green);border:1px solid var(--ng-bd);}
+.fw-cat.traditional{background:var(--gold-bg);color:var(--gold);border:1px solid var(--gold-bd);}
+.fw-cat.youth{background:var(--teal-bg);color:var(--teal);border:1px solid var(--teal-bd);}
+.fw-cat.event{background:var(--ai-bg);color:var(--ai);border:1px solid var(--ai-bd);}
+.fw-card-title{font-size:12px;font-weight:800;color:var(--t1);}
+.fw-card-who{font-size:10px;color:var(--t3);font-weight:600;}
+.fw-card-desc{font-size:11px;color:var(--t2);line-height:1.60;}
+.fw-items{display:flex;flex-direction:column;gap:3px;margin-top:4px;}
+.fw-item{font-size:10.5px;color:var(--t2);display:flex;gap:6px;align-items:flex-start;}
+.fw-item::before{content:'—';color:var(--t4);flex-shrink:0;}
+.fw-region-note{font-size:10px;color:var(--t3);font-style:italic;margin-top:4px;padding-top:6px;border-top:1px solid var(--bd);}
 
 /* Portrait viewer */
 .portrait-viewer{
@@ -1883,6 +1927,7 @@ body{overflow-x:hidden;}
       <div class="info-tab on" onclick="setInfoTab('profile',this)">Profile</div>
       <div class="info-tab" onclick="setInfoTab('context',this)">Context Engine</div>
       <div class="info-tab" onclick="setInfoTab('regional',this)">Regional &amp; Transport</div>
+      <div class="info-tab" onclick="setInfoTab('fashion',this)">Fashion &amp; Wardrobe</div>
       <div class="info-tab" onclick="setInfoTab('audio',this)">Audio</div>
       <div class="info-tab" onclick="setInfoTab('consistency',this)">Consistency</div>
     </div>
@@ -2016,6 +2061,43 @@ body{overflow-x:hidden;}
           </div>
         </div>
       </div>
+      <!-- ASSET STATES GALLERY (shared — always visible in Profile tab) -->
+      <div class="sec" style="margin-top:6px;">Asset States — All Six Demonstrated</div>
+      <div class="gc" style="margin-bottom:4px;">
+        <div style="font-size:12px;color:var(--t2);line-height:1.70;margin-bottom:10px;">Every asset in NATASHAS exists in one of six canonical states. A browser-generated prototype is not automatically production-ready. Only Approved / Locked assets may become canonical production content.</div>
+        <div class="as-grid">
+          <div class="as-card concept">
+            <span class="as-card-badge state-concept">◌ Concept</span>
+            <div class="as-card-name">NATAS-CHAR-003 — Mama Fatima</div>
+            <div class="as-card-desc">NPC archetype brief defined. Visual direction established. Not yet generated to full spec. Market civilian context.</div>
+          </div>
+          <div class="as-card prototype">
+            <span class="as-card-badge state-prototype">● Prototype</span>
+            <div class="as-card-name">NATAS-CHAR-001 — Gov. Adeyemi</div>
+            <div class="as-card-desc">Full portrait, full-body, 3D model, expressions, wardrobe generated. Pending consistency review and cultural validation.</div>
+          </div>
+          <div class="as-card candidate">
+            <span class="as-card-badge state-candidate">◑ Candidate</span>
+            <div class="as-card-name">NATAS-WD-GOV-004 — Full Traditional Yoruba</div>
+            <div class="as-card-desc">Gov. Adeyemi's ceremonial aso-oke regalia variant. Generated, reviewed by director. Awaiting cultural authenticity sign-off before approval.</div>
+          </div>
+          <div class="as-card approved">
+            <span class="as-card-badge state-approved">◕ Approved</span>
+            <div class="as-card-name">NATAS-WD-GOV-001 — Government Agbada</div>
+            <div class="as-card-desc">Gov. Adeyemi's primary governance costume. Passed identity check, context check, cultural review. Cleared for deployment to canonical scenes.</div>
+          </div>
+          <div class="as-card locked">
+            <span class="as-card-badge state-locked">🔒 Locked</span>
+            <div class="as-card-name">NATAS-CHAR-001 — Canonical DNA Anchor</div>
+            <div class="as-card-desc">Skin profile, face structure, colour palette and signature identity markers locked. No future generation may diverge without authority approval.</div>
+          </div>
+          <div class="as-card deprecated">
+            <span class="as-card-badge state-deprecated">✕ Deprecated</span>
+            <div class="as-card-name">NATAS-WD-GOV-LEGACY-001 — Early Concept Agbada</div>
+            <div class="as-card-desc">Pre-canonical revision. Fabric pattern inconsistent with Kwara regional identity. Replaced by NATAS-WD-GOV-001. Retained for lineage audit only. Do not use.</div>
+          </div>
+        </div>
+      </div>
     </div><!-- end profile pane -->
 
     <!-- CONTEXT ENGINE TAB -->
@@ -2146,6 +2228,129 @@ body{overflow-x:hidden;}
         </div>
       </div>
     </div>
+
+    <!-- FASHION & WARDROBE TAB — Section 7 -->
+    <div class="info-pane" id="pane-fashion">
+      <div class="sec">Fashion &amp; Wardrobe — Context-Sensitive System</div>
+      <div class="gc" style="margin-bottom:4px;">
+        <div style="font-size:12px;color:var(--t2);line-height:1.70;">Wardrobe selection is driven by context (who, where, when, role, event) — never by arbitrary visual choice. Six categories cover the full wardrobe space. <strong style="color:var(--t1)">Wardrobe must be contextual rather than stereotypical.</strong></div>
+      </div>
+
+      <div class="fw-grid">
+
+        <!-- 1. EVERYDAY WEAR -->
+        <div class="fw-card">
+          <span class="fw-cat everyday">Everyday Wear</span>
+          <div class="fw-card-title">Market &amp; Civilian Daily</div>
+          <div class="fw-card-who">Mama Fatima Abdullahi · NPC · Kwara</div>
+          <div class="fw-items">
+            <div class="fw-item">Teal-blue hijab — Kwara Islamic identity</div>
+            <div class="fw-item">Ankara bubu — Hausa-Fulani Kwara market</div>
+            <div class="fw-item">Market apron over — practical trading gear</div>
+            <div class="fw-item">Flat sensible sandals — market terrain</div>
+          </div>
+          <div class="fw-region-note">Kwara regional context · Hot harmattan · Outdoor market</div>
+        </div>
+
+        <!-- 2. PROFESSIONAL WEAR -->
+        <div class="fw-card">
+          <span class="fw-cat professional">Professional Wear</span>
+          <div class="fw-card-title">Federal &amp; Executive Professional</div>
+          <div class="fw-card-who">Barr. Chidi Okafor · Chief of Staff · Enugu origin</div>
+          <div class="fw-items">
+            <div class="fw-item">Dark navy suit — formal federal authority</div>
+            <div class="fw-item">Gold-frame spectacles — canonical identifier</div>
+            <div class="fw-item">White French-cuff shirt · gold tie</div>
+            <div class="fw-item">Alligator-skin shoes — Igbo professional register</div>
+          </div>
+          <div class="fw-region-note">Cross-regional · Indoor climate-controlled · Government House</div>
+        </div>
+
+        <!-- 3. POLITICAL / CAMPAIGN WEAR -->
+        <div class="fw-card">
+          <span class="fw-cat campaign">Political / Campaign</span>
+          <div class="fw-card-title">NPA Rally &amp; Campaign Attire</div>
+          <div class="fw-card-who">Gov. Adeyemi + Barr. Okafor · NPA Party · Kwara</div>
+          <div class="fw-items">
+            <div class="fw-item">NPA-branded colour block shirt — party identity</div>
+            <div class="fw-item">Embroidered NPA crest — visible at crowd distance</div>
+            <div class="fw-item">Accessible silhouette — crowd-facing, not formal</div>
+            <div class="fw-item">Gov: presidential Agbada in NPA palette</div>
+          </div>
+          <div class="fw-region-note">Rally grounds · Both regions · High-visibility event</div>
+        </div>
+
+        <!-- 4. TRADITIONAL / CULTURAL WEAR -->
+        <div class="fw-card">
+          <span class="fw-cat traditional">Traditional / Cultural</span>
+          <div class="fw-card-title">Ceremonial &amp; Eid Attire</div>
+          <div class="fw-card-who">Gov. Adeyemi (Yoruba) · Mama Fatima (Hausa-Fulani)</div>
+          <div class="fw-items">
+            <div class="fw-item">Gov: Full aso-oke · Elaborate Agbada · Senior egungun markers</div>
+            <div class="fw-item">Gov: Ceremonial Fila cap — Yoruba chieftaincy</div>
+            <div class="fw-item">Mama Fatima: White / gold Eid hijab · Lace bubu</div>
+            <div class="fw-item">Mama Fatima: Gold jewellery · No market apron</div>
+          </div>
+          <div class="fw-region-note">Cultural / religious events · Respectful context-specific depiction</div>
+        </div>
+
+        <!-- 5. YOUTH STYLING -->
+        <div class="fw-card youth">
+          <span class="fw-cat youth">Youth Styling</span>
+          <div class="fw-card-title">Urban Youth NPC Archetype</div>
+          <div class="fw-card-who">NPC Archetype — Ages 18–28 · Urban Nigeria</div>
+          <div class="fw-items">
+            <div class="fw-item">Ankara print streetwear shirt — cultural + contemporary</div>
+            <div class="fw-item">Dark straight-leg trousers or jeans</div>
+            <div class="fw-item">Clean leather or canvas sneakers</div>
+            <div class="fw-item">Optional bucket hat / low cap — youth street signal</div>
+            <div class="fw-item">Phone-in-hand pose — social media active citizen</div>
+          </div>
+          <div class="fw-region-note">Lagos / Abuja / Urban Enugu · Electoral voter bloc · Grassroots social capital source</div>
+        </div>
+
+        <!-- 6. EVENT-SPECIFIC WEAR -->
+        <div class="fw-card">
+          <span class="fw-cat event">Event-Specific</span>
+          <div class="fw-card-title">State Ceremony &amp; National Day</div>
+          <div class="fw-card-who">All hero characters · Context: formal state events</div>
+          <div class="fw-items">
+            <div class="fw-item">Gov: Full government regalia with national colours</div>
+            <div class="fw-item">CoS: Formal wear with Nigerian flag pin</div>
+            <div class="fw-item">NPCs: Aso-ebi coordinated group wear for rallies</div>
+            <div class="fw-item">Funeral context: white or black attire per ethnic custom</div>
+          </div>
+          <div class="fw-region-note">State House · National celebrations · Funeral rites · Eid / Christmas</div>
+        </div>
+
+      </div><!-- /fw-grid -->
+
+      <div class="sec">Regional Wardrobe Comparison</div>
+      <div class="region-compare">
+        <div class="rc-card kw">
+          <div class="rc-title" style="color:var(--kwara2)">● Kwara — Wardrobe DNA</div>
+          <div class="rc-row">Adire indigo fabric — Yoruba signature textile</div>
+          <div class="rc-row">Teal / warm earth market everyday wear</div>
+          <div class="rc-row">Hijab styles — Islamic Emirate community</div>
+          <div class="rc-row">Fila cap — Yoruba male traditional</div>
+          <div class="rc-row">Kaftan + Babariga — formal male context</div>
+          <div class="rc-row">Agbada — governor / elder prestige</div>
+        </div>
+        <div class="rc-card en">
+          <div class="rc-title" style="color:var(--enugu2)">● Enugu — Wardrobe DNA</div>
+          <div class="rc-row">Isi-agu geometric print — Igbo prestige fabric</div>
+          <div class="rc-row">Navy + white professional suits</div>
+          <div class="rc-row">Ọkọ-style caps — Igbo male traditional</div>
+          <div class="rc-row">George fabric — Igbo ceremonial women</div>
+          <div class="rc-row">Church formal wear — Sunday civic culture</div>
+          <div class="rc-row">Coal-era work clothes — industrial heritage NPC</div>
+        </div>
+      </div>
+
+      <div class="gc" style="margin-top:4px;">
+        <div style="font-size:12px;color:var(--t2);line-height:1.70;font-style:italic;">"Wardrobe must be contextual rather than stereotypical." — Every wardrobe choice must be justified by WHO the character is, WHERE they are, WHEN it is, and WHY they are there. A Kwara governor does not wear the same thing as an Enugu chief of staff for the same occasion.</div>
+      </div>
+    </div><!-- /pane-fashion -->
 
     <!-- CONSISTENCY LAB TAB v2 -->
     <div class="info-pane" id="pane-consistency">
